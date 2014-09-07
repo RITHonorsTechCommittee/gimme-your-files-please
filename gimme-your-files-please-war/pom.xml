@@ -64,11 +64,20 @@
 			<artifactId>google-oauth-client-servlet</artifactId>
 			<version>1.18.0-rc</version>
 		</dependency>
+		
+		<!-- Java Standard Template Library -->
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>jstl</artifactId>
+		    <version>1.2</version>
+		</dependency>
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
+		
+		
 
 		<!-- Test Dependencies -->
 		<dependency>
