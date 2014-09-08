@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 	<servlet>
 		<servlet-name>UserList</servlet-name>
-		<servlet-class>edu.rit.honors.gyfp.UserList</servlet-class>
+		<servlet-class>edu.rit.honors.gyfp.servlets.UserList</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>UserList</servlet-name>
