@@ -45,7 +45,7 @@ public class Utils {
       AppEngineDataStoreFactory.getDefaultInstance();
 
   private static GoogleClientSecrets clientSecrets = null;
-  public static final String MAIN_SERVLET_PATH = "/drive-sampleservlet";
+  public static final String MAIN_SERVLET_PATH = "/list";
   public static final String AUTH_CALLBACK_SERVLET_PATH = "/oauth2callback";
   public static final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
   public static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
