@@ -25,3 +25,6 @@ out
 .settings
 .classpath
 .project
+
+# This file should never be committed!
+gimme-your-files-please-war/src/main/resources/client_secrets.json
