@@ -19,4 +19,16 @@
 			<scripting-invalid>true</scripting-invalid>
 		</jsp-property-group>
 	</jsp-config>
+
+	<!-- Make sure that there is a logged in user! -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>any</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>
+
 </web-app>

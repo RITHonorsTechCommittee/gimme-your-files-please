@@ -29,10 +29,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class Utils {
+	
+	private static final Logger log = Logger.getLogger(Utils.class.getName());
 
   /**
    * Global instance of the {@link DataStoreFactory}. The best practice is to make it a single
@@ -48,6 +51,7 @@ public class Utils {
   public static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
   private static GoogleClientSecrets getClientSecrets() throws IOException {
+	  log.info("Setting the stuff.");
     if (clientSecrets == null) {
       clientSecrets = GoogleClientSecrets.load(JSON_FACTORY,
           new InputStreamReader(Utils.class.getResourceAsStream("/client_secrets.json")));

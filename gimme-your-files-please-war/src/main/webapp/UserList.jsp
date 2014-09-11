@@ -23,6 +23,14 @@
     	div#main {
     		margin-top: 50px;
     	}
+    	
+    	.list-group-item {
+    		padding: 5px 10px;
+    	}
+    	
+    	.email-address-badge {
+    		float: right;
+    	}
     </style>
 </head>
 <body>
@@ -51,51 +59,49 @@
     <div id="main" class="container">
 		<h1>Gimme Your Files Please!</h1>
 		
-		<c:forEach items="${users}" var="user">
-			<div class="panel panel-primary">
-			  <div class="panel-heading">
-			    <h3 class="panel-title">${user.name}</h3>
-			  </div>
-			  <div class="panel-body">
-		  		<div class="container-fluid">
-		  			<div class="row">
-		  				<div class="col-xs-3">
-		  					<div class="well">
-		  						<h4>${user.email}</h4>
-		  						<div style="width: 100px; height: 100px; background-color: #282828; border: 2px solid white">User picture</div>
-		  					</div>
-		  				</div>
-		  				<div class="col-xs-4">
-						    <ul class="list-group">
-							  <li class="list-group-item">
-							    <span class="badge">${user.filesOwned}</span>
-							    Files Owned
-							  </li>
-							  <li class="list-group-item">
-							    <span class="badge">${user.filesEditor}</span>
-							    Files with Write Permissions
-							  </li>
-							  <li class="list-group-item">
-							    <span class="badge">${user.filesViewer}</span>
-							    Files with Read Permissions
-							  </li>
-							</ul>
-						</div>
-						<div class="col-xs-5">
-							<div class="btn-group btn-group-justified">
-							  <a href="#" class="btn btn-success">Ask Nicely</a>
-							  <a href="#" class="btn btn-danger">Hostile Takeover</a>
-							  <a href="#" class="btn btn-primary">Remove User</a>
+		<div class="row">
+			<c:forEach items="${users}" var="user">
+				<div class="col-xs-6">
+					<div class="panel panel-primary">
+					  <div class="panel-heading">
+					    <h3 class="panel-title">${user.name} <span class="badge email-address-badge">${user.email}</span></h3>
+					  </div>
+					  <div class="panel-body">
+				  		<div class="container-fluid">
+				  			<div class="row">
+				  				<div class="col-xs-8">
+								    <ul class="list-group">
+									  <li class="list-group-item">
+									    <span class="badge">${user.filesOwned}</span>
+									    Files Owned
+									  </li>
+									  <li class="list-group-item">
+									    <span class="badge">${user.filesEditor}</span>
+									    Files with Write Permissions
+									  </li>
+									  <li class="list-group-item">
+									    <span class="badge">${user.filesViewer}</span>
+									    Files with Read Permissions
+									  </li>
+									</ul>
+								</div>
+								<div class="col-xs-4">
+									<div class="btn-group-vertical">
+									  <a href="#" class="btn btn-success btn-sm">Ask Nicely</a>
+									  <a href="#" class="btn btn-danger  btn-sm">Hostile Takeover</a>
+									  <a href="#" class="btn btn-default  btn-sm">Remove User</a>
+									</div>
+								</div>
 							</div>
 						</div>
+					  </div>
 					</div>
 				</div>
-			  </div>
-			</div>
-		</c:forEach>
+			</c:forEach>
+		</div>
 	</div>
 	
-	 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
