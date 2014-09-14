@@ -27,16 +27,9 @@ import java.util.logging.Logger;
  * an authenticated API call using OAuth 2 helper classes.
  */
 public class DriveSampleServlet extends
-		AbstractAppEngineAuthorizationCodeServlet {
+		DriveServlet {
 
 	private static final Logger log = Logger.getLogger(DriveSampleServlet.class.getName());
-	
-	/**
-	 * Be sure to specify the name of your application. If the application name
-	 * is {@code null} or blank, the application will log a warning. Suggested
-	 * format is "MyCompany-ProductName/1.0".
-	 */
-	private static final String APPLICATION_NAME = "RIT-Honors-Drive/1.0";
 	
 	private static final String FOLDER_MIME = "application/vnd.google-apps.folder";
 
@@ -89,13 +82,8 @@ public class DriveSampleServlet extends
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException, ServletException {
-		// Get the stored credentials using the Authorization Flow
-		AuthorizationCodeFlow authFlow = initializeFlow();
-		Credential credential = authFlow.loadCredential(getUserId(req));
-		// Build the Drive object using the credentials
-		Drive drive = new Drive.Builder(Utils.HTTP_TRANSPORT,
-				Utils.JSON_FACTORY, credential).setApplicationName(
-				APPLICATION_NAME).build();
+		Drive drive = getDriveService(req);
+		
 
 		resp.setStatus(200);
 		resp.setContentType("text/html");
@@ -119,17 +107,5 @@ public class DriveSampleServlet extends
 		{
 			writer.println("Please use google drive to open a folder (or folders!) you want processed.");
 		}
-	}
-
-	@Override
-	protected AuthorizationCodeFlow initializeFlow() throws ServletException,
-			IOException {
-		return Utils.initializeFlow();
-	}
-
-	@Override
-	protected String getRedirectUri(HttpServletRequest req)
-			throws ServletException, IOException {
-		return Utils.getRedirectUri(req);
 	}
 }

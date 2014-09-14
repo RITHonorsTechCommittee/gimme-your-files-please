@@ -36,14 +36,21 @@
 						<enableJarClasses>false</enableJarClasses>
 						<port>8888</port>
 						<address>0.0.0.0</address>
-						<!-- Uncomment these lines to enable debugging with eclipse -->
-						
-<!-- 						<jvmFlags> -->
-<!-- 							<jvmFlag>-Xdebug</jvmFlag> -->
-<!-- 							<jvmFlag>-Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=y -->
-<!-- 							</jvmFlag> -->
-<!-- 						</jvmFlags> -->
+						<jvmFlags>
+							<jvmFlag>-Xdebug</jvmFlag>
+							<jvmFlag>-Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n
+							</jvmFlag>
+						</jvmFlags>
 					</configuration>
+				</plugin>
+				<plugin> 
+				    <groupId>org.apache.maven.plugins</groupId> 
+				    <artifactId>maven-compiler-plugin</artifactId> 
+				    <version>2.3.2</version> 
+				    <configuration> 
+				        <source>1.7</source> 
+				        <target>1.7</target> 
+				    </configuration> 
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
