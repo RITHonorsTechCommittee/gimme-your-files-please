@@ -29,18 +29,20 @@ Running the development server
 Running the development server from Eclipse (with debugging)
 ------------------------------------------------------------
 1.  Build the application
---1.  Create a new maven run configuration
-----*  Base directory:  ${workspace_loc:/gimme-your-files-please}
-----*  Goals:  clean install  
---2.  Run the configuration after making any changes
+    1.  Create a new maven run configuration
+        *  Base directory:  ${workspace_loc:/gimme-your-files-please}
+        *  Goals:  clean install  
+    2.  Run the configuration after making any changes
 2.  Start the server.
---*  See the steps above, I've found that running it from the command line is easiest for starting and stopping it.
+    *  See the steps above, I've found that running it from the command line is easiest for starting and stopping it.
 3.  Start the remote debugger
---1.  Create a new Remote Java Application debug configuration
-----*  Project: gimme-your-files-please-war
-----*  Connection type:  standard
-----*  Host:  Localhost
-----*  Port:  1044
+    1.  Create a new Remote Java Application debug configuration
+        *  Project: gimme-your-files-please-war
+        *  Connection type:  standard
+        *  Host:  Localhost
+        *  Port:  1044
+    2.  Add whatever breakpoints you want
+    3.  Start the debug configuration
 
 
 To Do!
