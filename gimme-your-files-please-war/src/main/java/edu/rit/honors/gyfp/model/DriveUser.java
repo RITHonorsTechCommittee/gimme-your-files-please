@@ -45,7 +45,7 @@ public class DriveUser {
 		return email;
 	}
 
-	public int getFilesOwned() {
+	public int getFilesOwner() {
 		return permissions.get(UserRole.OWNER).size();
 	}
 

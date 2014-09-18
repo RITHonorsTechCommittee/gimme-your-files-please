@@ -25,6 +25,7 @@ Running the development server
 2.  cd into <base dir>/gimme-your-files-please-ear
 3.  run the following command to start the server
         mvn appengine:devserver
+4.  Use the tool!  http://localhost:8888/list?folderId=0BwyAT8fk8FVDTGpNbnlmQ09KTGM will list the owners of Tech Committee's files.  You will need to authenticate to access this page.
         
 Running the development server from Eclipse (with debugging)
 ------------------------------------------------------------

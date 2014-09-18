@@ -72,15 +72,15 @@
 				  				<div class="col-xs-8">
 								    <ul class="list-group">
 									  <li class="list-group-item">
-									    <span class="badge">${user.filesOwned}</span>
+									    <span class="badge">${user.filesOwner}</span>
 									    Files Owned
 									  </li>
 									  <li class="list-group-item">
-									    <span class="badge">${user.filesEditor}</span>
+									    <span class="badge">${user.filesWriter}</span>
 									    Files with Write Permissions
 									  </li>
 									  <li class="list-group-item">
-									    <span class="badge">${user.filesViewer}</span>
+									    <span class="badge">${user.filesReader}</span>
 									    Files with Read Permissions
 									  </li>
 									</ul>
