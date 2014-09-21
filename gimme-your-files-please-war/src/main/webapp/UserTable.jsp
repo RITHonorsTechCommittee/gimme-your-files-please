@@ -46,12 +46,12 @@
 					<td><c:out value="${user.filesReader}" /></td>
 					<td>
 						<div class="btn-group">
+							<c:if test="${user.filesReader > 0 || user.filesWriter > 0}">
+								<a href="#" class="btn btn-default  btn-sm">Remove User</a>
+							</c:if>
 							<c:if test="${user.filesOwner > 0}">
 								<a href="#" class="btn btn-success btn-sm">Ask Nicely</a>
 								<a href="#" class="btn btn-danger  btn-sm">Hostile Takeover</a>
-							</c:if>
-							<c:if test="${user.filesReader > 0 || user.filesWriter > 0}">
-								<a href="#" class="btn btn-default  btn-sm">Remove User</a>
 							</c:if>
 						</div>
 					</td>
