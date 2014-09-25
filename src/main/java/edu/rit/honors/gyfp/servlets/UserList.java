@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,9 +17,11 @@ import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
+import com.googlecode.objectify.Objectify;
 
 import edu.rit.honors.gyfp.drive.FileHelper;
 import edu.rit.honors.gyfp.model.DriveUser;
+import edu.rit.honors.gyfp.util.OfyService;
 import edu.rit.honors.gyfp.util.Utils;
 
 /**
@@ -30,13 +33,18 @@ public class UserList extends DriveServlet {
 	private static final long serialVersionUID = -5877306066505657461L;
 
 	private static final String PARAM_FOLDER = "folderId";
-
+	
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException, ServletException {
 
 		// Get the stored credentials using the Authorization Flow
 		RequestDispatcher view = req.getRequestDispatcher("UserList.jsp");
+		DriveUser saveUser = new DriveUser("Save", "me-plz");
+		
+		Objectify ofy = OfyService.ofy();
+		ofy.save().entity(saveUser).now();
+		System.out.println("New ID: " + saveUser.getId());
 
 		String folderId = req.getParameter(PARAM_FOLDER);
 		Drive service = getDriveService(req);
