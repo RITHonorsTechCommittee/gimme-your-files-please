@@ -67,6 +67,27 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
+    "gyfp.folders.tranfer.list" : {
+      "path" : "transferrequestcollection/{folder}",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "edu.rit.honors.gyfp.api.folder.FolderApi.getTransferRequests",
+      "request" : {
+        "parameters" : {
+          "folder" : {
+            "type" : "int64",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
     "gyfp.folders.tranfer.polite" : {
       "path" : "makeTransferRequest/{folder}/{users}",
       "httpMethod" : "POST",
@@ -84,27 +105,6 @@
           "users" : {
             "repeated" : true,
             "type" : "string",
-            "required" : true
-          }
-        },
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "gyfp.folders.tranfer.list" : {
-      "path" : "transferrequestcollection/{folder}",
-      "httpMethod" : "GET",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
-      "audiences" : [ ],
-      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "edu.rit.honors.gyfp.api.folder.FolderApi.getTransferRequests",
-      "request" : {
-        "parameters" : {
-          "folder" : {
-            "type" : "int64",
             "required" : true
           }
         },
@@ -151,7 +151,7 @@
       "request" : {
         "parameters" : {
           "folder" : {
-            "type" : "int64",
+            "type" : "string",
             "required" : true
           },
           "users" : {
@@ -177,7 +177,7 @@
       "request" : {
         "parameters" : {
           "folder" : {
-            "type" : "int64",
+            "type" : "string",
             "required" : true
           },
           "users" : {
@@ -223,6 +223,9 @@
           "files" : {
             "$ref" : "JsonMap"
           },
+          "ownerUserId" : {
+            "type" : "string"
+          },
           "dirty" : {
             "type" : "boolean"
           }
@@ -244,12 +247,12 @@
           "$ref" : "Folder"
         }
       },
-      "edu.rit.honors.gyfp.api.folder.FolderApi.makeTransferRequest" : {
+      "edu.rit.honors.gyfp.api.folder.FolderApi.getTransferRequests" : {
         "response" : {
           "$ref" : "TransferRequestCollection"
         }
       },
-      "edu.rit.honors.gyfp.api.folder.FolderApi.getTransferRequests" : {
+      "edu.rit.honors.gyfp.api.folder.FolderApi.makeTransferRequest" : {
         "response" : {
           "$ref" : "TransferRequestCollection"
         }

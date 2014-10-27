@@ -3,6 +3,7 @@ package edu.rit.honors.gyfp.api.folder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,8 +21,11 @@ import com.google.appengine.api.users.User;
 import com.google.common.base.Strings;
 
 import edu.rit.honors.gyfp.api.Constants;
+import edu.rit.honors.gyfp.api.model.FileUser;
 import edu.rit.honors.gyfp.api.model.Folder;
 import edu.rit.honors.gyfp.api.model.TransferRequest;
+import edu.rit.honors.gyfp.api.model.TransferableFile;
+import edu.rit.honors.gyfp.util.OfyService;
 import edu.rit.honors.gyfp.util.Utils;
 
 @Api(name = "gyfp", version = "v1", scopes = {Constants.Scope.USER_EMAIL, Constants.Scope.DRIVE_METADATA_READONLY})
@@ -101,7 +105,7 @@ public class FolderApi {
 		//
 		// This means we can safely begin attempting to load the contents of the folder.
 		
-		return Folder.fromGoogleId(id, service);
+		return Folder.fromGoogleId(id, user);
 	}
 
 	/**
@@ -121,9 +125,52 @@ public class FolderApi {
 	 *             If the user is not the owner of the folder
 	 */
 	@ApiMethod(name = "folders.revoke.read", httpMethod = HttpMethod.POST)
-	public void revokeReadPermission(@Named("folder") Long folder, User user, @Named("users") List<String> users) 
-			throws NotFoundException, ForbiddenException {
-		// TODO
+	public void revokeReadPermission(@Named("folder") String folder, User user, @Named("users") List<String> users) 
+			throws NotFoundException, ForbiddenException, BadRequestException {
+		
+		revokePermission(folder, user, users, Constants.Role.READER);
+	}
+
+	/**
+	 * @param folder
+	 * @param user
+	 * @param users
+	 * @throws ForbiddenException
+	 * @throws BadRequestException
+	 */
+	private void revokePermission(String folder, User user, List<String> users, String role)
+			throws ForbiddenException, BadRequestException {
+		if (user == null) {
+			throw new ForbiddenException("You must authenticate to use this API.");
+		}
+		
+		if (users == null || users.size() == 0) {
+			throw new BadRequestException("No users specified");
+		}
+		
+		Folder target = Folder.fromGoogleId(folder, user);
+		
+		Drive service = Utils.createDriveFromUser(user);
+		
+		Map<String, FileUser> files = target.getFiles();
+		for (String userid : users) {
+			FileUser currentUser = files.get(userid);
+			List<TransferableFile> readFiles = currentUser.getFiles().get(role);
+			List<TransferableFile> fail = new ArrayList<>();
+			
+			for (TransferableFile file : readFiles) {
+				try {
+					service.permissions().delete(file.getFileId(), currentUser.getPermission()).execute();
+				} catch (IOException e) {
+					fail.add(file);
+				}
+			}
+			
+			
+			readFiles.retainAll(fail);
+		}
+		
+		OfyService.ofy().save().entity(folder).now();
 	}
 
 	/**
@@ -141,11 +188,14 @@ public class FolderApi {
 	 *             If a folder with fileid id is not found
 	 * @throws ForbiddenException
 	 *             If the user is not the owner of the folder
+	 * @throws BadRequestException  If there are no users specified or no permissions were revoked
+	 * 
 	 */
 	@ApiMethod(name = "folders.revoke.write", httpMethod = HttpMethod.POST)
-	public void revokeWritePermission(@Named("folder") Long folder, User user, @Named("users") List<String> users) 
-			throws NotFoundException, ForbiddenException {
-		// TODO
+	public void revokeWritePermission(@Named("folder") String folder, User user, @Named("users") List<String> users) 
+			throws NotFoundException, ForbiddenException, BadRequestException {
+		
+		revokePermission(folder, user, users, Constants.Role.WRITER);
 	}
 	
 	/**

@@ -8,17 +8,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.api.server.spi.response.ForbiddenException;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.Drive.Files;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
+import com.google.appengine.api.users.User;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Unindex;
 
 import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.util.OfyService;
+import edu.rit.honors.gyfp.util.Utils;
 
 @Entity
 public class Folder {
@@ -33,6 +36,11 @@ public class Folder {
 	 * The contents of the folder, indexed by owner id
 	 */
 	private Map<String, FileUser> files;
+	
+	/**
+	 * The ID of the user who owns this folder
+	 */
+	private String ownerUserId;
 	
 	
 	/**
@@ -92,6 +100,13 @@ public class Folder {
 	public String getId() {
 		return id;
 	}
+	
+	/**
+	 * @return  The ID of the user who owns this folder
+	 */
+	public String getOwnerUserId() {
+		return ownerUserId;
+	}
 
 	/**
 	 * Creates a folder from a given google file id, and preloads it with its
@@ -103,25 +118,33 @@ public class Folder {
 	 * 
 	 * @param fileid
 	 *            The google fileid of the folder to load
-	 * @param service
-	 *            An authenticated instance of the Google Drive service
+	 * @param user
+	 *            A user who is authenticated to google drive
 	 * 
 	 * @return The corresponding folder
+	 * @throws ForbiddenException   If the drive service cannot be created
 	 */
-	public static Folder fromGoogleId(String fileid, Drive service) {
-
+	public static Folder fromGoogleId(String fileid, User user) throws ForbiddenException {
+		
+		
 		// First step: Check the cache for an existing load of this folder
 		Folder cached = OfyService.ofy().load().type(Folder.class).id(fileid).now();
 
 		if (cached != null && !cached.isDirty()) {
-			return cached;
+			if (cached.ownerUserId.equals(user.getUserId())) {
+				return cached;
+			}
+			
+			throw new ForbiddenException("User " + user.getUserId() + " is not authorized to control this folder");
 		}
 
+		Drive service = Utils.createDriveFromUser(user);
 		// The cache did not contain a valid folder, we need to load it fresh.
 		Folder folder = new Folder(fileid);
 		folder.updateTime = System.currentTimeMillis();
 
 		folder.loadChildren(service);
+		folder.ownerUserId = user.getUserId();
 
 		OfyService.ofy().save().entity(folder);
 
@@ -227,5 +250,4 @@ public class Folder {
 			return new ArrayList<File>();
 		}
 	}
-
 }
