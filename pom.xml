@@ -10,7 +10,7 @@
 	<artifactId>gimme-your-files-please</artifactId>
 
 	<properties>
-		<appengine.app.version>1</appengine.app.version>
+		<appengine.app.version>2</appengine.app.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -76,6 +76,20 @@
 			<artifactId>objectify</artifactId>
 			<version>5.0.4</version>
 		</dependency>
+		
+		<!-- Endpoints Dependencies -->
+		<dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-endpoints</artifactId>
+            <version>1.9.6</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
+				
+				
 
 		<!-- Test Dependencies -->
 		<dependency>

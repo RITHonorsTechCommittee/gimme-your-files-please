@@ -21,6 +21,12 @@ public class DriveUser {
 	
 	private Map<UserRole, List<String>> permissions; 
 	
+	/**
+	 * Needed for Objectify
+	 */
+	@SuppressWarnings("unused")
+	private DriveUser() { }
+	
 	public DriveUser(Permission user) {
 		this(user.getName(), user.getEmailAddress());
 	}

@@ -40,18 +40,14 @@ public class UserList extends DriveServlet {
 
 		// Get the stored credentials using the Authorization Flow
 		RequestDispatcher view = req.getRequestDispatcher("UserList.jsp");
-		DriveUser saveUser = new DriveUser("Save", "me-plz");
 		
-		Objectify ofy = OfyService.ofy();
-		ofy.save().entity(saveUser).now();
-		System.out.println("New ID: " + saveUser.getId());
-
 		String folderId = req.getParameter(PARAM_FOLDER);
 		Drive service = getDriveService(req);
 		FileHelper files = getFileHelper(service);
 		File rootFolder = null;
 		if (folderId != null) {
 			rootFolder = files.getFileById(folderId);
+			File file = service.files().get(folderId).execute();
 		}
 
 		if (rootFolder != null) {

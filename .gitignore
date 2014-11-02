@@ -28,3 +28,4 @@ out
 
 # This file should never be committed!
 src/main/resources/client_secrets.json
+/target/
