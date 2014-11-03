@@ -42,7 +42,7 @@
   <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
   <init-param>
    <param-name>services</param-name>
-   <param-value>edu.rit.honors.gyfp.api.folder.FolderApi</param-value>
+   <param-value>edu.rit.honors.gyfp.api.folder.FolderApi,edu.rit.honors.gyfp.api.user.UserApi</param-value>
   </init-param>
  </servlet>
  <servlet-mapping>
