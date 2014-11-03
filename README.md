@@ -36,11 +36,18 @@ Running the development server from Eclipse
 From then on, you should be able to start the server using the run configuration "Google App Engine at localhost" (or something to that effect).  This also works for debugging.
 
 
+Testing an API
+--------------
+
+1.  Deploy your version to AppEngine.  Unfortunately the devserver ALWAYS returns the same user even after authentication (example@example.com).  In order to test with actual drive API calls it must be running "in production"
+2.  Go to http://gimmeyourfilesplease.appspot.com/_ah/api/explorer.  Between runs you may need to clear cache and/or cookies to get the changes to appear
+3.  Find and run the API call you want to test
+4.  If you are not authenticated, use the "main" version of the app first.  Go to https://gimmeyourfilesplease.appspot.com/list?folderId=0BwyAT8fk8FVDTGpNbnlmQ09KTGM  This request should ensure that you are properly authenticated for future API calls.
+
 To Do!
 ======
 
-* Break out the long API work into an asynchronous API with a progress bar
-* Persist the calculations in the datastore
-* Better handle oauth redirect to keep url parameters
-* Handle the permission transfer / revocation
+* Implement API method bodies
+* Create frontend (HTML + JS) to leverage backend API
+* Test the calls that require authentication with a real client
 
