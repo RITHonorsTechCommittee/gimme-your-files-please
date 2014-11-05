@@ -89,7 +89,12 @@
             <version>1</version>
         </dependency>
 				
-				
+		<!-- JODA - a much nicer way to deal with dates/times in Java -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.5</version>
+		</dependency>
 
 		<!-- Test Dependencies -->
 		<dependency>
@@ -104,6 +109,7 @@
 			<version>1.9.11</version>
 			<scope>test</scope>
 		</dependency>
+		
 	</dependencies>
 
 
