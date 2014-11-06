@@ -21,4 +21,10 @@ public class Constants {
 		public static final String WRITER = "writer";
 		public static final String READER = "reader";
 	}
+	
+	public static class Error {
+		public static final String AUTH_REQUIRED = "Authentication is required to use this API.";
+		public static final String TRANSFER_REQUEST_NOT_FOUND = "The transfer request %d could not be found.";
+		public static final String TRANSFER_REQUEST_INCORRECT_USER = "You do not have access to this transfer request.";
+	}
 }

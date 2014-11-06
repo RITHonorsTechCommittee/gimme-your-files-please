@@ -13,6 +13,7 @@ import com.google.appengine.api.users.User;
 
 import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.api.model.TransferRequest;
+import edu.rit.honors.gyfp.util.OfyService;
 
 @Api(
 		name = "gyfp", 
@@ -78,9 +79,22 @@ public class UserApi {
 	 * @throws NotFoundException
 	 *             If the request cannot be found
 	 */
-	public TransferRequest getRequest(@Named("request") long request, User user)
+	public TransferRequest getRequest(@Named("request") long requestId, User user)
 			throws ForbiddenException, NotFoundException {
-		return null;
+		if (user == null) {
+			throw new ForbiddenException(Constants.Error.AUTH_REQUIRED);
+		}
+		TransferRequest request = OfyService.ofy().load().type(TransferRequest.class).id(requestId).now();
+		
+		if (request == null) {
+			throw new NotFoundException(String.format(Constants.Error.TRANSFER_REQUEST_NOT_FOUND, requestId));
+		}
+		
+		if (request.getTargetUser().equals(user.getUserId())) {
+			return request;
+		} else {
+			throw new ForbiddenException(Constants.Error.TRANSFER_REQUEST_INCORRECT_USER);
+		}
 	}
 
 	/**
