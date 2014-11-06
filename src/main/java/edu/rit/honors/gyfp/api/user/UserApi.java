@@ -1,5 +1,7 @@
 package edu.rit.honors.gyfp.api.user;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Named;
@@ -8,12 +10,19 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.Nullable;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ForbiddenException;
+import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.NotFoundException;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.Permission;
 import com.google.appengine.api.users.User;
+import com.google.apphosting.api.ApiProxy;
+import com.googlecode.objectify.ObjectifyService;
 
 import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.api.model.TransferRequest;
+import edu.rit.honors.gyfp.api.model.TransferableFile;
 import edu.rit.honors.gyfp.util.OfyService;
+import edu.rit.honors.gyfp.util.Utils;
 
 @Api(
 		name = "gyfp", 
@@ -59,9 +68,46 @@ public class UserApi {
 	 * @throws NotFoundException
 	 *             If the transfer request cannot be found
 	 */
-	public TransferRequest acceptRequest(@Named("request") long request, @Named("limit") @Nullable int limit, User user)
-			throws BadRequestException, ForbiddenException, NotFoundException {
-		return null;
+	public TransferRequest acceptRequest(@Named("request") long requestId, @Named("limit") @Nullable Integer limit, User user)
+			throws BadRequestException, ForbiddenException, NotFoundException, InternalServerErrorException {
+		
+		TransferRequest request = getRequest(requestId, user);
+		if (limit == null) {
+			limit = 600;
+		} else if (limit > 600 || limit <= 0) {
+			throw new BadRequestException(String.format(Constants.Error.INVALID_TRANSFER_LIMIT, limit, 0, 600));
+		}
+		
+		Drive service = Utils.createDriveFromUser(user);
+		List<TransferableFile> success = new ArrayList<>();
+		Permission owner = new Permission();
+		owner.setRole("owner");
+			
+		for (TransferableFile file : request.getFiles()) {
+			try {
+				service.permissions().update(file.getFileId(), request.getRequestingUser(), owner).execute();
+				success.add(file);
+				limit--;
+				// Maybe not necessary, but just to be safe slow ourselves down slightly to avoid hitting the rate limit
+				Thread.sleep(50); 
+			} catch (IOException e) {
+				throw new InternalServerErrorException(
+						Constants.Error.FAILED_DRIVE_REQUEST, e);
+			} catch (InterruptedException e) {
+				throw new InternalServerErrorException(
+						Constants.Error.SLEEP_INTERRUPTED, e);
+			}
+
+			// Ensure that we have enough time to remove the processed files,
+			// store the updated request, and return the result
+			if (ApiProxy.getCurrentEnvironment().getRemainingMillis() <= 2000 || limit == 0) {
+				break;
+			}
+		}
+		
+		request.getFiles().removeAll(success);
+		ObjectifyService.ofy().save().entity(request);
+		return request;
 	}
 
 	
@@ -107,7 +153,7 @@ public class UserApi {
 	 * @throws NotFoundException
 	 *             If the request cannot be found
 	 */
-	public void removeFilesFromList(List<String> ids, User user) {
+	public void removeFilesFromList(@Named("ids") List<String> ids, User user) {
 		// TODO
 	}
 }

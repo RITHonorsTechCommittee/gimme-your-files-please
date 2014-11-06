@@ -26,5 +26,8 @@ public class Constants {
 		public static final String AUTH_REQUIRED = "Authentication is required to use this API.";
 		public static final String TRANSFER_REQUEST_NOT_FOUND = "The transfer request %d could not be found.";
 		public static final String TRANSFER_REQUEST_INCORRECT_USER = "You do not have access to this transfer request.";
+		public static final String FAILED_DRIVE_REQUEST = "The request to Google Drive caused an error.";
+		public static final String SLEEP_INTERRUPTED = "Thread.sleep() interrupted during execution";
+		public static final String INVALID_TRANSFER_LIMIT = "Invalid file transfer limit %d.  Must be between %d and %d";
 	}
 }
