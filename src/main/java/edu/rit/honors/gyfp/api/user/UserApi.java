@@ -161,7 +161,7 @@ public class UserApi {
 	 *             valid files that were found, however, will still be removed
 	 *             even if this exception is thrown.
 	 */
-	public void removeFilesFromList(@Named("request") long requestId, @Named("ids") Set<String> ids, User user)
+	public void removeFilesFromTransfer(@Named("request") long requestId, @Named("ids") Set<String> ids, User user)
 			throws ForbiddenException, NotFoundException, BadRequestException {
 		TransferRequest request = getRequest(requestId, user);
 		

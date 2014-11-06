@@ -192,6 +192,32 @@
         "body" : "empty"
       }
     },
+    "gyfp.userApi.removeFilesFromTransfer" : {
+      "path" : "filesfromtransfer/{request}/{ids}",
+      "httpMethod" : "DELETE",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "edu.rit.honors.gyfp.api.user.UserApi.removeFilesFromTransfer",
+      "request" : {
+        "parameters" : {
+          "request" : {
+            "type" : "int64",
+            "required" : true
+          },
+          "ids" : {
+            "repeated" : true,
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "empty"
+      }
+    },
     "gyfp.userApi.acceptRequest" : {
       "path" : "acceptRequest/{request}",
       "httpMethod" : "POST",
@@ -236,32 +262,6 @@
       },
       "response" : {
         "body" : "autoTemplate(backendResponse)"
-      }
-    },
-    "gyfp.userApi.removeFilesFromList" : {
-      "path" : "filesfromlist/{request}/{ids}",
-      "httpMethod" : "DELETE",
-      "authLevel" : "NONE",
-      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
-      "audiences" : [ ],
-      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
-      "rosyMethod" : "edu.rit.honors.gyfp.api.user.UserApi.removeFilesFromList",
-      "request" : {
-        "parameters" : {
-          "request" : {
-            "type" : "int64",
-            "required" : true
-          },
-          "ids" : {
-            "repeated" : true,
-            "type" : "string",
-            "required" : true
-          }
-        },
-        "body" : "empty"
-      },
-      "response" : {
-        "body" : "empty"
       }
     }
   },
@@ -475,6 +475,8 @@
       },
       "edu.rit.honors.gyfp.api.folder.FolderApi.revokeReadPermission" : {
       },
+      "edu.rit.honors.gyfp.api.user.UserApi.removeFilesFromTransfer" : {
+      },
       "edu.rit.honors.gyfp.api.user.UserApi.acceptRequest" : {
         "response" : {
           "$ref" : "TransferRequest"
@@ -484,8 +486,6 @@
         "response" : {
           "$ref" : "TransferRequest"
         }
-      },
-      "edu.rit.honors.gyfp.api.user.UserApi.removeFilesFromList" : {
       }
     }
   }
