@@ -29,5 +29,6 @@ public class Constants {
 		public static final String FAILED_DRIVE_REQUEST = "The request to Google Drive caused an error.";
 		public static final String SLEEP_INTERRUPTED = "Thread.sleep() interrupted during execution";
 		public static final String INVALID_TRANSFER_LIMIT = "Invalid file transfer limit %d.  Must be between %d and %d";
+		public static final String REMOVE_UNKNOWN_FILE_IDS = "The following file IDs are not part of the transfer request: %s";
 	}
 }

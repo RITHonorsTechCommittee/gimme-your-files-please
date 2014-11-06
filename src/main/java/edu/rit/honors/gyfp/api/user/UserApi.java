@@ -3,6 +3,7 @@ package edu.rit.honors.gyfp.api.user;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Named;
 
@@ -144,16 +145,39 @@ public class UserApi {
 	}
 
 	/**
-	 * Allows users to selectively exclude files from the transfer request
+	 * Allows users to selectively exclude files from the transfer request.
 	 * 
-	 * @param ids  The ids of the files that should not be included in the request
-	 * @param user  The user who is completing the transfer request
+	 * @param ids
+	 *            The ids of the files that should not be included in the
+	 *            request
+	 * @param user
+	 *            The user who is completing the transfer request
 	 * @throws ForbiddenException
 	 *             If the user does not own this request
 	 * @throws NotFoundException
 	 *             If the request cannot be found
+	 * @throws BadRequestException
+	 *             If any of the given file IDs are not part of the request. The
+	 *             valid files that were found, however, will still be removed
+	 *             even if this exception is thrown.
 	 */
-	public void removeFilesFromList(@Named("ids") List<String> ids, User user) {
-		// TODO
+	public void removeFilesFromList(@Named("request") long requestId, @Named("ids") Set<String> ids, User user)
+			throws ForbiddenException, NotFoundException, BadRequestException {
+		TransferRequest request = getRequest(requestId, user);
+		
+		List<TransferableFile> toRemove = new ArrayList<>();
+		for (TransferableFile file : request.getFiles()) {
+			if (ids.contains(file.getFileId())) {
+				toRemove.add(file);
+				ids.remove(file.getFileId());
+			}
+		}
+		
+		
+		request.getFiles().removeAll(toRemove);
+		ObjectifyService.ofy().save().entity(request);
+		if (!ids.isEmpty()) {
+			throw new BadRequestException(String.format(Constants.Error.REMOVE_UNKNOWN_FILE_IDS, ids)); 
+		}
 	}
 }
