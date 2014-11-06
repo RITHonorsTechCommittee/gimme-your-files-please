@@ -56,11 +56,11 @@ public class FolderApi {
 	public Folder getFolder(@Named("id") String id, User user) throws NotFoundException, ForbiddenException, BadRequestException {
 		
 		if (Strings.isNullOrEmpty(id)) {
-			throw new BadRequestException("Request did not contain a folderid");
+			throw new BadRequestException(String.format(Constants.Error.MISSING_PARAMETER, "id"));
 		}
 		
 		if (user == null) {
-			throw new ForbiddenException("You must authenticate to use this API.");
+			throw new ForbiddenException(Constants.Error.AUTH_REQUIRED);
 		}
 		
 		Drive service = Utils.createDriveFromUser(user);
@@ -71,7 +71,7 @@ public class FolderApi {
 		} catch (IOException e) {
 			log.severe(e.getMessage());
 			log.log(Level.SEVERE, "Could not load file " + id, e);
-			throw new NotFoundException("Could not load file with id " + id + " for user " + user.getUserId() + " (" + user.getEmail() + ")\n" + e.getMessage(), e);
+			throw new NotFoundException(String.format(Constants.Error.LOAD_FOLDER_FOR_USER_FAIL, id, user.getNickname(), user.getEmail(), e.getMessage()), e);
 		}
 		
 		if (Constants.MimeType.FOLDER.equals(result.getMimeType())) {
@@ -84,7 +84,7 @@ public class FolderApi {
 			}
 			
 			if (!isOwner) {
-				StringBuilder message = new StringBuilder("You are not the owner of this folder.  Only the following users are allowed to manage permissions of this folder:\n");
+				StringBuilder message = new StringBuilder(Constants.Error.INCORRECT_FOLDER_USER);
 				for (com.google.api.services.drive.model.User driveUser : result.getOwners()) {
 					message.append(driveUser.getDisplayName());
 					message.append(" (");
@@ -95,7 +95,7 @@ public class FolderApi {
 				throw new ForbiddenException(message.toString());
 			}
 		} else {
-			throw new BadRequestException("The given fileid is not a folder.  It has MIME type " + result.getMimeType());
+			throw new BadRequestException(String.format(Constants.Error.INVALID_MIME, result.getMimeType()));
 		}
 		
 		// At this point we know that:

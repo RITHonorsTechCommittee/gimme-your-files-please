@@ -30,5 +30,9 @@ public class Constants {
 		public static final String SLEEP_INTERRUPTED = "Thread.sleep() interrupted during execution";
 		public static final String INVALID_TRANSFER_LIMIT = "Invalid file transfer limit %d.  Must be between %d and %d";
 		public static final String REMOVE_UNKNOWN_FILE_IDS = "The following file IDs are not part of the transfer request: %s";
+		public static final String INVALID_MIME = "The given fileid is not a folder.  It has MIME type %s";
+		public static final String INCORRECT_FOLDER_USER = "You are not the owner of this folder.  Only the following users are allowed to manage permissions of this folder:\n";
+		public static final String LOAD_FOLDER_FOR_USER_FAIL = "Could not load file with id %s for user %s (%s)\n%s";
+		public static final String MISSING_PARAMETER = "Missing required parameter '%s'";
 	}
 }

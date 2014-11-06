@@ -317,13 +317,10 @@
           "dayOfYear" : {
             "type" : "integer"
           },
-          "millisOfSecond" : {
+          "hourOfDay" : {
             "type" : "integer"
           },
-          "secondOfMinute" : {
-            "type" : "integer"
-          },
-          "weekOfWeekyear" : {
+          "secondOfDay" : {
             "type" : "integer"
           },
           "minuteOfHour" : {
@@ -332,10 +329,13 @@
           "minuteOfDay" : {
             "type" : "integer"
           },
-          "hourOfDay" : {
+          "weekOfWeekyear" : {
             "type" : "integer"
           },
-          "secondOfDay" : {
+          "millisOfSecond" : {
+            "type" : "integer"
+          },
+          "secondOfMinute" : {
             "type" : "integer"
           },
           "millisOfDay" : {
@@ -366,13 +366,13 @@
           "chronology" : {
             "$ref" : "Chronology"
           },
-          "beforeNow" : {
-            "type" : "boolean"
-          },
           "afterNow" : {
             "type" : "boolean"
           },
           "equalNow" : {
+            "type" : "boolean"
+          },
+          "beforeNow" : {
             "type" : "boolean"
           }
         }
