@@ -132,6 +132,31 @@ public class FolderApi {
 	}
 
 	/**
+	 * Removes write permissions for all files in the given folder from the list
+	 * of users specified.
+	 * 
+	 * @param folder
+	 *            The id of the folder from which access will be revoked
+	 * @param user
+	 *            The user making the request. Required for authorization
+	 *            purposes
+	 * @param users
+	 *            A list of users who will have their write access revoked.
+	 * @throws NotFoundException
+	 *             If a folder with fileid id is not found
+	 * @throws ForbiddenException
+	 *             If the user is not the owner of the folder
+	 * @throws BadRequestException  If there are no users specified or no permissions were revoked
+	 * 
+	 */
+	@ApiMethod(name = "folders.revoke.write", httpMethod = HttpMethod.POST)
+	public void revokeWritePermission(@Named("folder") String folder, User user, @Named("users") List<String> users) 
+			throws NotFoundException, ForbiddenException, BadRequestException {
+		
+		revokePermission(folder, user, users, Constants.Role.WRITER);
+	}
+	
+	/**
 	 * @param folder
 	 * @param user
 	 * @param users
@@ -174,36 +199,12 @@ public class FolderApi {
 	}
 
 	/**
-	 * Removes write permissions for all files in the given folder from the list
-	 * of users specified.
-	 * 
-	 * @param folder
-	 *            The id of the folder from which access will be revoked
-	 * @param user
-	 *            The user making the request. Required for authorization
-	 *            purposes
-	 * @param users
-	 *            A list of users who will have their write access revoked.
-	 * @throws NotFoundException
-	 *             If a folder with fileid id is not found
-	 * @throws ForbiddenException
-	 *             If the user is not the owner of the folder
-	 * @throws BadRequestException  If there are no users specified or no permissions were revoked
-	 * 
-	 */
-	@ApiMethod(name = "folders.revoke.write", httpMethod = HttpMethod.POST)
-	public void revokeWritePermission(@Named("folder") String folder, User user, @Named("users") List<String> users) 
-			throws NotFoundException, ForbiddenException, BadRequestException {
-		
-		revokePermission(folder, user, users, Constants.Role.WRITER);
-	}
-	
-	/**
 	 * Creates "polite" transfer requests for all the specified users which will
 	 * transfer any files owned in the given folder to the requesting user
 	 * 
 	 * @param folder
-	 *            The id of folder for which the transfer requests will be created
+	 *            The id of folder for which the transfer requests will be
+	 *            created
 	 * @param user
 	 *            The user making the request. Required for authorization
 	 *            purposes
@@ -216,12 +217,28 @@ public class FolderApi {
 	 *             If a folder with fileid id is not found
 	 * @throws ForbiddenException
 	 *             If the user is not the owner of the folder
+	 * @throws BadRequestException
+	 *             If no users are specified
 	 */
 	@ApiMethod(name = "folders.tranfer.polite", httpMethod = HttpMethod.POST)
-	public List<TransferRequest> makeTransferRequest(@Named("folder") Long folder, User user, @Named("users") List<String> users) 
-			throws NotFoundException, ForbiddenException {
-		// TODO
-		return new ArrayList<>();
+	public List<TransferRequest> makeTransferRequest(@Named("folder") String folderid, User user, @Named("users") List<String> users) 
+			throws NotFoundException, ForbiddenException, BadRequestException {
+		
+		if (user == null) {
+			throw new ForbiddenException(Constants.Error.AUTH_REQUIRED);
+		}
+		
+		if (users == null || users.isEmpty()) {
+			throw new BadRequestException(String.format(Constants.Error.MISSING_PARAMETER, "users"));
+		}
+		
+		Folder folder = Folder.fromGoogleId(folderid, user);
+		List<TransferRequest> requests = new ArrayList<>();
+		
+		for (String userId : users) {
+			requests.add(TransferRequest.fromFolder(folder, user, userId));
+		}
+		return requests;
 	}
 	
 	/**
@@ -231,7 +248,7 @@ public class FolderApi {
 	 * Unlike the "polite" transfer requests, this API call will actually
 	 * forcefully transfer ownership of all files to the requesting user
 	 * 
-	 * @param folder
+	 * @param folderid
 	 *            The id of the folder for which the transfer requests will be created
 	 * @param user
 	 *            The user making the request. Required for authorization
@@ -245,12 +262,29 @@ public class FolderApi {
 	 *             If a folder with fileid id is not found
 	 * @throws ForbiddenException
 	 *             If the user is not the owner of the folder
+	 * @throws BadRequestException  If no users are specified
 	 */
 	@ApiMethod(name = "folders.tranfer.hostile", httpMethod = HttpMethod.POST)
-	public List<TransferRequest> makeHostileTransferRequest(@Named("folder") Long folder, User user,@Named("users") List<String> users) 
-			throws NotFoundException, ForbiddenException {
-		// TODO
-		return new ArrayList<>();
+	public List<TransferRequest> makeHostileTransferRequest(@Named("folder") String folderid, User user,@Named("users") List<String> users) 
+			throws NotFoundException, ForbiddenException, BadRequestException {
+		
+		if (user == null) {
+			throw new ForbiddenException(Constants.Error.AUTH_REQUIRED);
+		}
+		
+		if (users == null || users.isEmpty()) {
+			throw new BadRequestException(String.format(Constants.Error.MISSING_PARAMETER, "users"));
+		}
+		
+		Folder folder = Folder.fromGoogleId(folderid, user);
+		List<TransferRequest> requests = new ArrayList<>();
+		
+		for (String userId : users) {
+			TransferRequest request = TransferRequest.fromFolder(folder, user, userId);
+			request.setIsForced(true);
+			requests.add(request);
+		}
+		return requests;
 	}
 
 	/**

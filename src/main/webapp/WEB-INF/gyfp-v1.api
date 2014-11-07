@@ -78,7 +78,7 @@
       "request" : {
         "parameters" : {
           "folder" : {
-            "type" : "int64",
+            "type" : "string",
             "required" : true
           },
           "users" : {
@@ -104,7 +104,7 @@
       "request" : {
         "parameters" : {
           "folder" : {
-            "type" : "int64",
+            "type" : "string",
             "required" : true
           },
           "users" : {
@@ -295,6 +295,9 @@
             "items" : {
               "$ref" : "TransferableFile"
             }
+          },
+          "isForced" : {
+            "type" : "boolean"
           }
         }
       },
@@ -317,25 +320,7 @@
           "dayOfYear" : {
             "type" : "integer"
           },
-          "hourOfDay" : {
-            "type" : "integer"
-          },
-          "secondOfDay" : {
-            "type" : "integer"
-          },
-          "minuteOfHour" : {
-            "type" : "integer"
-          },
-          "minuteOfDay" : {
-            "type" : "integer"
-          },
           "weekOfWeekyear" : {
-            "type" : "integer"
-          },
-          "millisOfSecond" : {
-            "type" : "integer"
-          },
-          "secondOfMinute" : {
             "type" : "integer"
           },
           "millisOfDay" : {
@@ -354,6 +339,24 @@
             "type" : "integer"
           },
           "yearOfCentury" : {
+            "type" : "integer"
+          },
+          "millisOfSecond" : {
+            "type" : "integer"
+          },
+          "secondOfMinute" : {
+            "type" : "integer"
+          },
+          "minuteOfHour" : {
+            "type" : "integer"
+          },
+          "minuteOfDay" : {
+            "type" : "integer"
+          },
+          "secondOfDay" : {
+            "type" : "integer"
+          },
+          "hourOfDay" : {
             "type" : "integer"
           },
           "millis" : {

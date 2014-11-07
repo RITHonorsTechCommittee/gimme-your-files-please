@@ -50,6 +50,11 @@ public class TransferRequest {
 	 */
 	List<TransferableFile> files;
 	
+	/**
+	 * Whether this is a polite request or a forced transfer
+	 */
+	boolean isForced;
+	
 	private TransferRequest(String rUser, String rEmail, String tUser, String tEmail, List<TransferableFile> files) {
 		this.requestingUser = checkNotNull(rUser);
 		this.requestingEmail = checkNotNull(rEmail);
@@ -58,7 +63,7 @@ public class TransferRequest {
 		this.files = checkNotNull(files);
 	}
 	
-	public static TransferRequest fromFolder(Folder folder, User user) {
+	public static TransferRequest fromFolder(Folder folder, User user, String targetId) {
 		// TODO
 		
 		return null;
@@ -90,6 +95,10 @@ public class TransferRequest {
 
 	public List<TransferableFile> getFiles() {
 		return files;
+	}
+
+	public void setIsForced(boolean isForced) {
+		this.isForced = isForced;
 	}
 	
 	
