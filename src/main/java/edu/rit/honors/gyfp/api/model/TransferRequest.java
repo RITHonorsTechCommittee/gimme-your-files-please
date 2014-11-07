@@ -66,6 +66,11 @@ public class TransferRequest {
 	public static TransferRequest fromFolder(Folder folder, User user, String targetId) {
 		// TODO
 		
+		// 1.  Check for existing transfer request
+		// 2.  Create or Update transfer request
+		// 3.  Persist this request object
+		// 4.  Must store request object in folder
+		// 5.  Persist the folder changes
 		return null;
 	}
 
