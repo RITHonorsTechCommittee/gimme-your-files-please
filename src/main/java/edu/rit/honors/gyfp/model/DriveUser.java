@@ -6,17 +6,26 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.api.services.drive.model.Permission;
-import com.google.api.services.drive.model.User;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+@Entity
 public class DriveUser {
+	
+	@Id Long id;
+	
 	
 	private String name;
 	
 	private String email; 
 	
 	private Map<UserRole, List<String>> permissions; 
+	
+	/**
+	 * Needed for Objectify
+	 */
+	@SuppressWarnings("unused")
+	private DriveUser() { }
 	
 	public DriveUser(Permission user) {
 		this(user.getName(), user.getEmailAddress());
@@ -57,6 +66,9 @@ public class DriveUser {
 		return permissions.get(UserRole.READER).size();
 	}
 	
+	public long getId() {
+		return id;
+	}
 	
 
 }
