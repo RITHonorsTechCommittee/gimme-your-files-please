@@ -220,7 +220,7 @@ public class FolderApi {
 	 * @throws BadRequestException
 	 *             If no users are specified
 	 */
-	@ApiMethod(name = "folders.tranfer.polite", httpMethod = HttpMethod.POST)
+	@ApiMethod(name = "folders.transfer.polite", httpMethod = HttpMethod.POST)
 	public List<TransferRequest> makeTransferRequest(@Named("folder") String folderid, User user, @Named("users") List<String> users) 
 			throws NotFoundException, ForbiddenException, BadRequestException {
 		
@@ -264,7 +264,7 @@ public class FolderApi {
 	 *             If the user is not the owner of the folder
 	 * @throws BadRequestException  If no users are specified
 	 */
-	@ApiMethod(name = "folders.tranfer.hostile", httpMethod = HttpMethod.POST)
+	@ApiMethod(name = "folders.transfer.hostile", httpMethod = HttpMethod.POST)
 	public List<TransferRequest> makeHostileTransferRequest(@Named("folder") String folderid, User user,@Named("users") List<String> users) 
 			throws NotFoundException, ForbiddenException, BadRequestException {
 		
@@ -300,7 +300,7 @@ public class FolderApi {
 	 * @throws ForbiddenException
 	 *             If the user is not the owner of the folder
 	 */
-	@ApiMethod(name = "folders.tranfer.convert", httpMethod = HttpMethod.PUT)
+	@ApiMethod(name = "folders.transfer.convert", httpMethod = HttpMethod.PUT)
 	public List<TransferRequest> convertTransferRequest(@Named("requests") List<Long> requests, User user) 
 			throws ForbiddenException {
 		// TODO
@@ -322,7 +322,7 @@ public class FolderApi {
 	 * @throws ForbiddenException
 	 *             If the user is not the owner of the folder
 	 */
-	@ApiMethod(name = "folders.tranfer.list", httpMethod = HttpMethod.GET)
+	@ApiMethod(name = "folders.transfer.list", httpMethod = HttpMethod.GET)
 	public List<TransferRequest> getTransferRequests(@Named("folder") Long folder, User user) 
 			throws NotFoundException, ForbiddenException {
 		// TODO

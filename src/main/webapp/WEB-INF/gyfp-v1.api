@@ -24,7 +24,7 @@
     "maxAge" : 0
   },
   "methods" : {
-    "gyfp.folders.tranfer.convert" : {
+    "gyfp.folders.transfer.convert" : {
       "path" : "convertTransferRequest/{requests}",
       "httpMethod" : "PUT",
       "authLevel" : "NONE",
@@ -67,7 +67,7 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "gyfp.folders.tranfer.hostile" : {
+    "gyfp.folders.transfer.hostile" : {
       "path" : "makeHostileTransferRequest/{folder}/{users}",
       "httpMethod" : "POST",
       "authLevel" : "NONE",
@@ -93,7 +93,7 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "gyfp.folders.tranfer.polite" : {
+    "gyfp.folders.transfer.polite" : {
       "path" : "makeTransferRequest/{folder}/{users}",
       "httpMethod" : "POST",
       "authLevel" : "NONE",
@@ -119,7 +119,7 @@
         "body" : "autoTemplate(backendResponse)"
       }
     },
-    "gyfp.folders.tranfer.list" : {
+    "gyfp.folders.transfer.list" : {
       "path" : "transferrequestcollection/{folder}",
       "httpMethod" : "GET",
       "authLevel" : "NONE",
