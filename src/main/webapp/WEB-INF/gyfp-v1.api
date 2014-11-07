@@ -1,0 +1,495 @@
+{
+  "extends" : "thirdParty.api",
+  "abstract" : false,
+  "root" : "https://gimmeyourfilesplease.appspot.com/_ah/api",
+  "name" : "gyfp",
+  "version" : "v1",
+  "defaultVersion" : false,
+  "adapter" : {
+    "bns" : "https://gimmeyourfilesplease.appspot.com/_ah/spi",
+    "deadline" : 65.0,
+    "type" : "lily"
+  },
+  "auth" : {
+    "allowCookieAuth" : false
+  },
+  "frontendLimits" : {
+    "unregisteredUserQps" : -1,
+    "unregisteredQps" : -1,
+    "unregisteredDaily" : -1,
+    "rules" : [ ]
+  },
+  "cacheControl" : {
+    "type" : "no-cache",
+    "maxAge" : 0
+  },
+  "methods" : {
+    "gyfp.folders.transfer.convert" : {
+      "path" : "convertTransferRequest/{requests}",
+      "httpMethod" : "PUT",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "edu.rit.honors.gyfp.api.folder.FolderApi.convertTransferRequest",
+      "request" : {
+        "parameters" : {
+          "requests" : {
+            "repeated" : true,
+            "type" : "int64",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "gyfp.folders.get" : {
+      "path" : "folder/{id}",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "edu.rit.honors.gyfp.api.folder.FolderApi.getFolder",
+      "request" : {
+        "parameters" : {
+          "id" : {
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "gyfp.folders.transfer.hostile" : {
+      "path" : "makeHostileTransferRequest/{folder}/{users}",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "edu.rit.honors.gyfp.api.folder.FolderApi.makeHostileTransferRequest",
+      "request" : {
+        "parameters" : {
+          "folder" : {
+            "type" : "string",
+            "required" : true
+          },
+          "users" : {
+            "repeated" : true,
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "gyfp.folders.transfer.polite" : {
+      "path" : "makeTransferRequest/{folder}/{users}",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "edu.rit.honors.gyfp.api.folder.FolderApi.makeTransferRequest",
+      "request" : {
+        "parameters" : {
+          "folder" : {
+            "type" : "string",
+            "required" : true
+          },
+          "users" : {
+            "repeated" : true,
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "gyfp.folders.transfer.list" : {
+      "path" : "transferrequestcollection/{folder}",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "edu.rit.honors.gyfp.api.folder.FolderApi.getTransferRequests",
+      "request" : {
+        "parameters" : {
+          "folder" : {
+            "type" : "int64",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "gyfp.folders.revoke.write" : {
+      "path" : "revokeWritePermission/{folder}/{users}",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "edu.rit.honors.gyfp.api.folder.FolderApi.revokeWritePermission",
+      "request" : {
+        "parameters" : {
+          "folder" : {
+            "type" : "string",
+            "required" : true
+          },
+          "users" : {
+            "repeated" : true,
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "empty"
+      }
+    },
+    "gyfp.folders.revoke.read" : {
+      "path" : "revokeReadPermission/{folder}/{users}",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "edu.rit.honors.gyfp.api.folder.FolderApi.revokeReadPermission",
+      "request" : {
+        "parameters" : {
+          "folder" : {
+            "type" : "string",
+            "required" : true
+          },
+          "users" : {
+            "repeated" : true,
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "empty"
+      }
+    },
+    "gyfp.userApi.removeFilesFromTransfer" : {
+      "path" : "filesfromtransfer/{request}/{ids}",
+      "httpMethod" : "DELETE",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "edu.rit.honors.gyfp.api.user.UserApi.removeFilesFromTransfer",
+      "request" : {
+        "parameters" : {
+          "request" : {
+            "type" : "int64",
+            "required" : true
+          },
+          "ids" : {
+            "repeated" : true,
+            "type" : "string",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "empty"
+      }
+    },
+    "gyfp.userApi.acceptRequest" : {
+      "path" : "acceptRequest/{request}",
+      "httpMethod" : "POST",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "edu.rit.honors.gyfp.api.user.UserApi.acceptRequest",
+      "request" : {
+        "parameters" : {
+          "request" : {
+            "type" : "int64",
+            "required" : true
+          },
+          "limit" : {
+            "type" : "int32",
+            "required" : false
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    },
+    "gyfp.userApi.getRequest" : {
+      "path" : "transferrequest/{request}",
+      "httpMethod" : "GET",
+      "authLevel" : "NONE",
+      "scopes" : [ "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata" ],
+      "audiences" : [ ],
+      "clientIds" : [ "292824132082.apps.googleusercontent.com" ],
+      "rosyMethod" : "edu.rit.honors.gyfp.api.user.UserApi.getRequest",
+      "request" : {
+        "parameters" : {
+          "request" : {
+            "type" : "int64",
+            "required" : true
+          }
+        },
+        "body" : "empty"
+      },
+      "response" : {
+        "body" : "autoTemplate(backendResponse)"
+      }
+    }
+  },
+  "descriptor" : {
+    "schemas" : {
+      "TransferRequest" : {
+        "id" : "TransferRequest",
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "int64"
+          },
+          "requestingUser" : {
+            "type" : "string"
+          },
+          "requestingEmail" : {
+            "type" : "string"
+          },
+          "targetUser" : {
+            "type" : "string"
+          },
+          "targetEmail" : {
+            "type" : "string"
+          },
+          "requestCreation" : {
+            "$ref" : "DateTime"
+          },
+          "files" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "TransferableFile"
+            }
+          },
+          "isForced" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "DateTime" : {
+        "id" : "DateTime",
+        "type" : "object",
+        "properties" : {
+          "year" : {
+            "type" : "integer"
+          },
+          "dayOfMonth" : {
+            "type" : "integer"
+          },
+          "dayOfWeek" : {
+            "type" : "integer"
+          },
+          "era" : {
+            "type" : "integer"
+          },
+          "dayOfYear" : {
+            "type" : "integer"
+          },
+          "weekOfWeekyear" : {
+            "type" : "integer"
+          },
+          "millisOfDay" : {
+            "type" : "integer"
+          },
+          "weekyear" : {
+            "type" : "integer"
+          },
+          "monthOfYear" : {
+            "type" : "integer"
+          },
+          "yearOfEra" : {
+            "type" : "integer"
+          },
+          "centuryOfEra" : {
+            "type" : "integer"
+          },
+          "yearOfCentury" : {
+            "type" : "integer"
+          },
+          "millisOfSecond" : {
+            "type" : "integer"
+          },
+          "secondOfMinute" : {
+            "type" : "integer"
+          },
+          "minuteOfHour" : {
+            "type" : "integer"
+          },
+          "minuteOfDay" : {
+            "type" : "integer"
+          },
+          "secondOfDay" : {
+            "type" : "integer"
+          },
+          "hourOfDay" : {
+            "type" : "integer"
+          },
+          "millis" : {
+            "type" : "string",
+            "format" : "int64"
+          },
+          "zone" : {
+            "$ref" : "DateTimeZone"
+          },
+          "chronology" : {
+            "$ref" : "Chronology"
+          },
+          "afterNow" : {
+            "type" : "boolean"
+          },
+          "equalNow" : {
+            "type" : "boolean"
+          },
+          "beforeNow" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "DateTimeZone" : {
+        "id" : "DateTimeZone",
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "fixed" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "Chronology" : {
+        "id" : "Chronology",
+        "type" : "object",
+        "properties" : {
+          "zone" : {
+            "$ref" : "DateTimeZone"
+          }
+        }
+      },
+      "TransferableFile" : {
+        "id" : "TransferableFile",
+        "type" : "object",
+        "properties" : {
+          "fileName" : {
+            "type" : "string"
+          },
+          "fileId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "TransferRequestCollection" : {
+        "id" : "TransferRequestCollection",
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "TransferRequest"
+            }
+          }
+        }
+      },
+      "Folder" : {
+        "id" : "Folder",
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "files" : {
+            "$ref" : "JsonMap"
+          },
+          "ownerUserId" : {
+            "type" : "string"
+          },
+          "dirty" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "JsonMap" : {
+        "id" : "JsonMap",
+        "type" : "object"
+      }
+    },
+    "methods" : {
+      "edu.rit.honors.gyfp.api.folder.FolderApi.convertTransferRequest" : {
+        "response" : {
+          "$ref" : "TransferRequestCollection"
+        }
+      },
+      "edu.rit.honors.gyfp.api.folder.FolderApi.getFolder" : {
+        "response" : {
+          "$ref" : "Folder"
+        }
+      },
+      "edu.rit.honors.gyfp.api.folder.FolderApi.makeHostileTransferRequest" : {
+        "response" : {
+          "$ref" : "TransferRequestCollection"
+        }
+      },
+      "edu.rit.honors.gyfp.api.folder.FolderApi.makeTransferRequest" : {
+        "response" : {
+          "$ref" : "TransferRequestCollection"
+        }
+      },
+      "edu.rit.honors.gyfp.api.folder.FolderApi.getTransferRequests" : {
+        "response" : {
+          "$ref" : "TransferRequestCollection"
+        }
+      },
+      "edu.rit.honors.gyfp.api.folder.FolderApi.revokeWritePermission" : {
+      },
+      "edu.rit.honors.gyfp.api.folder.FolderApi.revokeReadPermission" : {
+      },
+      "edu.rit.honors.gyfp.api.user.UserApi.removeFilesFromTransfer" : {
+      },
+      "edu.rit.honors.gyfp.api.user.UserApi.acceptRequest" : {
+        "response" : {
+          "$ref" : "TransferRequest"
+        }
+      },
+      "edu.rit.honors.gyfp.api.user.UserApi.getRequest" : {
+        "response" : {
+          "$ref" : "TransferRequest"
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,9 @@
 package edu.rit.honors.gyfp.api.user;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Named;
 
@@ -8,11 +11,19 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.Nullable;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ForbiddenException;
+import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.NotFoundException;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.Permission;
 import com.google.appengine.api.users.User;
+import com.google.apphosting.api.ApiProxy;
+import com.googlecode.objectify.ObjectifyService;
 
 import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.api.model.TransferRequest;
+import edu.rit.honors.gyfp.api.model.TransferableFile;
+import edu.rit.honors.gyfp.util.OfyService;
+import edu.rit.honors.gyfp.util.Utils;
 
 @Api(
 		name = "gyfp", 
@@ -58,9 +69,46 @@ public class UserApi {
 	 * @throws NotFoundException
 	 *             If the transfer request cannot be found
 	 */
-	public TransferRequest acceptRequest(@Named("request") long request, @Named("limit") @Nullable int limit, User user)
-			throws BadRequestException, ForbiddenException, NotFoundException {
-		return null;
+	public TransferRequest acceptRequest(@Named("request") long requestId, @Named("limit") @Nullable Integer limit, User user)
+			throws BadRequestException, ForbiddenException, NotFoundException, InternalServerErrorException {
+		
+		TransferRequest request = getRequest(requestId, user);
+		if (limit == null) {
+			limit = 600;
+		} else if (limit > 600 || limit <= 0) {
+			throw new BadRequestException(String.format(Constants.Error.INVALID_TRANSFER_LIMIT, limit, 0, 600));
+		}
+		
+		Drive service = Utils.createDriveFromUser(user);
+		List<TransferableFile> success = new ArrayList<>();
+		Permission owner = new Permission();
+		owner.setRole("owner");
+			
+		for (TransferableFile file : request.getFiles()) {
+			try {
+				service.permissions().update(file.getFileId(), request.getRequestingUser(), owner).execute();
+				success.add(file);
+				limit--;
+				// Maybe not necessary, but just to be safe slow ourselves down slightly to avoid hitting the rate limit
+				Thread.sleep(50); 
+			} catch (IOException e) {
+				throw new InternalServerErrorException(
+						Constants.Error.FAILED_DRIVE_REQUEST, e);
+			} catch (InterruptedException e) {
+				throw new InternalServerErrorException(
+						Constants.Error.SLEEP_INTERRUPTED, e);
+			}
+
+			// Ensure that we have enough time to remove the processed files,
+			// store the updated request, and return the result
+			if (ApiProxy.getCurrentEnvironment().getRemainingMillis() <= 2000 || limit == 0) {
+				break;
+			}
+		}
+		
+		request.getFiles().removeAll(success);
+		ObjectifyService.ofy().save().entity(request);
+		return request;
 	}
 
 	
@@ -78,22 +126,58 @@ public class UserApi {
 	 * @throws NotFoundException
 	 *             If the request cannot be found
 	 */
-	public TransferRequest getRequest(@Named("request") long request, User user)
+	public TransferRequest getRequest(@Named("request") long requestId, User user)
 			throws ForbiddenException, NotFoundException {
-		return null;
+		if (user == null) {
+			throw new ForbiddenException(Constants.Error.AUTH_REQUIRED);
+		}
+		TransferRequest request = OfyService.ofy().load().type(TransferRequest.class).id(requestId).now();
+		
+		if (request == null) {
+			throw new NotFoundException(String.format(Constants.Error.TRANSFER_REQUEST_NOT_FOUND, requestId));
+		}
+		
+		if (request.getTargetUser().equals(user.getUserId())) {
+			return request;
+		} else {
+			throw new ForbiddenException(Constants.Error.TRANSFER_REQUEST_INCORRECT_USER);
+		}
 	}
 
 	/**
-	 * Allows users to selectively exclude files from the transfer request
+	 * Allows users to selectively exclude files from the transfer request.
 	 * 
-	 * @param ids  The ids of the files that should not be included in the request
-	 * @param user  The user who is completing the transfer request
+	 * @param ids
+	 *            The ids of the files that should not be included in the
+	 *            request
+	 * @param user
+	 *            The user who is completing the transfer request
 	 * @throws ForbiddenException
 	 *             If the user does not own this request
 	 * @throws NotFoundException
 	 *             If the request cannot be found
+	 * @throws BadRequestException
+	 *             If any of the given file IDs are not part of the request. The
+	 *             valid files that were found, however, will still be removed
+	 *             even if this exception is thrown.
 	 */
-	public void removeFilesFromList(List<String> ids, User user) {
-		// TODO
+	public void removeFilesFromTransfer(@Named("request") long requestId, @Named("ids") Set<String> ids, User user)
+			throws ForbiddenException, NotFoundException, BadRequestException {
+		TransferRequest request = getRequest(requestId, user);
+		
+		List<TransferableFile> toRemove = new ArrayList<>();
+		for (TransferableFile file : request.getFiles()) {
+			if (ids.contains(file.getFileId())) {
+				toRemove.add(file);
+				ids.remove(file.getFileId());
+			}
+		}
+		
+		
+		request.getFiles().removeAll(toRemove);
+		ObjectifyService.ofy().save().entity(request);
+		if (!ids.isEmpty()) {
+			throw new BadRequestException(String.format(Constants.Error.REMOVE_UNKNOWN_FILE_IDS, ids)); 
+		}
 	}
 }
