@@ -2,9 +2,9 @@
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html ng-app="gyfp">
 <head>
-	<jsp:include page="includes/Header.jsp"></jsp:include>
+	<jsp:include page="includes/Header.jsp" />
     <style type="text/css">
     	div#main {
     		margin-top: 50px;
@@ -18,15 +18,18 @@
     		float: right;
     	}
     </style>
+
+	<script type="application/javascript" src="js/third-party/angular/angular.js"></script>
+	<script type="application/javascript" src="js/gyfp.js"></script>
 </head>
 <body>
 
-	<jsp:include page="includes/MainMenu.jsp"></jsp:include>
+	<jsp:include page="includes/MainMenu.jsp" />
 
     <div id="main" class="container">
 		<h1><c:out value="${appName}" /></h1>
 		
-		<table class="table table-striped">
+		<table class="table table-striped" ng-controller="FileListController as folder">
 			<tr>
 				<th> </th>
 				<th>User</th>
@@ -36,29 +39,22 @@
 				<th>Reader</th>
 				<th>Actions</th>
 			</tr>
-			<c:forEach items="${users}" var="user">
-				<tr>
-					<td><input type="checkbox" /></td>
-					<td><c:out value="${user.name}" /></td>
-					<td><c:out value="${user.email}" /></td>
-					<td><c:out value="${user.filesOwner}" /></td>
-					<td><c:out value="${user.filesWriter}" /></td>
-					<td><c:out value="${user.filesReader}" /></td>
-					<td>
-						<div class="btn-group">
-							<c:if test="${user.filesOwner > 0}">
-								<a href="#" class="btn btn-success btn-sm">Ask Nicely</a>
-								<a href="#" class="btn btn-danger  btn-sm">Hostile Takeover</a>
-							</c:if>
-							<c:if test="${user.filesReader > 0 || user.filesWriter > 0}">
-								<a href="#" class="btn btn-default  btn-sm">Remove User</a>
-							</c:if>
-						</div>
-					</td>
-				</tr>
-			</c:forEach>
+			<tr ng-repeat="user in folder.users">
+				<td><input type="checkbox" ng-model="user.selected"/></td>
+				<td ng-bind="user.name"></td>
+				<td ng-bind="user.email"></td>
+				<td ng-bind="user.files.owner.length"></td>
+				<td ng-bind="user.files.reader.length"></td>
+				<td ng-bind="user.files.writer.length"></td>
+				<td>
+					<div class="btn-group">
+						<a ng-if="user.files.owner.length > 0" href="#" class="btn btn-success btn-sm">Ask Nicely</a>
+						<a ng-if="user.files.owner.length > 0" href="#" class="btn btn-danger  btn-sm">Hostile Takeover</a>
+						<a ng-if="user.files.reader.length + user.files.writer.length > 0" href="#" class="btn btn-default  btn-sm">Remove User</a>
+					</div>
+				</td>
+			</tr>
 		</table>
-			
 	</div>
 	
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
