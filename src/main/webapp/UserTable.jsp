@@ -2,7 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html ng-app="gyfp">
+<html>
 <head>
 	<jsp:include page="includes/Header.jsp" />
     <style type="text/css">
@@ -39,7 +39,7 @@
 				<th>Reader</th>
 				<th>Actions</th>
 			</tr>
-			<tr ng-repeat="user in folder.users">
+			<tr ng-repeat="user in folder.users" ng-cloak>
 				<td><input type="checkbox" ng-model="user.selected"/></td>
 				<td ng-bind="user.name"></td>
 				<td ng-bind="user.email"></td>
@@ -58,8 +58,10 @@
 	</div>
 	
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="application/javascript"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js" type="application/javascript"></script>
+
+	<script src="https://apis.google.com/js/client.js?onload=init" type="application/javascript"></script>
 </body>
 </html>

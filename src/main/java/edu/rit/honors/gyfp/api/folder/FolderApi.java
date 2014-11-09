@@ -28,7 +28,16 @@ import edu.rit.honors.gyfp.api.model.TransferableFile;
 import edu.rit.honors.gyfp.util.OfyService;
 import edu.rit.honors.gyfp.util.Utils;
 
-@Api(name = "gyfp", version = "v1", scopes = {Constants.Scope.USER_EMAIL, Constants.Scope.DRIVE_METADATA_READONLY})
+@Api(
+		name = "gyfp",
+		version = "v1",
+		scopes = {
+				Constants.Scope.USER_EMAIL,
+				Constants.Scope.DRIVE_METADATA_READONLY
+		},
+		clientIds = {
+				Constants.Clients.WEB_CLIENT
+		})
 public class FolderApi {
 	
 	private static final Logger log = Logger.getLogger(FolderApi.class.getName()); 

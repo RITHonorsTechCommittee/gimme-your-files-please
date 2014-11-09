@@ -1,6 +1,51 @@
 var gyfp = angular.module("gyfp", []);
 
-gyfp.controller("FileListController", function () {
+gyfp.controller("FileListController", ['$scope', '$window', function ($scope, $window) {
+
+    console.log("init");
+
+    var scope = this;
+    var requestedScopes = 1;
+    this.api_authenticated = function(resp) {
+        console.log(resp);
+        requestedScopes -= 1;
+        scope.api_ready = requestedScopes === 0;
+
+        if (scope.api_ready) {
+            console.log("Making real request.");
+            gapi.client.gyfp.folders.get({id: "0B0WTvx-f8-LZY0dxUGlwWmtSRHc"}).execute(function (resp) {
+                console.log(resp);
+                scope.raw_users = resp.files;
+                scope.users = [];
+                for (var user in resp.files) {
+                    if (resp.files.hasOwnProperty(user)) {
+                        if (!resp.files[user].files.hasOwnProperty("reader")) {
+                            resp.files[user].files.reader = [];
+                        }
+
+                        if (!resp.files[user].files.hasOwnProperty("writer")) {
+                            resp.files[user].files.writer = [];
+                        }
+
+                        if (!resp.files[user].files.hasOwnProperty("owner")) {
+                            resp.files[user].files.owner = [];
+                        }
+                    }
+
+                    scope.users.push(resp.files[user]);
+                    $scope.apply();
+                }
+            });
+        } else {
+            console.log(requestedScopes + " scopes remaining");
+        }
+    };
+
+    console.log("set_api_loaded");
+    this.api_loaded = true;
+    gapi.auth.authorize({client_id: "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com",scope:["https://www.googleapis.com/auth/userinfo.email"], immediate:false}, scope.api_authenticated);
+    gapi.auth.authorize({client_id: "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com",scope:["https://www.googleapis.com/auth/drive.readonly.metadata"], immediate:false}, scope.api_authenticated);
+
     this.users = [
         {
             selected: false,
@@ -32,4 +77,13 @@ gyfp.controller("FileListController", function () {
             }
         }
     ];
-});
+}]);
+
+var init = function() {
+    console.log("Doing manual bootstrap");
+    var gyfp_api = 'https://gimmeyourfilesplease.appspot.com/_ah/api';
+    gapi.client.load('gyfp', 'v1', function() {
+        angular.bootstrap(document, ["gyfp"]);
+
+    }, gyfp_api);
+};

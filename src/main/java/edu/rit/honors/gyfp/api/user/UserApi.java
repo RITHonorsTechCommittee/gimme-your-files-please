@@ -31,6 +31,9 @@ import edu.rit.honors.gyfp.util.Utils;
 		scopes = { 
 				Constants.Scope.USER_EMAIL,
 				Constants.Scope.DRIVE_METADATA_READONLY
+		},
+		clientIds = {
+				Constants.Clients.WEB_CLIENT
 		})
 public class UserApi {
 
@@ -49,7 +52,7 @@ public class UserApi {
 	 * total number of requests is known and the number of requests per call is
 	 * configurable. To get a higher precision, use a smaller limit.
 	 * 
-	 * @param request
+	 * @param requestId
 	 *            The id of the transfer request
 	 * @param limit
 	 *            The maximum number of files to transfer during this request.
@@ -116,7 +119,7 @@ public class UserApi {
 	 * Returns details about the given transfer request, including a list of
 	 * included files.
 	 * 
-	 * @param request
+	 * @param requestId
 	 *            The ID of the request
 	 * @param user
 	 *            The user who is completing the transfer request
