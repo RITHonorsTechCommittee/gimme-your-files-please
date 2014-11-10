@@ -134,7 +134,7 @@ public class FolderApi {
 	 *             If the user is not the owner of the folder
 	 */
 	@ApiMethod(name = "folders.revoke.read", httpMethod = HttpMethod.POST)
-	public void revokeReadPermission(@Named("folder") String folder, User user, @Named("users") List<String> users) 
+	public void revokeReadPermission(@Named("folder") String folder, User user, @Named("users") List<String> users)
 			throws NotFoundException, ForbiddenException, BadRequestException {
 		
 		revokePermission(folder, user, users, Constants.Role.READER);
@@ -159,7 +159,7 @@ public class FolderApi {
 	 * 
 	 */
 	@ApiMethod(name = "folders.revoke.write", httpMethod = HttpMethod.POST)
-	public void revokeWritePermission(@Named("folder") String folder, User user, @Named("users") List<String> users) 
+	public void revokeWritePermission(@Named("folder") String folder, User user, @Named("users") List<String> users)
 			throws NotFoundException, ForbiddenException, BadRequestException {
 		
 		revokePermission(folder, user, users, Constants.Role.WRITER);
