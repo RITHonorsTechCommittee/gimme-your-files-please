@@ -22,7 +22,7 @@ public class FileUser {
 
 	private String name;
 
-	private String value;
+	private String email;
 
 	private Map<String, List<TransferableFile>> files;
 	
@@ -39,13 +39,13 @@ public class FileUser {
 	 *            The permission id for this user
 	 * @param name
 	 *            The name of the user
-	 * @param value
+	 * @param email
 	 *            The user's / group's email address
 	 */
-	public FileUser(String permission, String name, String value) {
+	public FileUser(String permission, String name, String email) {
 		this.permission = permission;
 		this.name = name;
-		this.value = value;
+		this.email = email;
 		this.files = new HashMap<>();
 	}
 
@@ -57,8 +57,8 @@ public class FileUser {
 		return name;
 	}
 
-	public String getValue() {
-		return value;
+	public String getEmail() {
+		return email;
 	}
 	
 	public Map<String, List<TransferableFile>> getFiles() {

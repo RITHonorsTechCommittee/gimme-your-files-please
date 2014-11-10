@@ -26,10 +26,11 @@
 
 	<jsp:include page="includes/MainMenu.jsp" />
 
-    <div id="main" class="container">
+    <div id="main" class="container" ng-controller="FileListController" >
 		<h1><c:out value="${appName}" /></h1>
-		
-		<table class="table table-striped" ng-controller="FileListController as folder">
+
+		<h2 ng-show="!loaded_users">Loading...</h2>
+		<table class="table table-striped" ng-cloak>
 			<tr>
 				<th> </th>
 				<th>User</th>
@@ -39,7 +40,7 @@
 				<th>Reader</th>
 				<th>Actions</th>
 			</tr>
-			<tr ng-repeat="user in folder.users" ng-cloak>
+			<tr ng-repeat="user in users" ng-cloak>
 				<td><input type="checkbox" ng-model="user.selected"/></td>
 				<td ng-bind="user.name"></td>
 				<td ng-bind="user.email"></td>

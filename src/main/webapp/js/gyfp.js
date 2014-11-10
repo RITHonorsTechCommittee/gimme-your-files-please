@@ -4,19 +4,19 @@ gyfp.controller("FileListController", ['$scope', '$window', function ($scope, $w
 
     console.log("init");
 
-    var scope = this;
-    var requestedScopes = 1;
-    this.api_authenticated = function(resp) {
+    $scope.requestedScopes = 1;
+    $scope.loaded_users = false;
+    $scope.api_authenticated = function(resp) {
         console.log(resp);
-        requestedScopes -= 1;
-        scope.api_ready = requestedScopes === 0;
+        $scope.requestedScopes -= 1;
+        $scope.api_ready = $scope.requestedScopes === 0;
 
-        if (scope.api_ready) {
+        if ($scope.api_ready) {
             console.log("Making real request.");
             gapi.client.gyfp.folders.get({id: "0B0WTvx-f8-LZY0dxUGlwWmtSRHc"}).execute(function (resp) {
                 console.log(resp);
-                scope.raw_users = resp.files;
-                scope.users = [];
+                $scope.raw_users = resp.files;
+                $scope.users = [];
                 for (var user in resp.files) {
                     if (resp.files.hasOwnProperty(user)) {
                         if (!resp.files[user].files.hasOwnProperty("reader")) {
@@ -30,11 +30,12 @@ gyfp.controller("FileListController", ['$scope', '$window', function ($scope, $w
                         if (!resp.files[user].files.hasOwnProperty("owner")) {
                             resp.files[user].files.owner = [];
                         }
+                        $scope.users.push(resp.files[user]);
                     }
-
-                    scope.users.push(resp.files[user]);
-                    $scope.apply();
                 }
+
+                $scope.loaded_users = true;
+                $scope.$apply();
             });
         } else {
             console.log(requestedScopes + " scopes remaining");
@@ -42,11 +43,11 @@ gyfp.controller("FileListController", ['$scope', '$window', function ($scope, $w
     };
 
     console.log("set_api_loaded");
-    this.api_loaded = true;
-    gapi.auth.authorize({client_id: "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com",scope:["https://www.googleapis.com/auth/userinfo.email"], immediate:false}, scope.api_authenticated);
-    gapi.auth.authorize({client_id: "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com",scope:["https://www.googleapis.com/auth/drive.readonly.metadata"], immediate:false}, scope.api_authenticated);
+    $scope.api_loaded = true;
+    gapi.auth.authorize({client_id: "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com",scope:["https://www.googleapis.com/auth/userinfo.email"], immediate:false}, $scope.api_authenticated);
+    gapi.auth.authorize({client_id: "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com",scope:["https://www.googleapis.com/auth/drive.readonly.metadata"], immediate:false}, $scope.api_authenticated);
 
-    this.users = [
+    $scope.users = [
         {
             selected: false,
             name: "Greg One",
