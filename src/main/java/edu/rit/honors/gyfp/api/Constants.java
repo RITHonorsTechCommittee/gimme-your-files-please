@@ -7,6 +7,10 @@ public class Constants {
 		public static final String USER_EMAIL = "https://www.googleapis.com/auth/userinfo.email";
 	}
 
+	public static class Clients {
+		public static final String WEB_CLIENT = "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com";
+	}
+
 	public static class Field {
 		public static final String KIND_OWNER = "mimeType,owners(displayName,emailAddress,isAuthenticatedUser)";
 		public static final String FOLDER_ENUM = "items(id,mimeType,permissions(additionalRoles,id,role,name,type,value),title),nextLink,nextPageToken";

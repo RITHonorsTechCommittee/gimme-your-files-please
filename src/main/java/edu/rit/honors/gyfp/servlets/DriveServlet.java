@@ -24,6 +24,7 @@ public abstract class DriveServlet extends
 	private static final long serialVersionUID = 3919061798514265674L;
 
 	public static final String APPLICATION_NAME = "gimme-your-files-please/0.1";
+	public static final String APPLICATION_DISPLAY_NAME = "Gimme Your Files, Please!";
 	
 	protected Drive getDriveService(HttpServletRequest req) {
 
@@ -46,6 +47,20 @@ public abstract class DriveServlet extends
 
 		return drive;
 	}
+	
+	protected void setBaseAttributes(HttpServletRequest req) {
+		req.setAttribute("appName", APPLICATION_DISPLAY_NAME);
+		req.setAttribute("title", getTitle(req));
+	}
+	
+	/**
+	 * Generates the appropriate page title for a gyfp page
+	 * 
+	 * @param req
+	 *            The request for which the page title is being generated
+	 * @return The title of the current page
+	 */
+	protected abstract String getTitle(HttpServletRequest req);
 	
 	protected FileHelper getDriveFileHelper(HttpServletRequest req) {
 		return new FileHelperImpl(getDriveService(req));

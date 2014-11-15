@@ -37,10 +37,21 @@ public class UserList extends DriveServlet {
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException, ServletException {
+		
+		setBaseAttributes(req);
+		
+		String template = req.getParameter("template");
+		if (template == null || !(template.equals("list") || template.equals("table"))) {
+			template = "UserList.jsp";
+		} else if (template.equals("list")) {
+			template = "UserList.jsp";
+		} else if (template.equals("table")) {
+			template = "UserTable.jsp";
+		}
 
 		// Get the stored credentials using the Authorization Flow
-		RequestDispatcher view = req.getRequestDispatcher("UserList.jsp");
-		
+		RequestDispatcher view = req.getRequestDispatcher(template);
+
 		String folderId = req.getParameter(PARAM_FOLDER);
 		Drive service = getDriveService(req);
 		FileHelper files = getFileHelper(service);
@@ -91,5 +102,10 @@ public class UserList extends DriveServlet {
 	protected String getRedirectUri(HttpServletRequest req)
 			throws ServletException, IOException {
 		return Utils.getRedirectUri(req);
+	}
+
+	@Override
+	protected String getTitle(HttpServletRequest req) {
+		return "File List";
 	}
 }

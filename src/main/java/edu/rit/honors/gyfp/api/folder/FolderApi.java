@@ -14,12 +14,14 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ForbiddenException;
+import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.appengine.api.users.User;
 import com.google.common.base.Strings;
 
+import edu.rit.honors.gyfp.api.ApiUtil;
 import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.api.model.FileUser;
 import edu.rit.honors.gyfp.api.model.Folder;
@@ -28,7 +30,16 @@ import edu.rit.honors.gyfp.api.model.TransferableFile;
 import edu.rit.honors.gyfp.util.OfyService;
 import edu.rit.honors.gyfp.util.Utils;
 
-@Api(name = "gyfp", version = "v1", scopes = {Constants.Scope.USER_EMAIL, Constants.Scope.DRIVE_METADATA_READONLY})
+@Api(
+		name = "gyfp",
+		version = "v1",
+		scopes = {
+				Constants.Scope.USER_EMAIL,
+				Constants.Scope.DRIVE_METADATA_READONLY
+		},
+		clientIds = {
+				Constants.Clients.WEB_CLIENT
+		})
 public class FolderApi {
 	
 	private static final Logger log = Logger.getLogger(FolderApi.class.getName()); 
@@ -117,18 +128,18 @@ public class FolderApi {
 	 * @param user
 	 *            The user making the request. Required for authorization
 	 *            purposes
-	 * @param users
-	 *            A list of users who will have their read access revoked.
+	 * @param userId
+	 *            The ID of the user who will have read permissions removed
 	 * @throws NotFoundException
 	 *             If a folder with fileid id is not found
 	 * @throws ForbiddenException
 	 *             If the user is not the owner of the folder
 	 */
 	@ApiMethod(name = "folders.revoke.read", httpMethod = HttpMethod.POST)
-	public void revokeReadPermission(@Named("folder") String folder, User user, @Named("users") List<String> users) 
-			throws NotFoundException, ForbiddenException, BadRequestException {
+	public void revokeReadPermission(@Named("folder") String folder, User user, @Named("userId") String userId)
+			throws NotFoundException, ForbiddenException, BadRequestException, InternalServerErrorException {
 		
-		revokePermission(folder, user, users, Constants.Role.READER);
+		revokePermission(folder, user, userId, Constants.Role.READER);
 	}
 
 	/**
@@ -140,8 +151,8 @@ public class FolderApi {
 	 * @param user
 	 *            The user making the request. Required for authorization
 	 *            purposes
-	 * @param users
-	 *            A list of users who will have their write access revoked.
+	 * @param userId
+	 *            The ID of the user who will have read permissions removed
 	 * @throws NotFoundException
 	 *             If a folder with fileid id is not found
 	 * @throws ForbiddenException
@@ -150,51 +161,44 @@ public class FolderApi {
 	 * 
 	 */
 	@ApiMethod(name = "folders.revoke.write", httpMethod = HttpMethod.POST)
-	public void revokeWritePermission(@Named("folder") String folder, User user, @Named("users") List<String> users) 
-			throws NotFoundException, ForbiddenException, BadRequestException {
+	public void revokeWritePermission(@Named("folder") String folder, User user, @Named("userId") String userId)
+			throws NotFoundException, ForbiddenException, BadRequestException, InternalServerErrorException {
 		
-		revokePermission(folder, user, users, Constants.Role.WRITER);
+		revokePermission(folder, user, userId, Constants.Role.WRITER);
 	}
 	
 	/**
 	 * @param folder
+	 *            The id of the folder from which access will be revoked
 	 * @param user
-	 * @param users
+	 *            The user making the request. Required for authorization
+	 *            purposes
+	 * @param userId
+	 *            The ID of the user who will have read permissions removed
+	 * @param role
+	 * 			  The role (read or
 	 * @throws ForbiddenException
 	 * @throws BadRequestException
 	 */
-	private void revokePermission(String folder, User user, List<String> users, String role)
-			throws ForbiddenException, BadRequestException {
+	private void revokePermission(String folder, User user, String userId, String role)
+			throws ForbiddenException, BadRequestException, InternalServerErrorException {
 		if (user == null) {
-			throw new ForbiddenException("You must authenticate to use this API.");
+			throw new ForbiddenException(Constants.Error.AUTH_REQUIRED);
 		}
 		
-		if (users == null || users.size() == 0) {
-			throw new BadRequestException("No users specified");
+		if (userId == null || userId.length() == 0) {
+			throw new BadRequestException(String.format(Constants.Error.MISSING_PARAMETER, "userId"));
 		}
 		
 		Folder target = Folder.fromGoogleId(folder, user);
 		
 		Drive service = Utils.createDriveFromUser(user);
-		
-		Map<String, FileUser> files = target.getFiles();
-		for (String userid : users) {
-			FileUser currentUser = files.get(userid);
-			List<TransferableFile> readFiles = currentUser.getFiles().get(role);
-			List<TransferableFile> fail = new ArrayList<>();
-			
-			for (TransferableFile file : readFiles) {
-				try {
-					service.permissions().delete(file.getFileId(), currentUser.getPermission()).execute();
-				} catch (IOException e) {
-					fail.add(file);
-				}
-			}
-			
-			
-			readFiles.retainAll(fail);
-		}
-		
+		FileUser targetUser = target.getUser(userId);
+
+		SimplePermissionDeletionExecutor executor = new SimplePermissionDeletionExecutor(service, targetUser);
+
+		ApiUtil.safeExecuteDriveRequestQueue(targetUser.getFiles().get(role), executor, 50);
+
 		OfyService.ofy().save().entity(folder).now();
 	}
 
@@ -202,7 +206,7 @@ public class FolderApi {
 	 * Creates "polite" transfer requests for all the specified users which will
 	 * transfer any files owned in the given folder to the requesting user
 	 * 
-	 * @param folder
+	 * @param folderid
 	 *            The id of folder for which the transfer requests will be
 	 *            created
 	 * @param user
@@ -223,22 +227,8 @@ public class FolderApi {
 	@ApiMethod(name = "folders.transfer.polite", httpMethod = HttpMethod.POST)
 	public List<TransferRequest> makeTransferRequest(@Named("folder") String folderid, User user, @Named("users") List<String> users) 
 			throws NotFoundException, ForbiddenException, BadRequestException {
-		
-		if (user == null) {
-			throw new ForbiddenException(Constants.Error.AUTH_REQUIRED);
-		}
-		
-		if (users == null || users.isEmpty()) {
-			throw new BadRequestException(String.format(Constants.Error.MISSING_PARAMETER, "users"));
-		}
-		
-		Folder folder = Folder.fromGoogleId(folderid, user);
-		List<TransferRequest> requests = new ArrayList<>();
-		
-		for (String userId : users) {
-			requests.add(TransferRequest.fromFolder(folder, user, userId));
-		}
-		return requests;
+
+		return getTransferRequests(folderid, user, users, false);
 	}
 	
 	/**
@@ -267,21 +257,25 @@ public class FolderApi {
 	@ApiMethod(name = "folders.transfer.hostile", httpMethod = HttpMethod.POST)
 	public List<TransferRequest> makeHostileTransferRequest(@Named("folder") String folderid, User user,@Named("users") List<String> users) 
 			throws NotFoundException, ForbiddenException, BadRequestException {
-		
+
+		return getTransferRequests(folderid, user, users, true);
+	}
+
+	private List<TransferRequest> getTransferRequests(String folderid, User user, List<String> users, boolean isForced) throws ForbiddenException, BadRequestException {
 		if (user == null) {
 			throw new ForbiddenException(Constants.Error.AUTH_REQUIRED);
 		}
-		
+
 		if (users == null || users.isEmpty()) {
 			throw new BadRequestException(String.format(Constants.Error.MISSING_PARAMETER, "users"));
 		}
-		
+
 		Folder folder = Folder.fromGoogleId(folderid, user);
 		List<TransferRequest> requests = new ArrayList<>();
-		
+
 		for (String userId : users) {
 			TransferRequest request = TransferRequest.fromFolder(folder, user, userId);
-			request.setIsForced(true);
+			request.setIsForced(isForced);
 			requests.add(request);
 		}
 		return requests;

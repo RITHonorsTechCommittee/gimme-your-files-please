@@ -105,7 +105,7 @@ public class TransferRequest {
 	public void setIsForced(boolean isForced) {
 		this.isForced = isForced;
 	}
-	
-	
+
+
 
 }

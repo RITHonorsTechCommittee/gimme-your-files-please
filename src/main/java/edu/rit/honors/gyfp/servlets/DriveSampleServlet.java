@@ -108,4 +108,9 @@ public class DriveSampleServlet extends
 			writer.println("Please use google drive to open a folder (or folders!) you want processed.");
 		}
 	}
+
+	@Override
+	protected String getTitle(HttpServletRequest req) {
+		return "Drive Sample Servlet";
+	}
 }
