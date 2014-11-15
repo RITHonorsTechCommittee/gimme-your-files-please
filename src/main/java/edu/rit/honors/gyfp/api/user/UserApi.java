@@ -8,6 +8,8 @@ import java.util.Set;
 import javax.inject.Named;
 
 import com.google.api.server.spi.config.Api;
+import com.google.api.server.spi.config.ApiMethod;
+import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 import com.google.api.server.spi.config.Nullable;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ForbiddenException;
@@ -72,6 +74,7 @@ public class UserApi {
 	 * @throws NotFoundException
 	 *             If the transfer request cannot be found
 	 */
+	@ApiMethod(name="user.request.accept", httpMethod = HttpMethod.POST)
 	public TransferRequest acceptRequest(@Named("request") long requestId, @Named("limit") @Nullable Integer limit, User user)
 			throws BadRequestException, ForbiddenException, NotFoundException, InternalServerErrorException {
 		
@@ -129,6 +132,7 @@ public class UserApi {
 	 * @throws NotFoundException
 	 *             If the request cannot be found
 	 */
+	@ApiMethod(name="user.request.get", httpMethod = HttpMethod.GET)
 	public TransferRequest getRequest(@Named("request") long requestId, User user)
 			throws ForbiddenException, NotFoundException {
 		if (user == null) {
@@ -149,10 +153,48 @@ public class UserApi {
 
 	/**
 	 * Allows users to selectively exclude files from the transfer request.
-	 * 
+	 *
+	 * @param requestId
+	 *         The id of the transfer request being modified
 	 * @param ids
-	 *            The ids of the files that should not be included in the
-	 *            request
+	 *         The ids of the files that should not be included in the request
+	 * @param user
+	 *         The user who is completing the transfer request
+	 * @throws ForbiddenException
+	 *         If the user does not own this request
+	 * @throws NotFoundException
+	 *         If the request cannot be found
+	 * @throws BadRequestException
+	 *         If any of the given file IDs are not part of the request. The valid files that were
+	 *         found, however, will still be removed even if this exception is thrown.
+	 */
+	@ApiMethod(name="user.request.remove", httpMethod = HttpMethod.POST)
+	public void removeFilesFromTransfer(@Named("request") long requestId, @Named("ids") Set<String> ids, User user)
+			throws ForbiddenException, NotFoundException, BadRequestException {
+		TransferRequest request = getRequest(requestId, user);
+
+		List<TransferableFile> toRemove = new ArrayList<>();
+		for (TransferableFile file : request.getFiles()) {
+			if (ids.contains(file.getFileId())) {
+				toRemove.add(file);
+				ids.remove(file.getFileId());
+			}
+		}
+
+
+		request.getFiles().removeAll(toRemove);
+		ObjectifyService.ofy().save().entity(request);
+		if (!ids.isEmpty()) {
+			throw new BadRequestException(String.format(Constants.Error.REMOVE_UNKNOWN_FILE_IDS, ids));
+		}
+	}
+
+
+	/**
+	 * Deletes a transfer request
+	 *
+	 * @param requestId
+	 *            The ids of the transfer request to remove
 	 * @param user
 	 *            The user who is completing the transfer request
 	 * @throws ForbiddenException
@@ -164,23 +206,11 @@ public class UserApi {
 	 *             valid files that were found, however, will still be removed
 	 *             even if this exception is thrown.
 	 */
-	public void removeFilesFromTransfer(@Named("request") long requestId, @Named("ids") Set<String> ids, User user)
+	@ApiMethod(name="user.request.delete", httpMethod = HttpMethod.POST)
+	public void delete(@Named("request") long requestId, User user)
 			throws ForbiddenException, NotFoundException, BadRequestException {
 		TransferRequest request = getRequest(requestId, user);
-		
-		List<TransferableFile> toRemove = new ArrayList<>();
-		for (TransferableFile file : request.getFiles()) {
-			if (ids.contains(file.getFileId())) {
-				toRemove.add(file);
-				ids.remove(file.getFileId());
-			}
-		}
-		
-		
-		request.getFiles().removeAll(toRemove);
-		ObjectifyService.ofy().save().entity(request);
-		if (!ids.isEmpty()) {
-			throw new BadRequestException(String.format(Constants.Error.REMOVE_UNKNOWN_FILE_IDS, ids)); 
-		}
+
+		ObjectifyService.ofy().delete().entity(request);
 	}
 }

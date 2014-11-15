@@ -39,4 +39,8 @@ public class Constants {
 		public static final String LOAD_FOLDER_FOR_USER_FAIL = "Could not load file with id %s for user %s (%s)\n%s";
 		public static final String MISSING_PARAMETER = "Missing required parameter '%s'";
 	}
+
+	public static class Strings {
+		public static final String APP_NAME = "Gimme Your Files, Please";
+	}
 }

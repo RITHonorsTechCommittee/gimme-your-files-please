@@ -115,30 +115,56 @@ public class Folder {
 	/**
 	 * Creates a folder from a given google file id, and preloads it with its
 	 * children.
-	 * 
+	 *
 	 * This method first attempts to load a cached version of the folder data,
 	 * and will only create a new Folder object if the data does not yet exist
 	 * or the cache is invalid
-	 * 
+	 *
 	 * @param fileid
 	 *            The google fileid of the folder to load
 	 * @param user
 	 *            A user who is authenticated to google drive
-	 * 
+	 *
 	 * @return The corresponding folder
 	 * @throws ForbiddenException   If the drive service cannot be created
 	 */
 	public static Folder fromGoogleId(String fileid, User user) throws ForbiddenException {
-		
-		
+		return fromGoogleId(fileid, user, false);
+	}
+
+	/**
+	 * Creates a folder from a given google file id, and preloads it with its
+	 * children.
+	 *
+	 * This method first attempts to load a cached version of the folder data,
+	 * and will only create a new Folder object if the data does not yet exist
+	 * or the cache is invalid
+	 *
+	 * @param fileid
+	 *            The google fileid of the folder to load
+	 * @param user
+	 *            A user who is authenticated to google drive
+	 * @param forceRefresh
+	 * 	          Whether the cached version of the folder should be ignored
+	 * 	          and the entire folder recalculated
+	 * @return The corresponding folder
+	 * @throws ForbiddenException   If the drive service cannot be created
+	 */
+	public static Folder fromGoogleId(String fileid, User user, boolean forceRefresh) throws ForbiddenException {
+
+
 		// First step: Check the cache for an existing load of this folder
-		Folder cached = OfyService.ofy().load().type(Folder.class).id(fileid).now();
+		Folder cached = null;
+
+		if (!forceRefresh) {
+			cached = OfyService.ofy().load().type(Folder.class).id(fileid).now();
+		}
 
 		if (cached != null && !cached.isDirty()) {
 			if (cached.ownerUserId.equals(user.getUserId())) {
 				return cached;
 			}
-			
+
 			throw new ForbiddenException("User " + user.getUserId() + " is not authorized to control this folder");
 		}
 

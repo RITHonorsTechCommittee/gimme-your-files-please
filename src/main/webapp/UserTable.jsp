@@ -27,14 +27,15 @@
 		<h1><c:out value="${appName}" /></h1>
 
 		<h2 ng-show="!loaded_users">Loading...</h2>
+		<a ng-click="refresh()">Refresh</a>
 		<table class="table table-striped" ng-cloak>
 			<tr>
 				<th><input type="checkbox" ng-model="selectAll" ui-indeterminate="isSelectAllIndeterminate()" ng-click="toggleSelectAll()"/> </th>
 				<th>User</th>
 				<th>Email</th>
 				<th>Owner</th>
-				<th>Writer</th>
 				<th>Reader</th>
+				<th>Writer</th>
 				<th>Actions</th>
 			</tr>
 			<tr ng-repeat="user in users" ng-cloak>
@@ -46,9 +47,10 @@
 				<td ng-bind="user.files.writer.length" popover="{{user.files.writer}}"></td>
 				<td>
 					<div class="btn-group">
-						<a ng-if="user.files.owner.length > 0" href="#" class="btn btn-success btn-sm" ng-click="ask(user)">Ask Nicely</a>
-						<a ng-if="user.files.owner.length > 0" href="#" class="btn btn-danger  btn-sm" ng-click="force(user)">Hostile Takeover</a>
-						<a ng-if="user.files.reader.length + user.files.writer.length > 0" href="#" class="btn btn-default  btn-sm" ng-click="revoke(user)">Remove User</a>
+						<a ng-if="user.files.owner.length > 0" href="#" class="btn btn-success btn-sm" ng-click="ask(user)"><span class="glyphicon glyphicon-transfer"></span></a>
+						<a ng-if="user.files.owner.length > 0" href="#" class="btn btn-danger  btn-sm" ng-click="force(user)"><span class="glyphicon glyphicon-exclamation-sign"></span></a>
+						<a ng-if="user.files.reader.length > 0" href="#" class="btn btn-default  btn-sm" ng-click="revoke('reader', user)"><span class="glyphicon glyphicon-eye-open"></span></a>
+						<a ng-if="user.files.writer.length > 0" href="#" class="btn btn-default  btn-sm" ng-click="revoke('writer', user)"><span class="glyphicon glyphicon-pencil"></span></a>
 					</div>
 				</td>
 			</tr>

@@ -1,17 +1,9 @@
 package edu.rit.honors.gyfp.api.folder;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.inject.Named;
-
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
+import com.google.api.server.spi.config.Nullable;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ForbiddenException;
 import com.google.api.server.spi.response.InternalServerErrorException;
@@ -20,15 +12,20 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.appengine.api.users.User;
 import com.google.common.base.Strings;
-
 import edu.rit.honors.gyfp.api.ApiUtil;
 import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.api.model.FileUser;
 import edu.rit.honors.gyfp.api.model.Folder;
 import edu.rit.honors.gyfp.api.model.TransferRequest;
-import edu.rit.honors.gyfp.api.model.TransferableFile;
 import edu.rit.honors.gyfp.util.OfyService;
 import edu.rit.honors.gyfp.util.Utils;
+
+import javax.inject.Named;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Api(
 		name = "gyfp",
@@ -64,7 +61,9 @@ public class FolderApi {
 	 *             If the id is not a folder, or if the id is not provided
 	 */
 	@ApiMethod(name = "folders.get", httpMethod = HttpMethod.GET)
-	public Folder getFolder(@Named("id") String id, User user) throws NotFoundException, ForbiddenException, BadRequestException {
+	public Folder getFolder(@Named("id") String id, User user,
+							@Named("ignoreCache") @Nullable Boolean ignoreCache)
+			throws NotFoundException, ForbiddenException, BadRequestException {
 		
 		if (Strings.isNullOrEmpty(id)) {
 			throw new BadRequestException(String.format(Constants.Error.MISSING_PARAMETER, "id"));
@@ -76,7 +75,7 @@ public class FolderApi {
 		
 		Drive service = Utils.createDriveFromUser(user);
 		
-		File result = null;
+		File result;
 		try {
 			result = service.files().get(id).setFields(Constants.Field.KIND_OWNER).execute();
 		} catch (IOException e) {
@@ -115,8 +114,10 @@ public class FolderApi {
 		//   3)  The currently logged in user is an owner of the folder
 		//
 		// This means we can safely begin attempting to load the contents of the folder.
-		
-		return Folder.fromGoogleId(id, user);
+
+		// Default to not ignoring the cache
+		ignoreCache = ignoreCache == null ? false : ignoreCache;
+		return Folder.fromGoogleId(id, user, ignoreCache);
 	}
 
 	/**
@@ -135,7 +136,7 @@ public class FolderApi {
 	 * @throws ForbiddenException
 	 *             If the user is not the owner of the folder
 	 */
-	@ApiMethod(name = "folders.revoke.read", httpMethod = HttpMethod.POST)
+	@ApiMethod(name = "folders.revoke.reader", httpMethod = HttpMethod.POST)
 	public void revokeReadPermission(@Named("folder") String folder, User user, @Named("userId") String userId)
 			throws NotFoundException, ForbiddenException, BadRequestException, InternalServerErrorException {
 		
@@ -160,7 +161,7 @@ public class FolderApi {
 	 * @throws BadRequestException  If there are no users specified or no permissions were revoked
 	 * 
 	 */
-	@ApiMethod(name = "folders.revoke.write", httpMethod = HttpMethod.POST)
+	@ApiMethod(name = "folders.revoke.writer", httpMethod = HttpMethod.POST)
 	public void revokeWritePermission(@Named("folder") String folder, User user, @Named("userId") String userId)
 			throws NotFoundException, ForbiddenException, BadRequestException, InternalServerErrorException {
 		
@@ -197,7 +198,7 @@ public class FolderApi {
 
 		SimplePermissionDeletionExecutor executor = new SimplePermissionDeletionExecutor(service, targetUser);
 
-		ApiUtil.safeExecuteDriveRequestQueue(targetUser.getFiles().get(role), executor, 50);
+		ApiUtil.safeExecuteDriveRequestQueue(targetUser.getFiles(role), executor, 50);
 
 		OfyService.ofy().save().entity(folder).now();
 	}

@@ -31,4 +31,8 @@ public class TransferableFile {
 		return fileid;
 	}
 
+	public String toString() {
+		return fileid + " (" + filename + ")";
+	}
+
 }

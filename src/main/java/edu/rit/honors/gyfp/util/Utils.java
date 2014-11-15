@@ -37,6 +37,7 @@ import com.google.api.server.spi.response.ForbiddenException;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.appengine.api.users.User;
+import edu.rit.honors.gyfp.api.Constants;
 
 public class Utils {
 
@@ -119,8 +120,9 @@ public class Utils {
 		try {
 			AuthorizationCodeFlow authFlow = Utils.initializeFlow();
 			Credential credential = authFlow.loadCredential(user.getUserId());
-			Drive service = new Drive.Builder(Utils.HTTP_TRANSPORT,
-					Utils.JSON_FACTORY, credential).build();
+			Drive service = new Drive.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
+					.setApplicationName(Constants.Strings.APP_NAME)
+					.build();
 			return service;
 		} catch (IOException exc) {
 			throw new ForbiddenException("Could not create drive service for user " + user.getUserId(), exc);

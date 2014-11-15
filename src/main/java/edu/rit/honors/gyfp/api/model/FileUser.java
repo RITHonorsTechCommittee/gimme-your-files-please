@@ -77,4 +77,19 @@ public class FileUser {
 		}
 		roleFiles.add(file);
 	}
+
+	/**
+	 * A safe (non-null) way to get the list of files a user owns by the role.
+	 *
+	 * @param role
+	 *         The role for which the files will be returned
+	 * @return The files (not null)
+	 */
+	public List<TransferableFile> getFiles(String role) {
+		if (files.containsKey(role)) {
+			return this.files.get(role);
+		} else {
+			return new ArrayList<>();
+		}
+	}
 }

@@ -39,9 +39,7 @@ public abstract class DriveServlet extends
 					Utils.JSON_FACTORY, credential).setApplicationName(
 					APPLICATION_NAME).build();
 		}
-		catch (IOException e) {
-			log.log(Level.SEVERE, "Error authenticating", e);
-		} catch (ServletException e) {
+		catch (IOException | ServletException e) {
 			log.log(Level.SEVERE, "Error authenticating", e);
 		}
 

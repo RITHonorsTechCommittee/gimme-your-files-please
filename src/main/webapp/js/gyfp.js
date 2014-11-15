@@ -3,6 +3,34 @@ var gyfp = angular.module("gyfp", []);
 
 gyfp.controller("FileListController", ['$scope', function ($scope) {
 
+    $scope.applyFolder = function(folder) {
+        $scope.folder = {};
+        $scope.folder.id = folder.id;
+        $scope.folder.files = folder.files;
+        $scope.folder.owner = folder.ownerUserId;
+        console.log(folder);
+        $scope.users = [];
+        for (var user in folder.files) {
+            if (folder.files.hasOwnProperty(user)) {
+                if (!folder.files[user].files.hasOwnProperty("reader")) {
+                    folder.files[user].files.reader = [];
+                }
+
+                if (!folder.files[user].files.hasOwnProperty("writer")) {
+                    folder.files[user].files.writer = [];
+                }
+
+                if (!folder.files[user].files.hasOwnProperty("owner")) {
+                    folder.files[user].files.owner = [];
+                }
+                $scope.users.push(folder.files[user]);
+            }
+        }
+
+        $scope.loaded_users = true;
+        $scope.$apply();
+    };
+
     /**
      * Executes a polite transfer request for the given user's files.
      *
@@ -28,8 +56,24 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
      *
      * @param user  The target user object
      */
-    $scope.revoke = function(user) {
+    $scope.revoke = function(role, user) {
         console.log("'Revoking' user access");
+        var initialFiles = $scope.folder.files[user.permission].files[role].length;
+        gapi.client.gyfp.folders.revoke[role]({
+            folder: $scope.folder.id,
+            userId: user.permission
+        }).execute(function(resp) {
+            if (resp.hasOwnProperty("code")) {
+                console.error("Error revoking read access");
+                console.error(resp);
+            } else {
+                console.log("Got revoke response");
+                console.log(resp);
+                initialFiles -= resp.files[user.permission].reader.length;
+                console.log(initialFiles + " readable files remain");
+                $scope.applyFolder(resp);
+            }
+        });
         console.log(user);
     };
 
@@ -86,6 +130,17 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
         })
     };
 
+    /**
+     * Forces a refresh of the contents of the folder
+     */
+    $scope.refresh = function() {
+        console.log("Refreshing the folder");
+        gapi.client.gyfp.folders.get({
+            id: $scope.folder.id,
+            ignoreCache: true
+        }).execute($scope.applyFolder);
+    };
+
     $scope.selectAll = false;
     $scope.loaded_users = false;
     $scope.api_authenticated = function(resp) {
@@ -93,27 +148,7 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
         console.log("Got authentication response: ", $scope.api_ready);
 
         gapi.client.gyfp.folders.get({id: "0B0WTvx-f8-LZY0dxUGlwWmtSRHc"}).execute(function (resp) {
-            console.log(resp);
-            $scope.users = [];
-            for (var user in resp.files) {
-                if (resp.files.hasOwnProperty(user)) {
-                    if (!resp.files[user].files.hasOwnProperty("reader")) {
-                        resp.files[user].files.reader = [];
-                    }
-
-                    if (!resp.files[user].files.hasOwnProperty("writer")) {
-                        resp.files[user].files.writer = [];
-                    }
-
-                    if (!resp.files[user].files.hasOwnProperty("owner")) {
-                        resp.files[user].files.owner = [];
-                    }
-                    $scope.users.push(resp.files[user]);
-                }
-            }
-
-            $scope.loaded_users = true;
-            $scope.$apply();
+            $scope.applyFolder(resp);
         });
     };
 
