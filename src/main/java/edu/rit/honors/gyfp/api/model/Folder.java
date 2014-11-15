@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.api.server.spi.response.ForbiddenException;
 import com.google.api.services.drive.Drive;
@@ -25,6 +27,8 @@ import edu.rit.honors.gyfp.util.Utils;
 
 @Entity
 public class Folder {
+
+	private static Logger log = Logger.getLogger(Folder.class.getName());
 
 	/**
 	 * The id of the folder stored in Google Drive
@@ -61,8 +65,8 @@ public class Folder {
 	 * 
 	 * @param folderid
 	 */
-	private Folder(String id) {
-		this.id = checkNotNull(id);
+	private Folder(String folderid) {
+		this.id = checkNotNull(folderid);
 		this.files = new HashMap<>();
 	}
 
@@ -174,8 +178,8 @@ public class Folder {
 	 * If the map already exists in the files map, it is returned. Otherwise a
 	 * new entry is added to the map lookup
 	 * 
-	 * @param userId
-	 *            The userid that will be looked up
+	 * @param permission
+	 *            The permission that will be looked up
 	 * @return The populated map of permissions for this user
 	 */
 	private FileUser getUser(Permission permission) {
@@ -242,12 +246,23 @@ public class Folder {
 					throw e;
 				}
 			} while (request.getPageToken() != null
-					&& request.getPageToken().length() > 0);
+                && request.getPageToken().length() > 0);
 
 			return result;
-		} catch (IOException e1) {
-			// TODO:  add logging here.
-			return new ArrayList<File>();
+		} catch (IOException e) {
+			log.log(Level.SEVERE, "Error loading folder", e);
+			return new ArrayList<>();
 		}
+	}
+
+	/**
+	 * Looks up a user and their files within this folder
+	 *
+	 * @param userId
+	 *         The id of the user
+	 * @return The FileUser stored for this folder, or null if none exists
+	 */
+	public FileUser getUser(String userId) {
+		return files.get(userId);
 	}
 }
