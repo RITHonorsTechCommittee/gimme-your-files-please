@@ -7,23 +7,24 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
         $scope.folder = {};
         $scope.folder.id = folder.id;
         $scope.folder.files = folder.files;
-        $scope.folder.owner = folder.ownerUserId;
         console.log(folder);
         $scope.users = [];
         for (var user in folder.files) {
             if (folder.files.hasOwnProperty(user)) {
-                if (!folder.files[user].files.hasOwnProperty("reader")) {
-                    folder.files[user].files.reader = [];
-                }
+                if (folder.files[user].hasOwnProperty('files')) {
+                    if (!folder.files[user].files.hasOwnProperty("reader")) {
+                        folder.files[user].files.reader = [];
+                    }
 
-                if (!folder.files[user].files.hasOwnProperty("writer")) {
-                    folder.files[user].files.writer = [];
-                }
+                    if (!folder.files[user].files.hasOwnProperty("writer")) {
+                        folder.files[user].files.writer = [];
+                    }
 
-                if (!folder.files[user].files.hasOwnProperty("owner")) {
-                    folder.files[user].files.owner = [];
+                    if (!folder.files[user].files.hasOwnProperty("owner")) {
+                        folder.files[user].files.owner = [];
+                    }
+                    $scope.users.push(folder.files[user]);
                 }
-                $scope.users.push(folder.files[user]);
             }
         }
 
@@ -58,7 +59,13 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
      */
     $scope.revoke = function(role, user) {
         console.log("'Revoking' user access");
-        var initialFiles = $scope.folder.files[user.permission].files[role].length;
+        $scope.modal.element.modal('show');
+        $scope.modal.title = 'Revoking Access';
+        $scope.modal.body = 'Removing ' + user.email + ' access to ' + role + ' in this folder.';
+        $scope.modal.maxValue = $scope.folder.files[user.permission].files[role].length;
+        $scope.modal.progress = 0;
+        $scope.modal.indeterminate = false;
+
         gapi.client.gyfp.folders.revoke[role]({
             folder: $scope.folder.id,
             userId: user.permission
@@ -69,8 +76,7 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
             } else {
                 console.log("Got revoke response");
                 console.log(resp);
-                initialFiles -= resp.files[user.permission].reader.length;
-                console.log(initialFiles + " readable files remain");
+                $scope.modal.progress = $scope.modal.maxValue - resp.files[user.permission][role].length;
                 $scope.applyFolder(resp);
             }
         });
@@ -134,20 +140,39 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
      * Forces a refresh of the contents of the folder
      */
     $scope.refresh = function() {
+        $scope.modal.element.modal('show');
         console.log("Refreshing the folder");
         gapi.client.gyfp.folders.get({
             id: $scope.folder.id,
             ignoreCache: true
-        }).execute($scope.applyFolder);
+        }).execute(function(resp) {
+            $scope.modal.element.modal('hide');
+            $scope.applyFolder(resp);
+        });
     };
 
     $scope.selectAll = false;
     $scope.loaded_users = false;
+    $scope.modal = {
+        title: "Loading",
+        maxValue: 0,
+        progress: 0,
+        indeterminate: true,
+        element: $('#loadingModalDialog')
+    };
+
+    $scope.modal.element.modal({
+        show: true, // Open on load
+        backdrop: 'static',  // 'static' to disallow clicking outside to break cover
+        keyboard: true  // false to disallow keyboard escape
+    });
+
     $scope.api_authenticated = function(resp) {
         $scope.api_ready = resp.status.signed_in;
         console.log("Got authentication response: ", $scope.api_ready);
 
         gapi.client.gyfp.folders.get({id: "0B0WTvx-f8-LZY0dxUGlwWmtSRHc"}).execute(function (resp) {
+            $scope.modal.element.modal('hide');
             $scope.applyFolder(resp);
         });
     };

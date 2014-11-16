@@ -131,16 +131,17 @@ public class FolderApi {
 	 *            purposes
 	 * @param userId
 	 *            The ID of the user who will have read permissions removed
+	 * @return the updated folder
 	 * @throws NotFoundException
 	 *             If a folder with fileid id is not found
 	 * @throws ForbiddenException
 	 *             If the user is not the owner of the folder
 	 */
 	@ApiMethod(name = "folders.revoke.reader", httpMethod = HttpMethod.POST)
-	public void revokeReadPermission(@Named("folder") String folder, User user, @Named("userId") String userId)
+	public Folder revokeReadPermission(@Named("folder") String folder, User user, @Named("userId") String userId)
 			throws NotFoundException, ForbiddenException, BadRequestException, InternalServerErrorException {
 		
-		revokePermission(folder, user, userId, Constants.Role.READER);
+		return revokePermission(folder, user, userId, Constants.Role.READER);
 	}
 
 	/**
@@ -154,6 +155,7 @@ public class FolderApi {
 	 *            purposes
 	 * @param userId
 	 *            The ID of the user who will have read permissions removed
+     * @return the updated folder
 	 * @throws NotFoundException
 	 *             If a folder with fileid id is not found
 	 * @throws ForbiddenException
@@ -162,10 +164,10 @@ public class FolderApi {
 	 * 
 	 */
 	@ApiMethod(name = "folders.revoke.writer", httpMethod = HttpMethod.POST)
-	public void revokeWritePermission(@Named("folder") String folder, User user, @Named("userId") String userId)
+	public Folder revokeWritePermission(@Named("folder") String folder, User user, @Named("userId") String userId)
 			throws NotFoundException, ForbiddenException, BadRequestException, InternalServerErrorException {
 		
-		revokePermission(folder, user, userId, Constants.Role.WRITER);
+		return revokePermission(folder, user, userId, Constants.Role.WRITER);
 	}
 	
 	/**
@@ -177,11 +179,12 @@ public class FolderApi {
 	 * @param userId
 	 *            The ID of the user who will have read permissions removed
 	 * @param role
-	 * 			  The role (read or
+	 * 			  The role (read or write)
+	 * @return the updated folder
 	 * @throws ForbiddenException
 	 * @throws BadRequestException
 	 */
-	private void revokePermission(String folder, User user, String userId, String role)
+	private Folder revokePermission(String folder, User user, String userId, String role)
 			throws ForbiddenException, BadRequestException, InternalServerErrorException {
 		if (user == null) {
 			throw new ForbiddenException(Constants.Error.AUTH_REQUIRED);
@@ -201,6 +204,7 @@ public class FolderApi {
 		ApiUtil.safeExecuteDriveRequestQueue(targetUser.getFiles(role), executor, 50);
 
 		OfyService.ofy().save().entity(target).now();
+		return target;
 	}
 
 	/**

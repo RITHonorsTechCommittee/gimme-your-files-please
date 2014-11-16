@@ -16,6 +16,51 @@
     	.email-address-badge {
     		float: right;
     	}
+
+		.spinner {
+			margin: 30px auto;
+			width: 70px;
+			text-align: center;
+		}
+
+		.spinner > div {
+			width: 18px;
+			height: 18px;
+			background-color: #0099CC;
+
+			border-radius: 100%;
+			display: inline-block;
+			-webkit-animation: bouncedelay 1.4s infinite ease-in-out;
+			animation: bouncedelay 1.4s infinite ease-in-out;
+			/* Prevent first frame from flickering when animation starts */
+			-webkit-animation-fill-mode: both;
+			animation-fill-mode: both;
+		}
+
+		.spinner .bounce1 {
+			-webkit-animation-delay: -0.32s;
+			animation-delay: -0.32s;
+		}
+
+		.spinner .bounce2 {
+			-webkit-animation-delay: -0.16s;
+			animation-delay: -0.16s;
+		}
+
+		@-webkit-keyframes bouncedelay {
+			0%, 80%, 100% { -webkit-transform: scale(0.0) }
+			40% { -webkit-transform: scale(1.0) }
+		}
+
+		@keyframes bouncedelay {
+			0%, 80%, 100% {
+				transform: scale(0.0);
+				-webkit-transform: scale(0.0);
+			} 40% {
+				  transform: scale(1.0);
+				  -webkit-transform: scale(1.0);
+			  }
+		}
     </style>
 
 </head>
@@ -24,6 +69,28 @@
 	<jsp:include page="includes/MainMenu.jsp" />
 
     <div id="main" class="container" ng-controller="FileListController" >
+		<div class="modal fade" id="loadingModalDialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">{{modal.title}}</h4>
+					</div>
+					<div class="modal-baby">
+						<p>{{modal.body}}</p>
+						<div ng-show="modal.indeterminate">
+							<div class="spinner">
+								<div class="bounce1"></div>
+								<div class="bounce2"></div>
+								<div class="bounce3"></div>
+							</div>
+						</div>
+						<div ng-show="!modal.indeterminate">
+							<progressbar max="modal.maxValue" value="modal.progress"><span style="color:black; white-space:nowrap;">{{modal.progress}} / {{modal.maxValue}}</span></progressbar>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<h1><c:out value="${appName}" /></h1>
 
 		<h2 ng-show="!loaded_users">Loading...</h2>
