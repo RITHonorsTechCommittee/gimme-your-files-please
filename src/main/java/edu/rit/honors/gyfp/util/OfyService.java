@@ -3,7 +3,6 @@ package edu.rit.honors.gyfp.util;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
-
 import edu.rit.honors.gyfp.api.model.FileUser;
 import edu.rit.honors.gyfp.api.model.Folder;
 import edu.rit.honors.gyfp.api.model.TransferableFile;

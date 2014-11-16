@@ -200,7 +200,7 @@ public class FolderApi {
 
 		ApiUtil.safeExecuteDriveRequestQueue(targetUser.getFiles(role), executor, 50);
 
-		OfyService.ofy().save().entity(folder).now();
+		OfyService.ofy().save().entity(target).now();
 	}
 
 	/**
