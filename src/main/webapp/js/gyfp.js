@@ -1,5 +1,5 @@
 /*global gapi, angular*/
-var gyfp = angular.module("gyfp", []);
+var gyfp = angular.module("gyfp", ['ui.bootstrap']);
 
 gyfp.controller("FileListController", ['$scope', function ($scope) {
 
@@ -66,6 +66,8 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
         $scope.modal.progress = 0;
         $scope.modal.indeterminate = false;
 
+        console.log($scope.modal);
+
         gapi.client.gyfp.folders.revoke[role]({
             folder: $scope.folder.id,
             userId: user.permission
@@ -76,7 +78,6 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
             } else {
                 console.log("Got revoke response");
                 console.log(resp);
-                $scope.applyFolder(resp);
 
                 if (resp.files.hasOwnProperty(user.permission)
                     && resp.files[user.permission].hasOwnProperty('files')
@@ -86,6 +87,8 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
                     $scope.modal.progress = $scope.modal.maxValue;
                 }
 
+                console.log($scope.modal);
+                $scope.applyFolder(resp);
                 $scope.$apply();
             }
         });

@@ -201,7 +201,7 @@ public class FolderApi {
 
 		SimplePermissionDeletionExecutor executor = new SimplePermissionDeletionExecutor(service, targetUser);
 
-		ApiUtil.safeExecuteDriveRequestQueue(targetUser.getFiles(role), executor, 5);
+		ApiUtil.safeExecuteDriveRequestQueue(targetUser.getFiles(role), executor, 3);
 
 		OfyService.ofy().save().entity(target).now();
 		return target;

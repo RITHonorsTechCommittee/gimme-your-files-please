@@ -85,7 +85,7 @@
 							</div>
 						</div>
 						<div ng-show="!modal.indeterminate">
-							<progressbar max="modal.maxValue" value="modal.progress"><span style="color:black; white-space:nowrap;">{{modal.progress}} / {{modal.maxValue}}</span></progressbar>
+							<h4 style="text-align: center">{{modal.progress}} / {{modal.maxValue}}</h4>
 						</div>
 					</div>
 				</div>
