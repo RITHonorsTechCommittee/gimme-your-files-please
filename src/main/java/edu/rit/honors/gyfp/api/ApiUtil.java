@@ -58,6 +58,7 @@ public class ApiUtil {
 
         while (maxRequests > 0 && items.hasNext() &&
                 ApiProxy.getCurrentEnvironment().getRemainingMillis() >= 3000) {
+            maxRequests--;
             T item = items.next();
             try {
                 if (executor.execute(item)) {

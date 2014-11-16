@@ -76,8 +76,17 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
             } else {
                 console.log("Got revoke response");
                 console.log(resp);
-                $scope.modal.progress = $scope.modal.maxValue - resp.files[user.permission][role].length;
                 $scope.applyFolder(resp);
+
+                if (resp.files.hasOwnProperty(user.permission)
+                    && resp.files[user.permission].hasOwnProperty('files')
+                    && resp.files[user.permission].files.hasOwnProperty(role)) {
+                    $scope.modal.progress = $scope.modal.maxValue - resp.files[user.permission].files[role].length;
+                } else {
+                    $scope.modal.progress = $scope.modal.maxValue;
+                }
+
+                $scope.$apply();
             }
         });
         console.log(user);

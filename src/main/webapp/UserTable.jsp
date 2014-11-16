@@ -75,7 +75,7 @@
 					<div class="modal-header">
 						<h4 class="modal-title">{{modal.title}}</h4>
 					</div>
-					<div class="modal-baby">
+					<div class="modal-body">
 						<p>{{modal.body}}</p>
 						<div ng-show="modal.indeterminate">
 							<div class="spinner">
