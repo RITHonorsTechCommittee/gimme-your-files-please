@@ -1,8 +1,8 @@
 <div class="modal-header">
-    <h4 class="modal-title">{{title}}</h4>
+    <h4 class="modal-title">Processing...</h4>
 </div>
 <div class="modal-body">
-    <p>{{body}}</p>
+    <p>Revoking <strong>{{role}}</strong> permissions for user <strong>{{user.name}}</strong> ({{user.email}}).</p>
     <div>
         <div class="spinner">
             <div class="bounce1"></div>
@@ -17,6 +17,6 @@
 <div class="modal-footer">
     <div class="btn-group">
         <a href="#" class="btn btn-danger btn-md" ng-click="abort()">Abort</a>
-        <a href="#" class="btn btn-success btn-sm" ng-click="close()" ng-style="{'btn-disabled':!closeEnabled}">Close</a>
+        <a href="#" class="btn btn-success btn-sm" ng-click="close()">Close</a>
     </div>
 </div>

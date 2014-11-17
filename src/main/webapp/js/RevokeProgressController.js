@@ -7,6 +7,7 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user',
         $scope.continue = true;
         $scope.error = false;
         $scope.folder = folder;
+        $scope.role = role;
 
         $scope.closeEnabled = false;
 
