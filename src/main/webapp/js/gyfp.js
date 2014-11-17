@@ -1,7 +1,7 @@
 /*global gapi, angular*/
-var gyfp = angular.module("gyfp", ['ui.bootstrap']);
+var gyfp = angular.module("gyfp", ['ui.bootstrap', 'angular-ladda']);
 
-gyfp.controller("FileListController", ['$scope', function ($scope) {
+gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $modal) {
 
     $scope.applyFolder = function(folder) {
         $scope.folder = {};
@@ -28,6 +28,7 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
             }
         }
 
+        $scope.folderLoading = false;
         $scope.loaded_users = true;
         $scope.$apply();
     };
@@ -55,61 +56,37 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
     /**
      * Revokes a users read/write permissions within a folder
      *
+     * @param role  The role which will be revoked
      * @param user  The target user object
      */
     $scope.revoke = function(role, user) {
-        console.log("'Revoking' user access");
-
-
-        console.log($scope.modal);
-
-        gapi.client.gyfp.folders.revoke[role]({
-            folder: $scope.folder.id,
-            userId: user.permission
-        }).execute(function(resp) {
-            if (resp.hasOwnProperty("code")) {
-                console.error("Error revoking read access");
-                console.error(resp);
-            } else {
-                console.log("Got revoke response");
-                console.log(resp);
-
-                if (resp.files.hasOwnProperty(user.permission)
-                    && resp.files[user.permission].hasOwnProperty('files')
-                    && resp.files[user.permission].files.hasOwnProperty(role)) {
-                    $scope.modal.progress = $scope.modal.maxValue - resp.files[user.permission].files[role].length;
-                } else {
-                    $scope.modal.progress = $scope.modal.maxValue;
+        var modalInstance = $modal.open({
+            templateUrl: '../includes/RevokeDialog.html',
+            controller: 'RevokeProgressController',
+            size: 'sm',
+            resolve: {
+                user: function() {
+                    return user;
+                },
+                role: function() {
+                    return role;
+                },
+                folder: function() {
+                    return $scope.folder;
                 }
-
-                if ($scope.modal.progress != $scope.progress.maxValue) {
-                    $scope.revoke(role, user);
-                } else {
-                    $scope.modal.element.modal('hide');
-                }
-
-                console.log($scope.modal);
-                $scope.applyFolder(resp);
-                $scope.$apply();
-            }
+            },
+            keyboard: false,
+            backdrop: 'static'
         });
-        console.log(user);
+
+        modalInstance.result.then(function(result) {
+            console.log(result)
+        }, function() {
+            console.log('dismissed');
+        });
     };
 
-    $scope.modal.open = function() {
-        $scope.modal.isOpen = true;
-        $scope.modal.isAborted = false;
-        $scope.modal.element.modal('show');
-    };
 
-    $scope.modal.close = function() {
-        $scope.modal.element.modal('hide');
-        $scope.modal.isOpen = false;
-    };
-
-    $scope.modal.abort = function() {
-        $scope.modal.isAborted = true;
-    };
 
 
 
@@ -170,6 +147,8 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
      * Forces a refresh of the contents of the folder
      */
     $scope.refresh = function() {
+        $scope.folderLoading = true;
+        $scope.$apply();
         $scope.modal.element.modal('show');
         console.log("Refreshing the folder");
         gapi.client.gyfp.folders.get({
@@ -183,24 +162,13 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
 
     $scope.selectAll = false;
     $scope.loaded_users = false;
-    $scope.modal = {
-        title: "Loading",
-        maxValue: 0,
-        progress: 0,
-        indeterminate: true,
-        element: $('#loadingModalDialog')
-    };
-
-    $scope.modal.element.modal({
-        show: true, // Open on load
-        backdrop: 'static',  // 'static' to disallow clicking outside to break cover
-        keyboard: true  // false to disallow keyboard escape
-    });
 
     $scope.api_authenticated = function(resp) {
         $scope.api_ready = resp.status.signed_in;
         console.log("Got authentication response: ", $scope.api_ready);
 
+        $scope.folderLoading = true;
+        $scope.$apply();
         gapi.client.gyfp.folders.get({id: "0B0WTvx-f8-LZY0dxUGlwWmtSRHc"}).execute(function (resp) {
             $scope.modal.element.modal('hide');
             $scope.applyFolder(resp);

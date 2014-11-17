@@ -73,7 +73,8 @@
 		<h1><c:out value="${appName}" /></h1>
 
 		<h2 ng-show="!loaded_users">Loading...</h2>
-		<a ng-click="refresh()">Refresh</a>
+		<a class="btn btn-primary btn-md" ladda="folderLoading" ng-click="refresh()" data-style="expand-right">{{folderLoading ? "Loading..." : "Refresh"}}</a>
+
 		<table class="table table-striped" ng-cloak>
 			<tr>
 				<th><input type="checkbox" ng-model="selectAll" ui-indeterminate="isSelectAllIndeterminate()" ng-click="toggleSelectAll()"/> </th>
