@@ -69,28 +69,7 @@
 	<jsp:include page="includes/MainMenu.jsp" />
 
     <div id="main" class="container" ng-controller="FileListController" >
-		<div class="modal fade" id="loadingModalDialog">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 class="modal-title">{{modal.title}}</h4>
-					</div>
-					<div class="modal-body">
-						<p>{{modal.body}}</p>
-						<div>
-							<div class="spinner">
-								<div class="bounce1"></div>
-								<div class="bounce2"></div>
-								<div class="bounce3"></div>
-							</div>
-						</div>
-						<div ng-show="!modal.indeterminate">
-							<h4 style="text-align: center">{{modal.progress}} / {{modal.maxValue}}</h4>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+
 		<h1><c:out value="${appName}" /></h1>
 
 		<h2 ng-show="!loaded_users">Loading...</h2>

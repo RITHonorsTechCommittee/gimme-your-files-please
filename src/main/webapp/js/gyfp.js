@@ -59,12 +59,7 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
      */
     $scope.revoke = function(role, user) {
         console.log("'Revoking' user access");
-        $scope.modal.element.modal('show');
-        $scope.modal.title = 'Revoking Access';
-        $scope.modal.body = 'Removing ' + user.email + ' access to ' + role + ' in this folder.';
-        $scope.modal.maxValue = $scope.folder.files[user.permission].files[role].length;
-        $scope.modal.progress = 0;
-        $scope.modal.indeterminate = false;
+
 
         console.log($scope.modal);
 
@@ -87,6 +82,12 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
                     $scope.modal.progress = $scope.modal.maxValue;
                 }
 
+                if ($scope.modal.progress != $scope.progress.maxValue) {
+                    $scope.revoke(role, user);
+                } else {
+                    $scope.modal.element.modal('hide');
+                }
+
                 console.log($scope.modal);
                 $scope.applyFolder(resp);
                 $scope.$apply();
@@ -94,6 +95,23 @@ gyfp.controller("FileListController", ['$scope', function ($scope) {
         });
         console.log(user);
     };
+
+    $scope.modal.open = function() {
+        $scope.modal.isOpen = true;
+        $scope.modal.isAborted = false;
+        $scope.modal.element.modal('show');
+    };
+
+    $scope.modal.close = function() {
+        $scope.modal.element.modal('hide');
+        $scope.modal.isOpen = false;
+    };
+
+    $scope.modal.abort = function() {
+        $scope.modal.isAborted = true;
+    };
+
+
 
     /**
      * Executes a polite transfer request for all selected users
