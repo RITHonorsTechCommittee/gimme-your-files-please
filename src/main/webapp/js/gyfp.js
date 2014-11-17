@@ -170,7 +170,6 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
         $scope.folderLoading = true;
         $scope.$apply();
         gapi.client.gyfp.folders.get({id: "0B0WTvx-f8-LZY0dxUGlwWmtSRHc"}).execute(function (resp) {
-            $scope.modal.element.modal('hide');
             $scope.applyFolder(resp);
         });
     };

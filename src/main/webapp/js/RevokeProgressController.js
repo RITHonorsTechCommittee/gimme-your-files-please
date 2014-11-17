@@ -31,8 +31,10 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user',
                         && resp.files[user.permission].files.hasOwnProperty(role)) {
                         $scope.progress = $scope.numFiles - resp.files[user.permission].files[role].length;
                         user.files[role] = resp.files[user.permission].files[role];
+                        console.log($scope.progress);
                     } else {
                         $scope.progress = $scope.numFiles;
+                        console.log($scope.progress);
                         user.files[role] = [];
                     }
 
@@ -40,15 +42,16 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user',
                     if ($scope.progress != $scope.numFiles) {
                         if ($scope.continue) {
                             console.log("Would do again.");
+                            $scope.$apply();
                             $scope.revoke(role, user);
                         }
                     } else {
                         $scope.closeEnabled = true;
+                        $scope.$apply();
                     }
 
 
 
-                    $scope.$apply();
                 }
             });
         };

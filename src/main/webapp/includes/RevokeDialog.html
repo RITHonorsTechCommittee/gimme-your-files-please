@@ -11,12 +11,12 @@
         </div>
     </div>
     <div ng-show="!indeterminate">
-        <h4 style="text-align: center">{{progress}} / {{numFolders}}</h4>
+        <h4 style="text-align: center">{{progress}} / {{numFiles}}</h4>
     </div>
 </div>
 <div class="modal-footer">
     <div class="btn-group">
-        <a href="#" class="btn btn-danger btn-lg" ng-click="abort()">Abort</a>
+        <a href="#" class="btn btn-danger btn-md" ng-click="abort()">Abort</a>
         <a href="#" class="btn btn-success btn-sm" ng-click="close()" ng-style="{'btn-disabled':!closeEnabled}">Close</a>
     </div>
 </div>
