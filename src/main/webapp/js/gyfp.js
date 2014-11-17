@@ -149,13 +149,11 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
     $scope.refresh = function() {
         $scope.folderLoading = true;
         $scope.$apply();
-        $scope.modal.element.modal('show');
         console.log("Refreshing the folder");
         gapi.client.gyfp.folders.get({
             id: $scope.folder.id,
             ignoreCache: true
         }).execute(function(resp) {
-            $scope.modal.element.modal('hide');
             $scope.applyFolder(resp);
         });
     };
