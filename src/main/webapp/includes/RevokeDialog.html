@@ -2,21 +2,26 @@
     <h4 class="modal-title">Processing...</h4>
 </div>
 <div class="modal-body">
-    <p>Revoking <strong>{{role}}</strong> permissions for user <strong>{{user.name}}</strong> ({{user.email}}).</p>
-    <div>
+    <p>Revoking <strong>{{role}}</strong> permissions for <strong>{{user.name}}</strong> ({{user.email}}).</p>
+    <div ng-show="!closeEnabled">
         <div class="spinner">
             <div class="bounce1"></div>
             <div class="bounce2"></div>
             <div class="bounce3"></div>
         </div>
     </div>
-    <div ng-show="!indeterminate">
+    <div ng-show="!indeterminate && !closeEnabled">
         <h4 style="text-align: center">{{progress}} / {{numFiles}}</h4>
+    </div>
+    <div ng-show="closeEnabled">
+        <h4>All files transferred successfully!</h4>
     </div>
 </div>
 <div class="modal-footer">
     <div class="btn-group">
-        <a href="#" class="btn btn-danger btn-md" ng-click="abort()">Abort</a>
-        <a href="#" class="btn btn-success btn-md" ng-click="close()">Close</a>
+        <a href="#" class="btn btn-danger btn-md" ng-class="{'disabled': !shouldContinue || closeEnabled}" ng-click="abort()">Abort</a>
+    </div>
+    <div class="btn-group">
+        <a href="#" class="btn btn-primary btn-md" ng-class="{'disabled': !closeEnabled}" ng-click="close()">Close</a>
     </div>
 </div>
