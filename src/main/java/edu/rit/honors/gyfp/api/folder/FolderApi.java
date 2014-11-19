@@ -185,7 +185,8 @@ public class FolderApi {
 	 * @throws BadRequestException
 	 */
 	private Folder revokePermission(String folder, User user, String userId, String role)
-			throws ForbiddenException, BadRequestException, InternalServerErrorException {
+			throws NotFoundException, ForbiddenException, BadRequestException,
+			InternalServerErrorException {
 		if (user == null) {
 			throw new ForbiddenException(Constants.Error.AUTH_REQUIRED);
 		}
@@ -198,6 +199,10 @@ public class FolderApi {
 		
 		Drive service = Utils.createDriveFromUser(user);
 		FileUser targetUser = target.getUser(userId);
+
+		if (targetUser == null) {
+			throw new NotFoundException("User " + userId + " does not have any files in the specified folder");
+		}
 
 		SimplePermissionDeletionExecutor executor = new SimplePermissionDeletionExecutor(service, targetUser);
 

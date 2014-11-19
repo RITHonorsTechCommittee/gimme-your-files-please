@@ -1,27 +1,28 @@
 <div class="modal-header">
-    <h4 class="modal-title">Processing...</h4>
+    <h4 class="modal-title">{{title}}</h4>
 </div>
 <div class="modal-body">
-    <p>Revoking <strong>{{role}}</strong> permissions for <strong>{{user.name}}</strong> ({{user.email}}).</p>
-    <div ng-show="!closeEnabled">
+    <div ng-show="isErrored" class="alert alert-danger" role="alert">{{body}}</div>
+    <p>{{isFinished ? "Revoking " : "Revoked" }} <strong>{{role}}</strong> permissions for <strong>{{user.name}}</strong> ({{user.email}}).</p>
+    <div ng-show="!isFinished">
         <div class="spinner">
             <div class="bounce1"></div>
             <div class="bounce2"></div>
             <div class="bounce3"></div>
         </div>
     </div>
-    <div ng-show="!indeterminate && !closeEnabled">
+    <div ng-show="!indeterminate && !isFinished">
         <h4 style="text-align: center">{{progress}} / {{numFiles}}</h4>
     </div>
-    <div ng-show="closeEnabled">
+    <div ng-show="isFinished && !isErrored">
         <h4>All files transferred successfully!</h4>
     </div>
 </div>
 <div class="modal-footer">
     <div class="btn-group">
-        <a href="#" class="btn btn-danger btn-md" ng-class="{'disabled': !shouldContinue || closeEnabled}" ng-click="abort()">Abort</a>
+        <a href="#" class="btn btn-danger btn-md" ng-class="{'disabled': isAborted || isFinished}" ng-click="abort()">Abort</a>
     </div>
     <div class="btn-group">
-        <a href="#" class="btn btn-primary btn-md" ng-class="{'disabled': !closeEnabled}" ng-click="close()">Close</a>
+        <a href="#" class="btn btn-primary btn-md" ng-class="{'disabled': !isFinished}" ng-click="close()">Close</a>
     </div>
 </div>

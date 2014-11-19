@@ -1,15 +1,5 @@
 package edu.rit.honors.gyfp.api.model;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.google.api.server.spi.response.ForbiddenException;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.Drive.Files;
@@ -20,10 +10,19 @@ import com.google.appengine.api.users.User;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Unindex;
-
 import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.util.OfyService;
 import edu.rit.honors.gyfp.util.Utils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @Entity
 public class Folder {
@@ -62,8 +61,9 @@ public class Folder {
 
 	/**
 	 * Creates a new folder object.
-	 * 
+	 *
 	 * @param folderid
+	 *         The google file id of the folder
 	 */
 	private Folder(String folderid) {
 		this.id = checkNotNull(folderid);
@@ -92,7 +92,7 @@ public class Folder {
 	/**
 	 * Gets the maps of users to owned files
 	 * 
-	 * @return
+	 * @return  The the fileuser objects in this folder
 	 */
 	public Map<String, FileUser> getFiles() {
 		return files;
@@ -245,7 +245,7 @@ public class Folder {
 	 * @return A list of files that have {@code id} as a parent
 	 */
 	private static List<File> getChildren(Drive service, String id) {
-		List<File> result = new ArrayList<File>();
+		List<File> result = new ArrayList<>();
 		Files.List request;
 		try {
 			request = service.files().list();
@@ -289,6 +289,9 @@ public class Folder {
 	 * @return The FileUser stored for this folder, or null if none exists
 	 */
 	public FileUser getUser(String userId) {
-		return files.get(userId);
+		if (files != null) {
+			return files.get(userId);
+		}
+		return null;
 	}
 }
