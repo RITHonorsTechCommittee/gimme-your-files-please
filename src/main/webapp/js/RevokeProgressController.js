@@ -1,15 +1,15 @@
 gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user', 'folder', 'role',
     function ($scope, $modalInstance, user, folder, role) {
-
-        console.log(user, folder, role);
+        $scope.title = "Processing...";
         $scope.numFiles = folder.files[user.permission].files[role].length;
         $scope.progress = 0;
-        $scope.continue = true;
-        $scope.error = false;
+        $scope.isAborted = true;
         $scope.folder = folder;
         $scope.role = role;
+        $scope.user = user;
 
-        $scope.closeEnabled = false;
+        $scope.isFinished = false;
+        $scope.isErrored = false;
 
         console.log("'Revoking' user access");
 
@@ -20,9 +20,7 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user',
                 userId: user.permission
             }).execute(function (resp) {
                 if (resp.hasOwnProperty("code")) {
-                    console.error("Error revoking read access");
-                    console.error(resp);
-                    $scope.error = "Error revoking " + role + " access!";
+                    $scope.error(resp);
                 } else {
                     console.log("Got revoke response");
                     console.log(resp);
@@ -41,13 +39,13 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user',
 
 
                     if ($scope.progress != $scope.numFiles) {
-                        if ($scope.continue) {
+                        if (!$scope.isAborted) {
                             console.log("Would do again.");
                             $scope.$apply();
                             $scope.revoke(role, user);
                         }
                     } else {
-                        $scope.closeEnabled = true;
+                        $scope.isFinished = true;
                         $scope.$apply();
                     }
 
@@ -57,10 +55,35 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user',
             });
         };
 
+        $scope.error = function(resp) {
+            console.error("Error revoking permissions");
+            console.error(resp);
+            if (resp.code >= 500) {
+                $scope.title = "Internal Server Error";
+                $scope.body = "The server encountered an error when trying to fulfill your request.  Please try again later.";
+            } else if (resp.code >= 400) {
+                $scope.title = "Bad Request";
+
+                if (resp.code === 404) {
+                    $scope.body = "The user " + $scope.user.email  + " does not own any files in this folder";
+                } else {
+                    $scope.body = resp.message;
+                }
+            } else {
+                $scope.title = "An unknown error occurred.";
+                $scope.body = "Unable to complete the permission transfer.  Please try again later.";
+            }
+            $scope.isFinished = true;
+            $scope.isErrored = true;
+
+
+            $scope.$apply();
+        };
+
         console.log(user);
 
         $scope.abort = function() {
-            $scope.continue = false;
+            $scope.isAborted = true;
         };
 
         $scope.close = function() {
