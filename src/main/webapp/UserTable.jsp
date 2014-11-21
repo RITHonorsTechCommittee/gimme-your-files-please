@@ -8,6 +8,21 @@
     	div#main {
     		margin-top: 50px;
     	}
+
+		div.cover {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: #262626;
+			z-index: 100;
+			text-align: center;
+		}
+
+		div.cover div.loadcontainer {
+			margin-top: 200px;
+		}
     	
     	.list-group-item {
     		padding: 5px 10px;
@@ -64,11 +79,21 @@
     </style>
 
 </head>
-<body>
+<body ng-controller="FileListController" >
 
 	<jsp:include page="includes/MainMenu.jsp" />
 
-    <div id="main" class="container" ng-controller="FileListController" >
+	<div id="cover" ng-show="!loaded_users" class="cover">
+		<div class="loadcontainer">
+			<div class="spinner">
+				<div class="bounce1"></div>
+				<div class="bounce2"></div>
+				<div class="bounce3"></div>
+			</div>
+			<h1>Loading</h1>
+		</div>
+	</div>
+    <div id="main" class="container">
 
 		<h1><c:out value="${appName}" /></h1>
 
