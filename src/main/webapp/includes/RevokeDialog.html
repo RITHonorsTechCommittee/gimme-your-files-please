@@ -14,8 +14,9 @@
     <div ng-show="!indeterminate && !isFinished">
         <h4 style="text-align: center">{{progress}} / {{numFiles}}</h4>
     </div>
-    <div ng-show="isFinished && !isErrored">
-        <h4>All files transferred successfully!</h4>
+    <div ng-show="isFinished && !isErrored" class="results">
+        <p ng-show="isAborted"><strong>{{progress}} / {{numFiles}}</strong> files transferred successfully!</p>
+        <p ng-show="!isAborted">All files transferred successfully!</p>
     </div>
 </div>
 <div class="modal-footer">

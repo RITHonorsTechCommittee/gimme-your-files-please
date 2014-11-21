@@ -3,11 +3,11 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user',
         $scope.title = "Processing...";
         $scope.numFiles = folder.files[user.permission].files[role].length;
         $scope.progress = 0;
-        $scope.isAborted = true;
         $scope.folder = folder;
         $scope.role = role;
         $scope.user = user;
 
+        $scope.isAborted = false;
         $scope.isFinished = false;
         $scope.isErrored = false;
 
@@ -38,19 +38,15 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user',
                     }
 
 
-                    if ($scope.progress != $scope.numFiles) {
-                        if (!$scope.isAborted) {
-                            console.log("Would do again.");
-                            $scope.$apply();
-                            $scope.revoke(role, user);
-                        }
+                    if ($scope.progress != $scope.numFiles && !$scope.isAborted) {
+                        console.log("Would do again.");
+                        $scope.$apply();
+                        $scope.revoke(role, user);
                     } else {
+                        $scope.title = "Finished";
                         $scope.isFinished = true;
                         $scope.$apply();
                     }
-
-
-
                 }
             });
         };

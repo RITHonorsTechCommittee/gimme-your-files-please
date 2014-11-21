@@ -76,6 +76,15 @@
 				  -webkit-transform: scale(1.0);
 			  }
 		}
+
+		.modal-sm {
+			width: 500px;
+		}
+
+		.results {
+			font-size: 18px;
+			color: #FFFFFF;
+		}
     </style>
 
 </head>
