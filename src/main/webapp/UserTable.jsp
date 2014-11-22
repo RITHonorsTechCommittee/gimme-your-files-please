@@ -24,14 +24,6 @@
 			margin-top: 200px;
 		}
     	
-    	.list-group-item {
-    		padding: 5px 10px;
-    	}
-    	
-    	.email-address-badge {
-    		float: right;
-    	}
-
 		.spinner {
 			margin: 30px auto;
 			width: 70px;
@@ -123,9 +115,24 @@
 				<td><input type="checkbox" ng-model="user.selected"/></td>
 				<td ng-bind="user.name"></td>
 				<td ng-bind="user.email"></td>
-				<td ng-bind="user.files.owner.length" popover="{{user.files.owner | popoverFileList}}" popover-title="Owned Files" popover-trigger="mouseenter" popover-append-to-body="true" popover-placement="right"></td>
-				<td ng-bind="user.files.reader.length" popover="{{user.files.reader | popoverFileList}}" popover-title="Files with Read Access" popover-trigger="mouseenter" popover-append-to-body="true" popover-placement="right"></td>
-				<td ng-bind="user.files.writer.length" popover="{{user.files.writer | popoverFileList}} " popover-title="Files with Write Access" popover-trigger="mouseenter" popover-append-to-body="true" popover-placement="right"></td>
+				<td ng-bind="user.files.owner.length"
+					popover="{{user.files.owner | popoverFileList}}"
+					popover-title="Owned Files"
+					popover-trigger="mouseenter"
+					popover-append-to-body="true"
+					popover-placement="right"></td>
+				<td ng-bind="user.files.reader.length"
+					popover="{{user.files.reader | popoverFileList}}"
+					popover-title="Files with Read Access"
+					popover-trigger="mouseenter"
+					popover-append-to-body="true"
+					popover-placement="right"></td>
+				<td ng-bind="user.files.writer.length"
+					popover="{{user.files.writer | popoverFileList}}"
+					popover-title="Files with Write Access"
+					popover-trigger="mouseenter"
+					popover-append-to-body="true"
+					popover-placement="right"></td>
 				<td>
 					<div class="btn-group">
 						<a ng-if="user.files.owner.length > 0" href="#" class="btn btn-success btn-sm" ng-click="ask(user)"><span class="glyphicon glyphicon-transfer"></span></a>
