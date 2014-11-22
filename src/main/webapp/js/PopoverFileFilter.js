@@ -8,7 +8,7 @@ gyfp.filter('popoverFileList', ['$sce', function($sce) {
             var ret = "";
             input.forEach(function(elem, i) {
                 if (i < maxFiles) {
-                    ret += + elem.fileName + ", ";
+                    ret += elem.fileName + ", ";
                 }
             });
 
