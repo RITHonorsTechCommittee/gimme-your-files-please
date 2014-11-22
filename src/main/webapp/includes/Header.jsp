@@ -25,4 +25,5 @@
 <script type="application/javascript" src="/js/third-party/angular/angular-ladda/angular-ladda.js"></script>
 <script type="application/javascript" src="/js/third-party/angular/ui-bootstrap/ui-bootstrap-tpls-0.11.2.js"></script>
 <script type="application/javascript" src="/js/gyfp.js"></script>
+<script type="application/javascript" src="/js/PopoverFileFilter.js"></script>
 <script type="application/javascript" src="/js/RevokeProgressController.js"></script>
