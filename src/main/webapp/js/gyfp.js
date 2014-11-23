@@ -3,6 +3,11 @@ var gyfp = angular.module("gyfp", ['ui.bootstrap', 'angular-ladda']);
 
 gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $modal) {
 
+    /**
+     * Updates the contents of the folder list from an api response
+     *
+     * @param folder  The new folder state
+     */
     $scope.applyFolder = function(folder) {
         $scope.folder = {};
         $scope.folder.id = folder.id;
@@ -65,8 +70,8 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
             controller: 'RevokeProgressController',
             size: 'sm',
             resolve: {
-                user: function() {
-                    return user;
+                users: function() {
+                    return [user];
                 },
                 role: function() {
                     return role;
@@ -107,11 +112,29 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
     };
 
     /**
-     * Revokes read/write permissions for all selected users
+     * Revokes all selected users read/write permissions within a folder
+     *
+     * @param role  The role which will be revoked  (reader or writer)
      */
-    $scope.revokeAll = function() {
-        console.log("Revoke all.");
-        console.log($scope.getSelectedUsers());
+    $scope.revokeAll = function(role) {
+        var modalInstance = $modal.open({
+            templateUrl: '../includes/RevokeDialog.html',
+            controller: 'RevokeProgressController',
+            size: 'sm',
+            resolve: {
+                users: function () {
+                    return $scope.getSelectedUsers();
+                },
+                role: function () {
+                    return role;
+                },
+                folder: function () {
+                    return $scope.folder;
+                }
+            },
+            keyboard: false,
+            backdrop: 'static'
+        });
     };
 
     $scope.getSelectedUsers = function() {

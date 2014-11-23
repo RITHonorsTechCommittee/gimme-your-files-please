@@ -1,23 +1,37 @@
-gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user', 'folder', 'role',
-    function ($scope, $modalInstance, user, folder, role) {
+gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users', 'folder', 'role',
+    function ($scope, $modalInstance, users, folder, role) {
+        var currentPermission;
+
         $scope.title = "Processing...";
-        $scope.numFiles = folder.files[user.permission].files[role].length;
-        $scope.progress = 0;
+        $scope.progress = {
+            overall: {
+                total: 0,
+                current: 0
+            },
+            user: {
+                total: folder.files[users[0].permission].files[role].length,
+                current: 0,
+                user: users[0],
+                userIndex: 0
+            }
+        };
+
+        users.forEach(function (user) {
+            $scope.progress.overall += folder.files[user.permission].files[role].length;
+        });
+
         $scope.folder = folder;
         $scope.role = role;
-        $scope.user = user;
+        $scope.user = users[0];
 
         $scope.isAborted = false;
         $scope.isFinished = false;
         $scope.isErrored = false;
 
-        console.log("'Revoking' user access");
-
-
-        $scope.revoke = function() {
+        $scope.revoke = function () {
             gapi.client.gyfp.folders.revoke[role]({
                 folder: folder.id,
-                userId: user.permission
+                userId: $scope.progress.user.permission
             }).execute(function (resp) {
                 if (resp.hasOwnProperty("code")) {
                     $scope.error(resp);
@@ -51,7 +65,7 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user',
             });
         };
 
-        $scope.error = function(resp) {
+        $scope.error = function (resp) {
             console.error("Error revoking permissions");
             console.error(resp);
             if (resp.code >= 500) {
@@ -61,7 +75,7 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user',
                 $scope.title = "Bad Request";
 
                 if (resp.code === 404) {
-                    $scope.body = "The user " + $scope.user.email  + " does not own any files in this folder";
+                    $scope.body = "The user " + $scope.user.email + " does not own any files in this folder";
                 } else {
                     $scope.body = resp.message;
                 }
@@ -78,13 +92,15 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'user',
 
         console.log(user);
 
-        $scope.abort = function() {
+        $scope.abort = function () {
             $scope.isAborted = true;
         };
 
-        $scope.close = function() {
+        $scope.close = function () {
             $modalInstance.close(user);
         };
 
         $scope.revoke();
     }]);
+,
+gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users', 'folder', 'role'
