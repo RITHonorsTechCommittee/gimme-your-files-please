@@ -146,9 +146,10 @@
 		<div>
 			With selected...
 			<div class="btn-group">
-				<a href="#" ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-success btn-sm" ng-click="askAll()">Ask Nicely</a>
+				<a href="#" ng-class="{'disabled': !isReaderSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll('reader')">Remove Read Permissions</a>
+				<a href="#" ng-class="{'disabled': !isWriterSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll('writer')">Remove Write Permissions</a>
+				<a href="#" ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-default btn-sm" ng-click="askAll()">Ask Nicely</a>
 				<a href="#" ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-danger  btn-sm" ng-click="forceAll()">Hostile Takeover</a>
-				<a href="#" ng-class="{'disabled': !isReadWriteSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll()">Remove User</a>
 			</div>
 		</div>
 	</div>

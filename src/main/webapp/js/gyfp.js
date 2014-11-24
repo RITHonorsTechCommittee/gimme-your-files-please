@@ -143,15 +143,36 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
         });
     };
 
+    /**
+     * Checks if any of the selected users own files
+     *
+     * @returns {boolean}  True if at least one selected user owns at least one file
+     */
     $scope.isOwnerSelected = function() {
         return $scope.users.some(function(user) {
             return user.files.owner.length > 0;
         });
     };
 
-    $scope.isReadWriteSelected = function() {
+    /**
+     * Checks if any of the selected users have read access to files
+     *
+     * @returns {boolean}  True if at least one selected user can read at least one file
+     */
+    $scope.isReaderSelected = function() {
         return $scope.users.some(function(user) {
-            return user.files.reader.length + user.files.writer.length > 0;
+            return user.files.reader.length  > 0;
+        });
+    };
+
+    /**
+     * Checks if any of the selected users have write access to files
+     *
+     * @returns {boolean}  True if at least one selected user ca n write at least one file
+     */
+    $scope.isWriterSelected = function() {
+        return $scope.users.some(function(user) {
+            return user.files.writer.length  > 0;
         });
     };
 
