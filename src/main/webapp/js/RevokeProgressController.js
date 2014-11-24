@@ -1,7 +1,5 @@
 gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users', 'folder', 'role',
     function ($scope, $modalInstance, users, folder, role) {
-        var currentPermission;
-
         $scope.title = "Processing...";
         $scope.progress = {
             overall: {
@@ -60,12 +58,17 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
 
                         $scope.progress.user.index += 1;
 
-                        if ($scope.progress.overall.current == $scope.progress.overall.total) {
+                        if ($scope.progress.overall.current + $scope.progress.user.current == $scope.progress.overall.total) {
                             $scope.title = "Finished";
                             $scope.isFinished = true;
                         } else {
-                            $scope.user = $scope.users[$scope.progress.user.index];
-                            $scope.revoke();
+                            $scope.progress.overall.current += $scope.progress.user.current;
+                            if ($scope.progress.user.index < users.length) {
+                                $scope.user = users[$scope.progress.user.index];
+                                $scope.progress.user.current = 0;
+                                $scope.progress.user.total = folder.files[$scope.user.permission].files[role].length;
+                                $scope.revoke();
+                            }
                         }
 
                         $scope.$apply();
@@ -99,14 +102,14 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
             $scope.$apply();
         };
 
-        console.log(user);
+        console.log(users);
 
         $scope.abort = function () {
             $scope.isAborted = true;
         };
 
         $scope.close = function () {
-            $modalInstance.close(user);
+            $modalInstance.close(users);
         };
 
         $scope.revoke();
