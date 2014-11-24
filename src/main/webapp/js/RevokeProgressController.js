@@ -11,13 +11,12 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
             user: {
                 total: folder.files[users[0].permission].files[role].length,
                 current: 0,
-                user: users[0],
-                userIndex: 0
+                index: 0
             }
         };
 
         users.forEach(function (user) {
-            $scope.progress.overall += folder.files[user.permission].files[role].length;
+            $scope.progress.overall.total += folder.files[user.permission].files[role].length;
         });
 
         $scope.folder = folder;
@@ -29,9 +28,10 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
         $scope.isErrored = false;
 
         $scope.revoke = function () {
+            var permission =  $scope.user.permission;
             gapi.client.gyfp.folders.revoke[role]({
                 folder: folder.id,
-                userId: $scope.progress.user.permission
+                userId: permission
             }).execute(function (resp) {
                 if (resp.hasOwnProperty("code")) {
                     $scope.error(resp);
@@ -39,26 +39,35 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
                     console.log("Got revoke response");
                     console.log(resp);
 
-                    if (resp.files.hasOwnProperty(user.permission)
-                        && resp.files[user.permission].hasOwnProperty('files')
-                        && resp.files[user.permission].files.hasOwnProperty(role)) {
-                        $scope.progress = $scope.numFiles - resp.files[user.permission].files[role].length;
-                        user.files[role] = resp.files[user.permission].files[role];
+                    if (resp.files.hasOwnProperty(permission)
+                        && resp.files[permission].hasOwnProperty('files')
+                        && resp.files[permission].files.hasOwnProperty(role)) {
+                        $scope.progress.user.current = $scope.progress.user.total - resp.files[permission].files[role].length;
+                        $scope.user.files[role] = resp.files[permission].files[role];
                         console.log($scope.progress);
                     } else {
-                        $scope.progress = $scope.numFiles;
+                        $scope.progress.user.current = $scope.progress.user.total;
+                        $scope.user.files[role] = [];
                         console.log($scope.progress);
-                        user.files[role] = [];
                     }
 
 
-                    if ($scope.progress != $scope.numFiles && !$scope.isAborted) {
+                    if ($scope.progress.user.current != $scope.progress.user.total && !$scope.isAborted) {
                         console.log("Would do again.");
                         $scope.$apply();
-                        $scope.revoke(role, user);
+                        $scope.revoke();
                     } else {
-                        $scope.title = "Finished";
-                        $scope.isFinished = true;
+
+                        $scope.progress.user.index += 1;
+
+                        if ($scope.progress.overall.current == $scope.progress.overall.total) {
+                            $scope.title = "Finished";
+                            $scope.isFinished = true;
+                        } else {
+                            $scope.user = $scope.users[$scope.progress.user.index];
+                            $scope.revoke();
+                        }
+
                         $scope.$apply();
                     }
                 }
@@ -102,5 +111,3 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
 
         $scope.revoke();
     }]);
-,
-gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users', 'folder', 'role'

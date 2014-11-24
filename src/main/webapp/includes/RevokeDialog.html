@@ -3,7 +3,7 @@
 </div>
 <div class="modal-body">
     <div ng-show="isErrored" class="alert alert-danger" role="alert">{{body}}</div>
-    <p>{{isFinished ? "Revoking " : "Revoked" }} <strong>{{role}}</strong> permissions for <strong>{{user.name}}</strong> ({{user.email}}).</p>
+    <p>{{isFinished ? "Revoking " : "Revoked" }} <strong>{{role}}</strong> permissions for <strong>{{progress.user.user.name}}</strong> ({{progress.user.user.email}}).</p>
     <div ng-show="!isFinished">
         <div class="spinner">
             <div class="bounce1"></div>
@@ -12,10 +12,10 @@
         </div>
     </div>
     <div ng-show="!indeterminate && !isFinished">
-        <h4 style="text-align: center">{{progress}} / {{numFiles}}</h4>
+        <h4 style="text-align: center">{{progress.overall.current + progress.user.current}} / {{progress.overall.total}}</h4>
     </div>
     <div ng-show="isFinished && !isErrored" class="results">
-        <p ng-show="isAborted"><strong>{{progress}} / {{numFiles}}</strong> files transferred successfully!</p>
+        <p ng-show="isAborted"><strong>{{progress.overall.current}} / {{progress.overall.total}}</strong> files transferred successfully!</p>
         <p ng-show="!isAborted">All files transferred successfully!</p>
     </div>
 </div>
