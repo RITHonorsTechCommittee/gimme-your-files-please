@@ -7,6 +7,7 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
         $scope.role = role;
         $scope.users = users;
 
+        $scope.operationRunning = false;
         $scope.isAborted = false;
         $scope.isErrored = false;
 
@@ -16,7 +17,7 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
                 current: 0
             },
             user: {
-                total: folder.files[users[0].permission].files[role].length,
+                total: 0,
                 current: 0,
                 index: 0
             }
@@ -57,7 +58,8 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
          * @returns {boolean}  True, if all users are done processing
          */
         $scope.isFinished = function () {
-            return $scope.progress.overall.current + $scope.progress.user.current == $scope.progress.overall.total;
+            return $scope.progress.overall.current + $scope.progress.user.current == $scope.progress.overall.total
+                || ($scope.isAborted && !$scope.operationRunning);
         };
 
         /**
@@ -79,43 +81,48 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
         };
 
         $scope.revoke = function () {
-            gapi.client.gyfp.folders.revoke[role]({
-                folder: folder.id,
-                userId: $scope.user.permission
-            }).execute(function (resp) {
-                if (resp.hasOwnProperty("code")) {
-                    $scope.error(resp);
-                } else {
-                    console.log("Got revoke response");
-                    console.log(resp);
-
-                    $scope.updateUserProgress(resp);
-
-
-                    if (!$scope.isUserDone() && !$scope.isAborted) {
-                        console.log("Would do again.");
-                        $scope.$apply();
-                        $scope.revoke();
+            $scope.operationRunning = true;
+            if (!$scope.isAborted) {
+                gapi.client.gyfp.folders.revoke[role]({
+                    folder: folder.id,
+                    userId: $scope.user.permission
+                }).execute(function (resp) {
+                    $scope.operationRunning = false;
+                    if (resp.hasOwnProperty("code")) {
+                        $scope.error(resp);
                     } else {
+                        console.log("Got revoke response");
+                        console.log(resp);
 
-                        $scope.progress.user.index += 1;
+                        $scope.updateUserProgress(resp);
 
-                        if ($scope.isFinished()) {
-                            $scope.title = "Finished";
+
+                        if (!$scope.isUserDone()) {
+                            $scope.revoke();
                         } else {
-                            $scope.progress.overall.current += $scope.progress.user.current;
-                            if ($scope.hasMoreUsers()) {
-                                $scope.user = users[$scope.progress.user.index];
-                                $scope.progress.user.current = 0;
-                                $scope.progress.user.total = folder.files[$scope.user.permission].files[role].length;
-                                $scope.revoke();
+
+                            $scope.progress.user.index += 1;
+
+                            if ($scope.isFinished()) {
+                                $scope.title = "Finished";
+                            } else {
+                                $scope.progress.overall.current += $scope.progress.user.current;
+                                if ($scope.hasMoreUsers()) {
+                                    $scope.user = users[$scope.progress.user.index];
+                                    $scope.progress.user.current = 0;
+                                    $scope.progress.user.total = folder.files[$scope.user.permission].files[role].length;
+                                    $scope.revoke();
+                                }
                             }
                         }
-
-                        $scope.$apply();
                     }
-                }
-            });
+
+                    $scope.$apply();
+                });
+            } else {
+                $scope.operationRunning = true;
+                $scope.$apply();
+            }
         };
 
         $scope.error = function (resp) {
@@ -152,8 +159,12 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
             $modalInstance.close(users);
         };
 
-        users.forEach(function (user) {
-            $scope.progress.overall.total += folder.files[user.permission].files[role].length;
+        // Remove any checked users who do not have any files to begin with
+        $scope.users = users.filter(function (user) {
+            var files = folder.files[user.permission].files[role].length;
+            $scope.progress.overall.total += files;
+
+            return files > 0;
         });
 
         if ($scope.users.length == 0) {
@@ -163,6 +174,7 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
             });
         } else {
             $scope.user = $scope.users[0];
+            $scope.progress.user.total = folder.files[$scope.user.permission].files[role].length;
             $scope.revoke();
         }
     }]);
