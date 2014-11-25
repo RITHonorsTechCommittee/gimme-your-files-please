@@ -2,6 +2,14 @@
 gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users', 'folder', 'role',
     function ($scope, $modalInstance, users, folder, role) {
         $scope.title = "Processing...";
+
+        $scope.folder = folder;
+        $scope.role = role;
+        $scope.users = users;
+
+        $scope.isAborted = false;
+        $scope.isErrored = false;
+
         $scope.progress = {
             overall: {
                 total: 0,
@@ -14,25 +22,12 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
             }
         };
 
-        users.forEach(function (user) {
-            $scope.progress.overall.total += folder.files[user.permission].files[role].length;
-        });
-
-        $scope.folder = folder;
-        $scope.role = role;
-        $scope.user = users[0];
-
-        $scope.users = users;
-
-        $scope.isAborted = false;
-        $scope.isErrored = false;
-
         /**
          * Updates the progress of the individual user permission modifications
          *
          * @param resp  The response to the API call
          */
-        function updateUserProgress(resp) {
+        $scope.updateUserProgress = function (resp) {
             var permission = $scope.user.permission;
 
             if (resp.files.hasOwnProperty(permission)
@@ -45,23 +40,23 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
                 $scope.progress.user.current = $scope.progress.user.total;
                 $scope.user.files[role] = [];
             }
-        }
+        };
 
         /**
          * Checks if the current user has had all permissions revoked
          *
          * @returns {boolean}  True, if all the user's files have been processed
          */
-        function isUserDone() {
+        $scope.isUserDone = function () {
             return $scope.progress.user.current == $scope.progress.user.total;
-        }
+        };
 
         /**
          * Checks if all requested users have had their permissions revoked
          *
          * @returns {boolean}  True, if all users are done processing
          */
-        $scope.isFinished = function() {
+        $scope.isFinished = function () {
             return $scope.progress.overall.current + $scope.progress.user.current == $scope.progress.overall.total;
         };
 
@@ -70,7 +65,7 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
          *
          * @returns {boolean}  True, if the processing is done and there is more than one user.
          */
-        $scope.showUserList = function() {
+        $scope.showUserList = function () {
             return $scope.isFinished() && $scope.users.length > 1;
         };
 
@@ -79,9 +74,9 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
          *
          * @returns {boolean}  True, if there are more users to process
          */
-        function hasMoreUsers() {
+        $scope.hasMoreUsers = function () {
             return $scope.progress.user.index < users.length;
-        }
+        };
 
         $scope.revoke = function () {
             gapi.client.gyfp.folders.revoke[role]({
@@ -94,10 +89,10 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
                     console.log("Got revoke response");
                     console.log(resp);
 
-                    updateUserProgress(resp);
+                    $scope.updateUserProgress(resp);
 
 
-                    if (!isUserDone() && !$scope.isAborted) {
+                    if (!$scope.isUserDone() && !$scope.isAborted) {
                         console.log("Would do again.");
                         $scope.$apply();
                         $scope.revoke();
@@ -109,7 +104,7 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
                             $scope.title = "Finished";
                         } else {
                             $scope.progress.overall.current += $scope.progress.user.current;
-                            if (hasMoreUsers()) {
+                            if ($scope.hasMoreUsers()) {
                                 $scope.user = users[$scope.progress.user.index];
                                 $scope.progress.user.current = 0;
                                 $scope.progress.user.total = folder.files[$scope.user.permission].files[role].length;
@@ -157,5 +152,18 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
             $modalInstance.close(users);
         };
 
-        $scope.revoke();
+        users.forEach(function (user) {
+            $scope.progress.overall.total += folder.files[user.permission].files[role].length;
+        });
+
+        if ($scope.users.length == 0) {
+            $scope.error({
+                code: 400,
+                message: "No users specified"
+            });
+        } else {
+            $scope.user = $scope.users[0];
+            $scope.revoke();
+        }
     }]);
+

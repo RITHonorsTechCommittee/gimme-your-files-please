@@ -29,10 +29,6 @@
         <p ng-show="isAborted"><strong>{{progress.overall.current}} / {{progress.overall.total}}</strong> files transferred successfully!</p>
         <p ng-show="!isAborted">All files transferred successfully!</p>
     </div>
-    <div>isFinished: <strong>{{isFinished()}}</strong></div>
-    <div>user.length: <strong>{{users.length}}</strong></div>
-    <div>user.length && isFinished: <strong>{{isFinished() && users.length}}</strong></div>
-    <div>showUserList: <strong>{{showUserList()}}</strong></div>
 </div>
 <div class="modal-footer">
     <div class="btn-group">
