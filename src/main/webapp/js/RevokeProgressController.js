@@ -120,7 +120,7 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
                     $scope.$apply();
                 });
             } else {
-                $scope.operationRunning = true;
+                $scope.operationRunning = false;
                 $scope.$apply();
             }
         };

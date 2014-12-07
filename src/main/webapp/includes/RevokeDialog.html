@@ -25,7 +25,7 @@
         <h4 style="text-align: center">{{progress.overall.current + progress.user.current}} / {{progress.overall.total}}</h4>
     </div>
     <div ng-show="isFinished() && !isErrored" class="results">
-        <p ng-show="isAborted"><strong>{{progress.overall.current}} / {{progress.overall.total}}</strong> files transferred successfully!</p>
+        <p ng-show="isAborted"><strong>{{progress.overall.current + progress.user.current}} / {{progress.overall.total}}</strong> files transferred successfully!</p>
         <p ng-show="!isAborted">All files transferred successfully!</p>
     </div>
 </div>
@@ -34,6 +34,6 @@
         <a href="#" class="btn btn-danger btn-md" ng-class="{'disabled': isAborted || isFinished()}" ng-click="abort()">Abort</a>
     </div>
     <div class="btn-group">
-        <a href="#" class="btn btn-primary btn-md" ng-class="{'disabled': !isFinished()}" ng-click="close()">Close</a>
+        <a href="#" class="btn btn-primary btn-md" ng-class="{'disabled': operationRunning}" ng-click="close()">Close</a>
     </div>
 </div>
