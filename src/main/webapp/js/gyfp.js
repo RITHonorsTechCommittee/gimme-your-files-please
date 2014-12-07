@@ -149,7 +149,7 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
      * @returns {boolean}  True if at least one selected user owns at least one file
      */
     $scope.isOwnerSelected = function() {
-        return $scope.users.some(function(user) {
+        return $scope.getSelectedUsers().some(function(user) {
             return user.files.owner.length > 0;
         });
     };
@@ -160,8 +160,8 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
      * @returns {boolean}  True if at least one selected user can read at least one file
      */
     $scope.isReaderSelected = function() {
-        return $scope.users.some(function(user) {
-            return user.files.reader.length  > 0;
+        return $scope.getSelectedUsers().some(function (user) {
+            return user.files.reader.length > 0;
         });
     };
 
@@ -171,8 +171,8 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
      * @returns {boolean}  True if at least one selected user ca n write at least one file
      */
     $scope.isWriterSelected = function() {
-        return $scope.users.some(function(user) {
-            return user.files.writer.length  > 0;
+        return $scope.getSelectedUsers().some(function(user) {
+            return user.files.writer.length > 0;
         });
     };
 
