@@ -8,15 +8,22 @@
     	div#main {
     		margin-top: 50px;
     	}
-    	
-    	.list-group-item {
-    		padding: 5px 10px;
-    	}
-    	
-    	.email-address-badge {
-    		float: right;
-    	}
 
+		div.cover {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: #262626;
+			z-index: 100;
+			text-align: center;
+		}
+
+		div.cover div.loadcontainer {
+			margin-top: 200px;
+		}
+    	
 		.spinner {
 			margin: 30px auto;
 			width: 70px;
@@ -61,14 +68,33 @@
 				  -webkit-transform: scale(1.0);
 			  }
 		}
+
+		.modal-sm {
+			width: 500px;
+		}
+
+		.results {
+			font-size: 18px;
+			color: #FFFFFF;
+		}
     </style>
 
 </head>
-<body>
+<body ng-controller="FileListController" >
 
 	<jsp:include page="includes/MainMenu.jsp" />
 
-    <div id="main" class="container" ng-controller="FileListController" >
+	<div id="cover" ng-show="!loaded_users" class="cover">
+		<div class="loadcontainer">
+			<div class="spinner">
+				<div class="bounce1"></div>
+				<div class="bounce2"></div>
+				<div class="bounce3"></div>
+			</div>
+			<h1>Loading</h1>
+		</div>
+	</div>
+    <div id="main" class="container">
 
 		<h1><c:out value="${appName}" /></h1>
 
@@ -89,9 +115,24 @@
 				<td><input type="checkbox" ng-model="user.selected"/></td>
 				<td ng-bind="user.name"></td>
 				<td ng-bind="user.email"></td>
-				<td ng-bind="user.files.owner.length" popover="{{user.files.owner}}"></td>
-				<td ng-bind="user.files.reader.length" popover="{{user.files.reader}}"></td>
-				<td ng-bind="user.files.writer.length" popover="{{user.files.writer}}"></td>
+				<td ng-bind="user.files.owner.length"
+					popover="{{user.files.owner | popoverFileList}}"
+					popover-title="Owned Files"
+					popover-trigger="mouseenter"
+					popover-append-to-body="true"
+					popover-placement="right"></td>
+				<td ng-bind="user.files.reader.length"
+					popover="{{user.files.reader | popoverFileList}}"
+					popover-title="Files with Read Access"
+					popover-trigger="mouseenter"
+					popover-append-to-body="true"
+					popover-placement="right"></td>
+				<td ng-bind="user.files.writer.length"
+					popover="{{user.files.writer | popoverFileList}}"
+					popover-title="Files with Write Access"
+					popover-trigger="mouseenter"
+					popover-append-to-body="true"
+					popover-placement="right"></td>
 				<td>
 					<div class="btn-group">
 						<a ng-if="user.files.owner.length > 0" href="#" class="btn btn-success btn-sm" ng-click="ask(user)"><span class="glyphicon glyphicon-transfer"></span></a>
@@ -105,9 +146,10 @@
 		<div>
 			With selected...
 			<div class="btn-group">
-				<a href="#" ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-success btn-sm" ng-click="askAll()">Ask Nicely</a>
+				<a href="#" ng-class="{'disabled': !isReaderSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll('reader')">Remove Read Permissions</a>
+				<a href="#" ng-class="{'disabled': !isWriterSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll('writer')">Remove Write Permissions</a>
+				<a href="#" ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-default btn-sm" ng-click="askAll()">Ask Nicely</a>
 				<a href="#" ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-danger  btn-sm" ng-click="forceAll()">Hostile Takeover</a>
-				<a href="#" ng-class="{'disabled': !isReadWriteSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll()">Remove User</a>
 			</div>
 		</div>
 	</div>

@@ -3,6 +3,11 @@ var gyfp = angular.module("gyfp", ['ui.bootstrap', 'angular-ladda']);
 
 gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $modal) {
 
+    /**
+     * Updates the contents of the folder list from an api response
+     *
+     * @param folder  The new folder state
+     */
     $scope.applyFolder = function(folder) {
         $scope.folder = {};
         $scope.folder.id = folder.id;
@@ -65,8 +70,8 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
             controller: 'RevokeProgressController',
             size: 'sm',
             resolve: {
-                user: function() {
-                    return user;
+                users: function() {
+                    return [user];
                 },
                 role: function() {
                     return role;
@@ -107,11 +112,29 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
     };
 
     /**
-     * Revokes read/write permissions for all selected users
+     * Revokes all selected users read/write permissions within a folder
+     *
+     * @param role  The role which will be revoked  (reader or writer)
      */
-    $scope.revokeAll = function() {
-        console.log("Revoke all.");
-        console.log($scope.getSelectedUsers());
+    $scope.revokeAll = function(role) {
+        var modalInstance = $modal.open({
+            templateUrl: '../includes/RevokeDialog.html',
+            controller: 'RevokeProgressController',
+            size: 'sm',
+            resolve: {
+                users: function () {
+                    return $scope.getSelectedUsers();
+                },
+                role: function () {
+                    return role;
+                },
+                folder: function () {
+                    return $scope.folder;
+                }
+            },
+            keyboard: false,
+            backdrop: 'static'
+        });
     };
 
     $scope.getSelectedUsers = function() {
@@ -120,15 +143,36 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
         });
     };
 
+    /**
+     * Checks if any of the selected users own files
+     *
+     * @returns {boolean}  True if at least one selected user owns at least one file
+     */
     $scope.isOwnerSelected = function() {
-        return $scope.users.some(function(user) {
+        return $scope.getSelectedUsers().some(function(user) {
             return user.files.owner.length > 0;
         });
     };
 
-    $scope.isReadWriteSelected = function() {
-        return $scope.users.some(function(user) {
-            return user.files.reader.length + user.files.writer.length > 0;
+    /**
+     * Checks if any of the selected users have read access to files
+     *
+     * @returns {boolean}  True if at least one selected user can read at least one file
+     */
+    $scope.isReaderSelected = function() {
+        return $scope.getSelectedUsers().some(function (user) {
+            return user.files.reader.length > 0;
+        });
+    };
+
+    /**
+     * Checks if any of the selected users have write access to files
+     *
+     * @returns {boolean}  True if at least one selected user ca n write at least one file
+     */
+    $scope.isWriterSelected = function() {
+        return $scope.getSelectedUsers().some(function(user) {
+            return user.files.writer.length > 0;
         });
     };
 
