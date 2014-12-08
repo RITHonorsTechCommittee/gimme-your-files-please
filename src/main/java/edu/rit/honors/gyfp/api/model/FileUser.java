@@ -1,12 +1,15 @@
 package edu.rit.honors.gyfp.api.model;
 
+import com.google.appengine.api.users.User;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Id;
+import static com.google.common.base.Preconditions.*;
 
 /**
  * Class that stores information about users and the files they own.
@@ -43,10 +46,14 @@ public class FileUser {
 	 *            The user's / group's email address
 	 */
 	public FileUser(String permission, String name, String email) {
-		this.permission = permission;
-		this.name = name;
-		this.email = email;
+		this.permission = checkNotNull(permission);
+		this.name = checkNotNull(name);
+		this.email = checkNotNull(email);
 		this.files = new HashMap<>();
+	}
+
+	public FileUser(User user) {
+		this(user.getUserId(), user.getNickname(), user.getEmail());
 	}
 
 	public String getPermission() {

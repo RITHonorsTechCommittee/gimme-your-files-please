@@ -1,77 +1,87 @@
 package edu.rit.honors.gyfp.api.model;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.List;
-
-import org.joda.time.DateTime;
-
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import edu.rit.honors.gyfp.api.Constants;
+import edu.rit.honors.gyfp.util.OfyService;
+import org.joda.time.DateTime;
+
+import java.util.List;
+
+import static com.google.common.base.Preconditions.*;
 
 @Entity
 public class TransferRequest {
-	
+
 	/**
 	 * The ID of this transfer request.  Automatically assigned by Objectify
 	 */
 	@Id
 	Long id;
-	
-	
 	/**
-	 * The ID of the User who requested the transfer
+	 * The User who initiated the request
 	 */
-	String requestingUser;
-	
+	private final FileUser requester;
+
 	/**
-	 * The email address of the user who requested the transfer 
+	 * The email address of the user as which the request is directed
 	 */
-	String requestingEmail;
-	
+	private final FileUser target;
+
 	/**
 	 * The ID of the user as which the request is directed
 	 */
-	String targetUser;
-	
-	/**
-	 * The email address of the user as which the request is directed 
-	 */
-	String targetEmail;
-	
+	private String targetPermission;
+
 	/**
 	 * The date/time that the request was made.
 	 */
-	DateTime requestCreation;
-	
+	private DateTime requestCreation;
+
 	/**
-	 * The files that will be transferred 
+	 * The files that will be transferred
 	 */
 	List<TransferableFile> files;
-	
+
 	/**
 	 * Whether this is a polite request or a forced transfer
 	 */
 	boolean isForced;
 	
-	private TransferRequest(String rUser, String rEmail, String tUser, String tEmail, List<TransferableFile> files) {
-		this.requestingUser = checkNotNull(rUser);
-		this.requestingEmail = checkNotNull(rEmail);
-		this.targetUser = checkNotNull(tUser);
-		this.targetEmail = checkNotNull(tEmail);
+	private TransferRequest(FileUser requester, FileUser target, List<TransferableFile> files) {
+		this.requester = checkNotNull(requester);
+		this.target = checkNotNull(target);
+		this.targetPermission = target.getPermission();
 		this.files = checkNotNull(files);
 	}
 	
 	public static TransferRequest fromFolder(Folder folder, User user, String targetId) {
-		// TODO
-		
-		// 1.  Check for existing transfer request
-		// 2.  Create or Update transfer request
-		// 3.  Persist this request object
-		// 4.  Must store request object in folder
-		// 5.  Persist the folder changes
-		return null;
+		checkNotNull(folder);
+		checkNotNull(user);
+		checkNotNull(targetId);
+
+		// Attempt to load the an existing TransferRequest
+		TransferRequest request = OfyService.ofy().load()
+				.type(TransferRequest.class)
+				.filter("containingFolder ==", folder.getId())
+				.filter("targetUser ==", targetId)
+				.first().now();
+
+		FileUser target = checkNotNull(folder.getUser(targetId));
+		List<TransferableFile> files = target.getFiles().get(Constants.Role.OWNER);
+
+		if (request == null) {
+			FileUser requester = new FileUser(user);
+
+			request = new TransferRequest(requester, target, files);
+		} else {
+			request.getFiles().addAll(files);
+		}
+
+		OfyService.ofy().save().entity(request).now();
+
+		return request;
 	}
 
 	public Long getId() {
@@ -79,19 +89,19 @@ public class TransferRequest {
 	}
 
 	public String getRequestingUser() {
-		return requestingUser;
+		return requester.getPermission();
 	}
 
 	public String getRequestingEmail() {
-		return requestingEmail;
+		return requester.getEmail();
 	}
 
 	public String getTargetUser() {
-		return targetUser;
+		return target.getPermission();
 	}
 
 	public String getTargetEmail() {
-		return targetEmail;
+		return target.getEmail();
 	}
 
 	public DateTime getRequestCreation() {
