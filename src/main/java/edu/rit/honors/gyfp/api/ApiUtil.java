@@ -1,19 +1,22 @@
 package edu.rit.honors.gyfp.api;
 
 import com.google.api.server.spi.response.InternalServerErrorException;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.DriveRequest;
 import com.google.apphosting.api.ApiProxy;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.*;
 
 public class ApiUtil {
 
@@ -73,5 +76,9 @@ public class ApiUtil {
                         Constants.Error.SLEEP_INTERRUPTED, e);
             }
         }
+    }
+
+    public static void sendTransferRequestEmail(String from, String to, String message) {
+
     }
 }

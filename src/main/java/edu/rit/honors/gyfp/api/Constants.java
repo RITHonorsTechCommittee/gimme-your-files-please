@@ -20,6 +20,11 @@ public class Constants {
 		public static final String FOLDER = "application/vnd.google-apps.folder";
 	}
 
+	public static class Email {
+		public static final String ADDRESS = "no-reply@honors.rit.edu";
+		public static final String NAME = "GYFP Admin";
+	}
+
 	public static class Role {
 		public static final String OWNER = "owner";
 		public static final String WRITER = "writer";
