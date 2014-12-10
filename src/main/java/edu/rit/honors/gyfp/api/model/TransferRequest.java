@@ -7,7 +7,10 @@ import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.util.OfyService;
 import org.joda.time.DateTime;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.*;
 
@@ -42,18 +45,18 @@ public class TransferRequest {
 	/**
 	 * The files that will be transferred
 	 */
-	List<TransferableFile> files;
+	Set<TransferableFile> files;
 
 	/**
 	 * Whether this is a polite request or a forced transfer
 	 */
 	boolean isForced;
 	
-	private TransferRequest(FileUser requester, FileUser target, List<TransferableFile> files) {
+	private TransferRequest(FileUser requester, FileUser target, Collection<TransferableFile> files) {
 		this.requester = checkNotNull(requester);
 		this.target = checkNotNull(target);
 		this.targetPermission = target.getPermission();
-		this.files = checkNotNull(files);
+		this.files = new HashSet<>(checkNotNull(files));
 	}
 	
 	public static TransferRequest fromFolder(Folder folder, User user, String targetId) {
@@ -108,7 +111,7 @@ public class TransferRequest {
 		return requestCreation;
 	}
 
-	public List<TransferableFile> getFiles() {
+	public Set<TransferableFile> getFiles() {
 		return files;
 	}
 
