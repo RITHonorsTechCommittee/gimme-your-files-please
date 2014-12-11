@@ -3,6 +3,7 @@ package edu.rit.honors.gyfp.api.model;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import static com.google.common.base.Preconditions.*;
 public class FileUser {
 
 	@Id
+	@Index
 	private String permission;
 
 	private String name;

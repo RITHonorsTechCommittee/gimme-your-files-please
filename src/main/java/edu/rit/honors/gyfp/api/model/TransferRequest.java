@@ -1,8 +1,10 @@
 package edu.rit.honors.gyfp.api.model;
 
+import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.util.OfyService;
 import org.joda.time.DateTime;
@@ -25,24 +27,23 @@ public class TransferRequest {
 	 */
 	@Id
 	Long id;
+
 	/**
 	 * The User who initiated the request
 	 */
-	private final FileUser requester;
+	@Index
+	private FileUser requester;
 
 	/**
 	 * The email address of the user as which the request is directed
 	 */
-	private final FileUser target;
-
-	/**
-	 * The ID of the user as which the request is directed
-	 */
-	private String targetPermission;
+	@Index
+	private FileUser target;
 
 	/**
 	 * The date/time that the request was made.
 	 */
+	@Index
 	private DateTime requestCreation;
 
 	/**
@@ -58,7 +59,6 @@ public class TransferRequest {
 	private TransferRequest(FileUser requester, FileUser target, Collection<TransferableFile> files) {
 		this.requester = checkNotNull(requester);
 		this.target = checkNotNull(target);
-		this.targetPermission = target.getPermission();
 		this.files = new HashSet<>(checkNotNull(files));
 	}
 	
@@ -70,8 +70,8 @@ public class TransferRequest {
 		// Attempt to load the an existing TransferRequest
 		TransferRequest request = OfyService.ofy().load()
 				.type(TransferRequest.class)
-				.filter("containingFolder ==", folder.getId())
-				.filter("targetUser ==", targetId)
+				.filter("target.permission", targetId)
+				.filter("requester.permission", user.getUserId())
 				.first().now();
 
 		FileUser target = checkNotNull(folder.getUser(targetId));
@@ -79,10 +79,12 @@ public class TransferRequest {
 		List<TransferableFile> files = target.getFiles().get(Constants.Role.OWNER);
 
 		if (request == null) {
+			log.info("Creating a new transfer request.");
 			FileUser requester = new FileUser(user);
 
 			request = new TransferRequest(requester, target, files);
 		} else {
+			log.info("Updating existing transfer request.");
 			request.getFiles().addAll(files);
 		}
 
