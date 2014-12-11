@@ -21,7 +21,7 @@ public class Constants {
 	}
 
 	public static class Email {
-		public static final String ADDRESS = "no-reply@honors.rit.edu";
+		public static final String ADDRESS = "no-reply@gimmeyourfilesplease.appspotmail.com";
 		public static final String NAME = "GYFP Admin";
 	}
 

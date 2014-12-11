@@ -46,6 +46,9 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
     $scope.ask = function(user) {
         console.log("'Asking' user for files");
         console.log(user);
+
+        gapi.client.gyfp.folders.transfer.polite({folder: $scope.folder.id, users: [user.permission]})
+            .execute(function(resp){console.log(resp);});
     };
 
     /**

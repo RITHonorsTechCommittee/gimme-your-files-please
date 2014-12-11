@@ -318,6 +318,8 @@ public class FolderApi {
 					new InternetAddress(request.getTargetEmail(), request.getTargetUser()));
 			message.setSubject("You received a transfer request");
 			message.setText(messageText);
+
+			log.info("Sending transfer email from " + Constants.Email.ADDRESS + " (" + Constants.Email.NAME + ") to " + request.getTargetEmail() + " for request " + request.getId());
 			Transport.send(message);
 
 		} catch (AddressException e) {

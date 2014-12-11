@@ -11,11 +11,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import static com.google.common.base.Preconditions.*;
 
 @Entity
 public class TransferRequest {
+
+	private static final Logger log = Logger.getLogger(TransferRequest.class.getName());
 
 	/**
 	 * The ID of this transfer request.  Automatically assigned by Objectify
@@ -72,6 +75,7 @@ public class TransferRequest {
 				.first().now();
 
 		FileUser target = checkNotNull(folder.getUser(targetId));
+		log.info("Creating transfer request for user " + targetId + " files: " + target.getFiles());
 		List<TransferableFile> files = target.getFiles().get(Constants.Role.OWNER);
 
 		if (request == null) {
