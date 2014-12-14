@@ -31,7 +31,7 @@
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>any</web-resource-name>
-			<url-pattern>/list*</url-pattern>
+			<url-pattern>/folder*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>
