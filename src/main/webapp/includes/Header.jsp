@@ -9,7 +9,9 @@
 <title><c:out value="${title}" /> | <c:out value="${appName}" /></title>
 
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/cyborg/bootstrap.min.css" />
-<link rel="stylesheet" href="/css/third-party/ladda/ladda-themeless.min.css" />
+<link rel="stylesheet" href="css/third-party/ladda/ladda-themeless.min.css" />
+<link rel="stylesheet" href="css/base.css" />
+
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
@@ -19,11 +21,11 @@
 <![endif]-->
 
 <script type="application/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<script type="application/javascript" src="/js/third-party/ladda/spin.js"></script>
-<script type="application/javascript" src="/js/third-party/ladda/ladda.js"></script>
+<script type="application/javascript" src="js/third-party/ladda/spin.js"></script>
+<script type="application/javascript" src="js/third-party/ladda/ladda.js"></script>
 <script type="application/javascript" src="js/third-party/angular/angular.js"></script>
-<script type="application/javascript" src="/js/third-party/angular/angular-ladda/angular-ladda.js"></script>
-<script type="application/javascript" src="/js/third-party/angular/ui-bootstrap/ui-bootstrap-tpls-0.11.2.js"></script>
-<script type="application/javascript" src="/js/gyfp.js"></script>
-<script type="application/javascript" src="/js/PopoverFileFilter.js"></script>
-<script type="application/javascript" src="/js/RevokeProgressController.js"></script>
+<script type="application/javascript" src="js/third-party/angular/angular-ladda/angular-ladda.js"></script>
+<script type="application/javascript" src="js/third-party/angular/ui-bootstrap/ui-bootstrap-tpls-0.11.2.js"></script>
+<script type="application/javascript" src="js/gyfp.js"></script>
+<script type="application/javascript" src="js/PopoverFileFilter.js"></script>
+<script type="application/javascript" src="js/RevokeProgressController.js"></script>
