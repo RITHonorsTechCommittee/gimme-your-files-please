@@ -1,34 +1,25 @@
 package edu.rit.honors.gyfp.servlets;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.Permission;
+import edu.rit.honors.gyfp.drive.FileHelper;
+import edu.rit.honors.gyfp.model.DriveUser;
+import edu.rit.honors.gyfp.util.Utils;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.Permission;
-import com.googlecode.objectify.Objectify;
-
-import edu.rit.honors.gyfp.drive.FileHelper;
-import edu.rit.honors.gyfp.model.DriveUser;
-import edu.rit.honors.gyfp.util.OfyService;
-import edu.rit.honors.gyfp.util.Utils;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Entry servlet for the Drive API App Engine Sample. Demonstrates how to make
  * an authenticated API call using OAuth 2 helper classes.
  */
-public class UserList extends DriveServlet {
+public class FolderViewServlet extends DriveServlet {
 
 	private static final long serialVersionUID = -5877306066505657461L;
 
@@ -40,17 +31,8 @@ public class UserList extends DriveServlet {
 		
 		setBaseAttributes(req);
 		
-		String template = req.getParameter("template");
-		if (template == null || !(template.equals("list") || template.equals("table"))) {
-			template = "UserList.jsp";
-		} else if (template.equals("list")) {
-			template = "UserList.jsp";
-		} else if (template.equals("table")) {
-			template = "UserTable.jsp";
-		}
-
 		// Get the stored credentials using the Authorization Flow
-		RequestDispatcher view = req.getRequestDispatcher(template);
+		RequestDispatcher view = req.getRequestDispatcher("FolderView.jsp");
 
 		String folderId = req.getParameter(PARAM_FOLDER);
 		Drive service = getDriveService(req);
