@@ -1,0 +1,30 @@
+<div id="main" class="container">
+
+    <h1><c:out value="${appName}" /></h1>
+
+    <h2 ng-show="!loaded_users">Loading...</h2>
+    <a class="btn btn-primary btn-md" ladda="folderLoading" ng-click="refresh()" data-style="expand-right">{{folderLoading ? "Loading..." : "Refresh"}}</a>
+
+    <table class="table table-striped" ng-cloak>
+        <tr>
+            <th><input type="checkbox" ng-model="selectAll" ui-indeterminate="isSelectAllIndeterminate()" ng-click="toggleSelectAll()"/> </th>
+            <th>File Name</th>
+            <th>Actions</th>
+        </tr>
+        <tr ng-repeat="file in files" ng-cloak>
+            <td><input type="checkbox" ng-model="file.selected"/></td>
+            <td ng-bind="file.name"></td>
+            <td>
+                <div class="btn-group">
+                    <a href="#" class="btn btn-success btn-sm" ng-click="remove(file)"><span class="glyphicon glyphicon-trash"></span></a>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div>
+        <div class="btn-group">
+            <a href="#" ng-class="{'disabled': !hasSelectedFiles()}" class="btn btn-default  btn-sm" ng-click="removeFilesFromTransfer()">Remove Selected Files</a>
+            <a href="#" ng-class="{'disabled': !hasFiles()}" class="btn btn-default  btn-sm" ng-click="transfer()">Transfer Files</a>
+        </div>
+    </div>
+</div>

@@ -5,14 +5,21 @@
 <head>
 	<jsp:include page="includes/Header.jsp" />
 </head>
-<body>
+<body ng-controller="FileListController" >
 
 	<jsp:include page="includes/MainMenu.jsp" />
 
-
-    <div id="main" class="container">
-		<div ng-view></div>
+	<div id="cover" ng-show="!loaded_users" class="cover">
+		<div class="loadcontainer">
+			<div class="spinner">
+				<div class="bounce1"></div>
+				<div class="bounce2"></div>
+				<div class="bounce3"></div>
+			</div>
+			<h1>Loading</h1>
+		</div>
 	</div>
+
 	
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="application/javascript"></script>

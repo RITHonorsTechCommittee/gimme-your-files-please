@@ -1,7 +1,25 @@
 /*global gapi, angular*/
-var gyfp = angular.module("gyfp", ['ui.bootstrap', 'angular-ladda']);
+var gyfp = angular.module("gyfp", ['ngRoute', 'ui.bootstrap', 'angular-ladda']);
 
-gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $modal) {
+gyfp.config(function ($routeProvider, $locationProvider) {
+    //configure the routing rules here
+    $routeProvider.when('/about', {
+        controller: 'AboutController',
+        template: 'about.html'
+    })
+        when('/manage/:folderId', {
+        controller: 'FolderListController',
+        template: 'folder-list.html'
+    }).when('/request/:requestId', {
+        controller: 'FileListController',
+        template: 'transfer-list'
+    }).otherwise()
+
+    //routing DOESN'T work without html5Mode
+    $locationProvider.html5Mode(true);
+});
+
+gyfp.controller("FolderListController", ['$scope', '$modal', function ($scope, $modal) {
 
     /**
      * Updates the contents of the folder list from an api response
@@ -223,6 +241,13 @@ gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $mo
     gapi.auth.authorize({client_id: "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com",scope:["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata"], immediate:false}, $scope.api_authenticated);
 
     $scope.users = [];
+}]);
+
+gyfp.controller("FileListController", ['$scope', '$modal', function ($scope, $modal) {
+
+    $scope.files = [];
+
+
 }]);
 
 var init = function() {
