@@ -36,10 +36,10 @@
             popover-placement="right"></td>
         <td>
             <div class="btn-group">
-                <a ng-if="user.files.owner.length > 0" href="#" class="btn btn-success btn-sm" ng-click="ask(user)"><span class="glyphicon glyphicon-transfer"></span></a>
-                <a ng-if="user.files.owner.length > 0" href="#" class="btn btn-danger  btn-sm" ng-click="force(user)"><span class="glyphicon glyphicon-exclamation-sign"></span></a>
-                <a ng-if="user.files.reader.length > 0" href="#" class="btn btn-default  btn-sm" ng-click="revoke('reader', user)"><span class="glyphicon glyphicon-eye-open"></span></a>
-                <a ng-if="user.files.writer.length > 0" href="#" class="btn btn-default  btn-sm" ng-click="revoke('writer', user)"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a ng-if="user.files.owner.length > 0" class="btn btn-success btn-sm" ng-click="ask(user)"><span class="glyphicon glyphicon-transfer"></span></a>
+                <a ng-if="user.files.owner.length > 0" class="btn btn-danger  btn-sm" ng-click="force(user)"><span class="glyphicon glyphicon-exclamation-sign"></span></a>
+                <a ng-if="user.files.reader.length > 0" class="btn btn-default  btn-sm" ng-click="revoke('reader', user)"><span class="glyphicon glyphicon-eye-open"></span></a>
+                <a ng-if="user.files.writer.length > 0" class="btn btn-default  btn-sm" ng-click="revoke('writer', user)"><span class="glyphicon glyphicon-pencil"></span></a>
             </div>
         </td>
     </tr>
@@ -47,9 +47,9 @@
 <div>
     With selected...
     <div class="btn-group">
-        <a href="#" ng-class="{'disabled': !isReaderSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll('reader')">Remove Read Permissions</a>
-        <a href="#" ng-class="{'disabled': !isWriterSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll('writer')">Remove Write Permissions</a>
-        <a href="#" ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-default btn-sm" ng-click="askAll()">Ask Nicely</a>
-        <a href="#" ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-danger  btn-sm" ng-click="forceAll()">Hostile Takeover</a>
+        <a ng-class="{'disabled': !isReaderSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll('reader')">Remove Read Permissions</a>
+        <a ng-class="{'disabled': !isWriterSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll('writer')">Remove Write Permissions</a>
+        <a ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-default btn-sm" ng-click="askAll()">Ask Nicely</a>
+        <a ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-danger  btn-sm" ng-click="forceAll()">Hostile Takeover</a>
     </div>
 </div>

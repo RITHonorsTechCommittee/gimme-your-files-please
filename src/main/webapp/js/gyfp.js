@@ -5,21 +5,27 @@ gyfp.config(function ($routeProvider, $locationProvider) {
     //configure the routing rules here
     $routeProvider.when('/about', {
         controller: 'AboutController',
-        template: 'about.html'
-    })
-        when('/manage/:folderId', {
+        templateUrl: 'js/partials/about.html'
+    }).when('/manage/:folderId', {
         controller: 'FolderListController',
-        template: 'folder-list.html'
+        templateUrl: 'js/partials/folder-list.html'
     }).when('/request/:requestId', {
         controller: 'FileListController',
-        template: 'transfer-list'
-    }).otherwise()
+        templateUrl: 'js/partials/transfer-list'
+    }).otherwise({
+        redirectTo: '/about'
+    });
 
-    //routing DOESN'T work without html5Mode
-    $locationProvider.html5Mode(true);
+    // routing DOESN'T work without html5Mode
+    // $locationProvider.html5Mode(true);
+
 });
 
-gyfp.controller("FolderListController", ['$scope', '$modal', function ($scope, $modal) {
+gyfp.controller("FolderListController", ['$scope', '$modal', '$routeParams', function ($scope, $modal, $routeParams) {
+
+    $scope.folder = {
+        id: $routeParams.folderId
+    };
 
     /**
      * Updates the contents of the folder list from an api response
@@ -231,7 +237,7 @@ gyfp.controller("FolderListController", ['$scope', '$modal', function ($scope, $
 
         $scope.folderLoading = true;
         $scope.$apply();
-        gapi.client.gyfp.folders.get({id: "0B0WTvx-f8-LZY0dxUGlwWmtSRHc"}).execute(function (resp) {
+        gapi.client.gyfp.folders.get({id: $scope.folder.id}).execute(function (resp) {
             $scope.applyFolder(resp);
         });
     };

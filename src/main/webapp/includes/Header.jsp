@@ -30,3 +30,5 @@
 <script type="application/javascript" src="js/gyfp.js"></script>
 <script type="application/javascript" src="js/PopoverFileFilter.js"></script>
 <script type="application/javascript" src="js/RevokeProgressController.js"></script>
+
+<base href="/"/>
