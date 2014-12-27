@@ -43,7 +43,7 @@ gyfp.service('AuthenticationService', function() {
     };
 });
 
-gyfp.controller("AuthenticationController", ["$scope", "AuthenticateService", function($scope, authService) {
+gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", function($scope, authService) {
     $scope.authenticated = authService.isAuthenticated();
 
     if (!$scope.isAuthenticated) {
@@ -82,6 +82,21 @@ gyfp.controller("FolderListController", ['$scope', '$modal', '$routeParams', fun
      * @param folder  The new folder state
      */
     $scope.applyFolder = function(folder) {
+
+        if (folder.error) {
+            $scope.isErrored = true;
+            if (folder.code === 404) {
+                $scope.errorMessage = "The requested folder does not exist";
+            } else if (folder.code === 403) {
+                $scope.errorMessage = "You do not have permission to manage this folder";
+            } else if (folder.code === 400){
+                $scope.errorMessage = "Invalid folder";
+            } else {
+                $scope.errorMessage = "An unknown error occurred";
+            }
+
+            return;
+        }
         $scope.folder = {
             id: folder.id,
             files: folder.files
