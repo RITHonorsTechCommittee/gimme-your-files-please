@@ -15,11 +15,32 @@ gyfp.config(function ($routeProvider, $locationProvider) {
     }).otherwise({
         redirectTo: '/about'
     });
-
-    // routing DOESN'T work without html5Mode
-    // $locationProvider.html5Mode(true);
-
 });
+
+gyfp.controller("AuthenticationController", ["$scope", function($scope) {
+    $scope.authenticated = false;
+
+    $scope.handleAuthResult = function() {
+
+    };
+    $scope.checkAuth = function() {
+        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, $scope.handleAuthResult);
+    };
+
+
+}]);
+
+gyfp.controller("FileListController", ["$scope", "$modal", "$outeParams", function($scope, $modal, $routeParams) {
+    $scope.request = {
+        id: $routeParams.requestId
+    };
+
+    $scope.applyRequest = function(request) {
+        $scope.request.files = request.files
+    }
+
+
+}]);
 
 gyfp.controller("FolderListController", ['$scope', '$modal', '$routeParams', function ($scope, $modal, $routeParams) {
 
@@ -33,9 +54,11 @@ gyfp.controller("FolderListController", ['$scope', '$modal', '$routeParams', fun
      * @param folder  The new folder state
      */
     $scope.applyFolder = function(folder) {
-        $scope.folder = {};
-        $scope.folder.id = folder.id;
-        $scope.folder.files = folder.files;
+        $scope.folder = {
+            id: folder.id,
+            files: folder.files
+        };
+
         console.log(folder);
         $scope.users = [];
         for (var user in folder.files) {
