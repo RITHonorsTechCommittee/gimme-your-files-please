@@ -17,16 +17,44 @@ gyfp.config(function ($routeProvider, $locationProvider) {
     });
 });
 
-gyfp.controller("AuthenticationController", ["$scope", function($scope) {
-    $scope.authenticated = false;
+gyfp.service('AuthenticationService', function() {
+    var authenticated = false,
+        isAuthenticated = function() {
+            return authenticated;
+        },
+        handleAuthenticationRequest = function(authResponse) {
+            authenticated = authResponse && !authResponse.error;
 
-    $scope.handleAuthResult = function() {
+        },
+        makeAuthFunction = function(immediate) {
+            return function() {
+                gapi.auth.authorize({
+                    client_id: "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com",
+                    scope: ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata"],
+                    immediate: immediate
+                }, handleAuthenticationRequest);
+            };
+        };
 
+    return {
+        isAuthenticated: isAuthenticated,
+        checkAuth: makeAuthFunction(true),
+        authenticate: makeAuthFunction(false)
     };
-    $scope.checkAuth = function() {
-        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, $scope.handleAuthResult);
-    };
+});
 
+gyfp.controller("AuthenticationController", ["$scope", "AuthenticateService", function($scope, authService) {
+    $scope.authenticated = authService.isAuthenticated();
+
+    if (!$scope.isAuthenticated) {
+        authService.checkAuth();
+    }
+
+    $scope.$watch(authService.isAuthenticated, function(isAuthenticated) {
+        $scope.authenticated = isAuthenticated;
+    });
+
+    $scope.authenticate = authService.authenticate;
 
 }]);
 

@@ -20,7 +20,7 @@
 			</ul>
 
 			<div class="pull-right" ng-controller="AuthenticationController">
-				<button ng-show="!authenticated" class="btn btn-primary" type="button">
+				<button ng-show="!authenticated" class="btn btn-primary" type="button" ng-click="authenticate">
 					Login
 				</button>
 			</div>
