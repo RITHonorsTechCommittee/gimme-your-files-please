@@ -1,9 +1,23 @@
-gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', function ($scope, $modal, $routeParams) {
+/**
+ * Manage Folder Controller
+ *
+ * Provides functionality to manage the permissions for users of a specific
+ * folder.
+ */
+gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', 'AuthenticationService', function ($scope, $modal, $routeParams, authService) {
 
     $scope.loaded_users = false;
     $scope.folder = {
         id: $routeParams.folderId
     };
+
+    $scope.$watch(authService.isAuthenticated, function(isAuthenticated) {
+        if (isAuthenticated) {
+            $scope.load();
+        } else {
+            authService.checkAuth();
+        }
+    });
 
     /**
      * Updates the contents of the folder list from an api response
@@ -112,10 +126,6 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', f
         });
     };
 
-
-
-
-
     /**
      * Executes a polite transfer request for all selected users
      */
@@ -158,6 +168,10 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', f
         });
     };
 
+    /**
+     * Gets a list of the users that are currently selected
+     * @returns {Array.<T>}
+     */
     $scope.getSelectedUsers = function() {
         return $scope.users.filter(function(user) {
             return user.selected;
@@ -208,37 +222,27 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', f
         })
     };
 
+    var refreshFunction = function(force) {
+        return function() {
+            $scope.folderLoading = true;
+            console.log("Refreshing the folder");
+            gapi.client.gyfp.folders.get({
+                id: $scope.folder.id,
+                ignoreCache: force
+            }).execute(function(resp) {
+                $scope.applyFolder(resp);
+            });
+        };
+    };
+
     /**
      * Forces a refresh of the contents of the folder
      */
-    $scope.refresh = function() {
-        $scope.folderLoading = true;
-        console.log("Refreshing the folder");
-        gapi.client.gyfp.folders.get({
-            id: $scope.folder.id,
-            ignoreCache: true
-        }).execute(function(resp) {
-            $scope.applyFolder(resp);
-        });
-    };
+    $scope.refresh = refreshFunction(true);
+    $scope.load = refreshFunction(false);
 
     $scope.selectAll = false;
     $scope.loaded_users = false;
-
-    $scope.api_authenticated = function(resp) {
-        $scope.api_ready = resp.status.signed_in;
-        console.log("Got authentication response: ", $scope.api_ready);
-
-        $scope.folderLoading = true;
-        $scope.$apply();
-        gapi.client.gyfp.folders.get({id: $scope.folder.id}).execute(function (resp) {
-            $scope.applyFolder(resp);
-        });
-    };
-
-    console.log("set_api_loaded");
-    $scope.api_loaded = true;
-    gapi.auth.authorize({client_id: "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com",scope:["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata"], immediate:false}, $scope.api_authenticated);
 
     $scope.users = [];
 }]);
