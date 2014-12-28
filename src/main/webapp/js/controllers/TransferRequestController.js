@@ -1,5 +1,7 @@
+/**
+ * Controller for displaying and managing ploite transfer requests
+ */
 gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams", "AuthenticationService", function($scope, $modal, $routeParams, authService) {
-
 
     /**
      * The request object to display
@@ -7,8 +9,7 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
      * @type {{id: string, files: array, requester: object, target: object}}
      */
     $scope.request = {
-        id: $routeParams.requestId,
-        asdf: "asdf"
+        id: $routeParams.requestId
     };
 
 
