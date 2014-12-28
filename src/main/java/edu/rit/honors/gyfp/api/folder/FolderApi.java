@@ -308,18 +308,18 @@ public class FolderApi {
 
 		// TODO make this message contain useful information
 		String messageText = "Hey there! \n"
-				+ "    " + request.getRequestingEmail() + " has requested that you transfer ownership of "
+				+ "    " + request.getRequestingUser().getEmail() + " has requested that you transfer ownership of "
 				+ "your files in the folder " + request.getId() + ".";
 
 		try {
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(Constants.Email.ADDRESS, Constants.Email.NAME));
 			message.addRecipient(Message.RecipientType.TO,
-					new InternetAddress(request.getTargetEmail(), request.getTargetUser()));
+					new InternetAddress(request.getTargetUser().getEmail(), request.getTargetUser().getName()));
 			message.setSubject("You received a transfer request");
 			message.setText(messageText);
 
-			log.info("Sending transfer email from " + Constants.Email.ADDRESS + " (" + Constants.Email.NAME + ") to " + request.getTargetEmail() + " for request " + request.getId());
+			log.info("Sending transfer email from " + Constants.Email.ADDRESS + " (" + Constants.Email.NAME + ") to " + request.getTargetUser().getEmail() + " for request " + request.getId());
 			Transport.send(message);
 
 		} catch (AddressException e) {

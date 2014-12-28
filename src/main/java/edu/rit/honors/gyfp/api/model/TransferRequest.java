@@ -55,6 +55,10 @@ public class TransferRequest {
 	 * Whether this is a polite request or a forced transfer
 	 */
 	boolean isForced;
+
+	private TransferRequest() {
+		// Required for Objectify
+	}
 	
 	private TransferRequest(FileUser requester, FileUser target, Collection<TransferableFile> files) {
 		this.requester = checkNotNull(requester);
@@ -97,23 +101,15 @@ public class TransferRequest {
 		return id;
 	}
 
-	public String getRequestingUser() {
-		return requester.getPermission();
+	public FileUser getRequestingUser() {
+		return requester;
 	}
 
-	public String getRequestingEmail() {
-		return requester.getEmail();
+	public FileUser getTargetUser() {
+		return target;
 	}
 
-	public String getTargetUser() {
-		return target.getPermission();
-	}
-
-	public String getTargetEmail() {
-		return target.getEmail();
-	}
-
-	public DateTime getRequestCreation() {
+	public DateTime getRequestCreationTime() {
 		return requestCreation;
 	}
 
