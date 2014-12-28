@@ -1,4 +1,4 @@
-gyfp.directive('LoadingCover', function() {
+gyfp.directive('loadingCover', function() {
     return {
         templateUrl: '/js/partials/loading-cover.html',
         restrict: 'EA',

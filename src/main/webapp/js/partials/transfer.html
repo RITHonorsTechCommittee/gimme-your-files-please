@@ -1,11 +1,7 @@
-<div id="main" class="container">
+<div id="main" class="container" ng-show="authenticated">
+    <div loading-cover ng-show="!loaded"></div>
 
-    <h1><c:out value="${appName}" /></h1>
-
-    <h2 ng-show="!loaded">Loading...</h2>
-    <a class="btn btn-primary btn-md" ladda="folderLoading" ng-click="refresh()" data-style="expand-right">{{folderLoading ? "Loading..." : "Refresh"}}</a>
-
-    <div>Sending {{files.length}} Files to <strong ng-bind="requester.name"></strong></div>
+    <div>Sending {{request.files.length}} Files to <strong ng-bind="request.requester.name"></strong></div>
     <table class="table table-striped" ng-cloak>
         <tr>
             <th><input type="checkbox" ng-model="selectAll" ui-indeterminate="isSelectAllIndeterminate()" ng-click="toggleSelectAll()"/> </th>

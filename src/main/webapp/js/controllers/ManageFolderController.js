@@ -1,4 +1,4 @@
-gyfp.controller("FolderListController", ['$scope', '$modal', '$routeParams', function ($scope, $modal, $routeParams) {
+gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', function ($scope, $modal, $routeParams) {
 
     $scope.loaded_users = false;
     $scope.folder = {

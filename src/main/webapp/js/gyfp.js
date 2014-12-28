@@ -7,48 +7,16 @@ gyfp.config(function ($routeProvider, $locationProvider) {
         controller: 'AboutController',
         templateUrl: 'js/partials/about.html'
     }).when('/manage/:folderId', {
-        controller: 'FolderListController',
-        templateUrl: 'js/partials/folder-list.html'
+        controller: 'ManageFolderController',
+        templateUrl: 'js/partials/manage.html'
     }).when('/request/:requestId', {
-        controller: 'FileListController',
+        controller: 'TransferRequestController',
         templateUrl: 'js/partials/transfer.html'
     }).otherwise({
         redirectTo: '/about'
     });
 });
 
-
-gyfp.controller("FileListController", ["$scope", "$modal", "$routeParams", "AuthenticationService", function($scope, $modal, $routeParams, authService) {
-    $scope.request = {
-        id: $routeParams.requestId
-    };
-
-    $scope.loaded = false;
-
-    $scope.$watch(authService.isAuthenticated, function(isAuthenticated) {
-        if (isAuthenticated) {
-            $scope.loadRequest();
-        }
-    });
-
-    $scope.loadRequest = function() {
-        gapi.client.gyfp.user.request.get({request: $scope.request.id}).execute($scope.applyRequest);
-    };
-
-    $scope.applyRequest = function(request) {
-        $scope.loaded = true;
-        if (request && request.error) {
-            $scope.isErrored = true;
-            $scope.errorMessage = request.message;
-        } else {
-            $scope.request.files = request.files;
-            $scope.request.requester = request.requestingUser;
-            $scope.request.target = request.targetUser;
-        }
-
-        $scope.$apply();
-    }
-}]);
 
 var init = function() {
     console.log("Doing manual bootstrap");

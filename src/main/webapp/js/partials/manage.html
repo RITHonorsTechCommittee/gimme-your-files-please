@@ -1,4 +1,4 @@
-<div loading-cover loading="!loaded_users"></div>
+<div loading-cover ng-show="!loaded_users"></div>
 
 <div ng-show="isErrored" class="alert alert-error" ng-bind="errorMessage"></div>
 <a class="btn btn-primary btn-md" ladda="folderLoading" ng-click="refresh()" data-style="expand-right">{{folderLoading ? "Loading..." : "Refresh"}}</a>

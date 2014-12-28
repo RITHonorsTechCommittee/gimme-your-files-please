@@ -32,6 +32,7 @@
 <script type="application/javascript" src="js/controllers/AboutController.js"></script>
 <script type="application/javascript" src="js/controllers/AuthenticationController.js"></script>
 <script type="application/javascript" src="js/controllers/FolderListController.js"></script>
+<script type="application/javascript" src="js/directives/LoadingCover.js"></script>
 <script type="application/javascript" src="js/PopoverFileFilter.js"></script>
 <script type="application/javascript" src="js/RevokeProgressController.js"></script>
 
