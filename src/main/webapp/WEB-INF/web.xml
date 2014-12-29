@@ -11,13 +11,14 @@
 
 	<servlet-mapping>
 		<servlet-name>FolderView</servlet-name>
-		<url-pattern>/folder</url-pattern>
+		<url-pattern>/gyfp</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Oauth2Callback</servlet-name>
 		<url-pattern>/oauth2callback</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
+		<welcome-file>gyfp</welcome-file>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 	<jsp-config>
@@ -31,7 +32,7 @@
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>any</web-resource-name>
-			<url-pattern>/folder*</url-pattern>
+			<url-pattern>/gyfp*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>

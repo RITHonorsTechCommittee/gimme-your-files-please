@@ -25,7 +25,16 @@
 <script type="application/javascript" src="js/third-party/ladda/ladda.js"></script>
 <script type="application/javascript" src="js/third-party/angular/angular.js"></script>
 <script type="application/javascript" src="js/third-party/angular/angular-ladda/angular-ladda.js"></script>
+<script type="application/javascript" src="js/third-party/angular/ng-route/angular-route.js"></script>
 <script type="application/javascript" src="js/third-party/angular/ui-bootstrap/ui-bootstrap-tpls-0.11.2.js"></script>
 <script type="application/javascript" src="js/gyfp.js"></script>
+<script type="application/javascript" src="js/services/AuthenticationService.js"></script>
+<script type="application/javascript" src="js/controllers/AboutController.js"></script>
+<script type="application/javascript" src="js/controllers/AuthenticationController.js"></script>
+<script type="application/javascript" src="js/controllers/ManageFolderController.js"></script>
+<script type="application/javascript" src="js/controllers/TransferRequestController.js"></script>
+<script type="application/javascript" src="js/directives/LoadingCover.js"></script>
 <script type="application/javascript" src="js/PopoverFileFilter.js"></script>
 <script type="application/javascript" src="js/RevokeProgressController.js"></script>
+
+<base href="/"/>

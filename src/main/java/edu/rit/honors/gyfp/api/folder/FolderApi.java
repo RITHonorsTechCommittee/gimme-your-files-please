@@ -21,9 +21,18 @@ import edu.rit.honors.gyfp.util.OfyService;
 import edu.rit.honors.gyfp.util.Utils;
 
 import javax.inject.Named;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -287,8 +296,39 @@ public class FolderApi {
 			TransferRequest request = TransferRequest.fromFolder(folder, user, userId);
 			request.setIsForced(isForced);
 			requests.add(request);
+
+			sendTransferRequestMessage(request);
 		}
 		return requests;
+	}
+
+	private void sendTransferRequestMessage(TransferRequest request) {
+		Properties props = new Properties();
+		Session session = Session.getDefaultInstance(props, null);
+
+		// TODO make this message contain useful information
+		String messageText = "Hey there! \n"
+				+ "    " + request.getRequestingUser().getEmail() + " has requested that you transfer ownership of "
+				+ "your files in the folder " + request.getId() + ".";
+
+		try {
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(Constants.Email.ADDRESS, Constants.Email.NAME));
+			message.addRecipient(Message.RecipientType.TO,
+					new InternetAddress(request.getTargetUser().getEmail(), request.getTargetUser().getName()));
+			message.setSubject("You received a transfer request");
+			message.setText(messageText);
+
+			log.info("Sending transfer email from " + Constants.Email.ADDRESS + " (" + Constants.Email.NAME + ") to " + request.getTargetUser().getEmail() + " for request " + request.getId());
+			Transport.send(message);
+
+		} catch (AddressException e) {
+			log.log(Level.WARNING, "Invalid email address specified", e);
+		} catch (MessagingException e) {
+			log.log(Level.SEVERE, "Error sending email", e);
+		} catch (UnsupportedEncodingException e) {
+			log.log(Level.INFO, "Unsupported Encoding", e);
+		}
 	}
 
 	/**

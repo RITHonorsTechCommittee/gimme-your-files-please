@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.inject.Named;
 
@@ -38,6 +39,8 @@ import edu.rit.honors.gyfp.util.Utils;
 				Constants.Clients.WEB_CLIENT
 		})
 public class UserApi {
+
+	private static final Logger log = Logger.getLogger(UserApi.class.getName());
 
 	/**
 	 * Incrementally completes a transfer request.
@@ -92,7 +95,7 @@ public class UserApi {
 			
 		for (TransferableFile file : request.getFiles()) {
 			try {
-				service.permissions().update(file.getFileId(), request.getRequestingUser(), owner).execute();
+				service.permissions().update(file.getFileId(), request.getRequestingUser().getPermission(), owner).execute();
 				success.add(file);
 				limit--;
 				// Maybe not necessary, but just to be safe slow ourselves down slightly to avoid hitting the rate limit
@@ -144,9 +147,11 @@ public class UserApi {
 			throw new NotFoundException(String.format(Constants.Error.TRANSFER_REQUEST_NOT_FOUND, requestId));
 		}
 		
-		if (request.getTargetUser().equals(user.getUserId())) {
+		if (request.getTargetUser().getEmail().equals(user.getEmail())) {
+			log.info(request.getTargetUser() + " == " + user.getUserId());
 			return request;
 		} else {
+			log.info(request.getTargetUser().getEmail() + " != " + user.getEmail());
 			throw new ForbiddenException(Constants.Error.TRANSFER_REQUEST_INCORRECT_USER);
 		}
 	}
