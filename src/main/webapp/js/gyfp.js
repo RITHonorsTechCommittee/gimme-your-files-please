@@ -1,7 +1,7 @@
 /*global gapi, angular*/
 var gyfp = angular.module("gyfp", ['ngRoute', 'ui.bootstrap', 'angular-ladda']);
 
-gyfp.config(function ($routeProvider, $locationProvider) {
+gyfp.config(function ($routeProvider) {
     //configure the routing rules here
     $routeProvider.when('/about', {
         controller: 'AboutController',

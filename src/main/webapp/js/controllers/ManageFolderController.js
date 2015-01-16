@@ -4,7 +4,7 @@
  * Provides functionality to manage the permissions for users of a specific
  * folder.
  */
-gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', 'AuthenticationService', function ($scope, $modal, $routeParams, authService) {
+gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', function ($scope, $modal, $routeParams) {
 
     $scope.loading = false;
     $scope.authenticated = false;
@@ -17,6 +17,7 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
     $scope.$on("AuthenticationService.AuthenticationChanged", function(event, isAuthenticated) {
         if (isAuthenticated) {
             $scope.authenticated = isAuthenticated;
+            $scope.$apply();
             $scope.load();
         }
     });
@@ -171,7 +172,7 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
 
     /**
      * Gets a list of the users that are currently selected
-     * @returns {Array.<T>}
+     * @returns {Array.<Users>}
      */
     $scope.getSelectedUsers = function() {
         return $scope.users.filter(function(user) {

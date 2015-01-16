@@ -31,6 +31,9 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
          */
         handleAuthenticationRequest = function(authResponse) {
             authenticated = authResponse && authResponse.status && authResponse.status.signed_in;
+            console.log("Authenticated: ", authenticated, authResponse);
+            $rootScope.$broadcast("AuthenticationService.AuthenticationChanged", authenticated);
+
             if (authenticated) {
                 gapi.client.plus.people.get({
                     'userId': 'me'
@@ -43,8 +46,6 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
                 $rootScope.$broadcast("AuthenticationService.UserLoaded", user);
                 console.log("Broadcast")
             }
-            console.log("Authenticated: ", authenticated, authResponse);
-            $rootScope.$broadcast("AuthenticationService.AuthenticationChanged", authenticated);
         },
 
         /**

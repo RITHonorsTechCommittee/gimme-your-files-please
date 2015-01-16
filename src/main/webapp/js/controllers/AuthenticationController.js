@@ -12,6 +12,7 @@ gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", 
         console.log("Updated Auth Status", isAuthenticated);
         $scope.authenticated = isAuthenticated;
         $scope.operationRunning = false;
+        $scope.$apply();
     });
 
     // Subscribe to changes in user information
@@ -25,6 +26,7 @@ gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", 
         } else {
             $scope.email = "";
         }
+        $scope.$apply();
     });
 
     $scope.authenticate = function() {
