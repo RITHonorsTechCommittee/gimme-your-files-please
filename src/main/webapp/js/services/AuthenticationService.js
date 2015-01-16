@@ -3,12 +3,13 @@
  * location.  Allows other controllers to easily check authentication status
  * and initiate authentication requests
  */
-gyfp.service('AuthenticationService', function() {
+gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
     /**
      * Whether we have successfully authenticated
      * @type {boolean}
      */
     var authenticated = false,
+        user = {},
 
         /**
          * Checks whether we have successfully authenticated
@@ -19,14 +20,31 @@ gyfp.service('AuthenticationService', function() {
             return authenticated;
         },
 
+        getUser = function() {
+            return user;
+        },
+
         /**
          * Handles the response to an authentication request, setting the authentication status as appropriate
          *
          * @param authResponse  The response to the authentication request
          */
         handleAuthenticationRequest = function(authResponse) {
-            authenticated = authResponse && !authResponse.error;
-
+            authenticated = authResponse && authResponse.status && authResponse.status.signed_in;
+            if (authenticated) {
+                gapi.client.plus.people.get({
+                    'userId': 'me'
+                }).execute(function (me) {
+                    user = me;
+                    $rootScope.$broadcast("AuthenticationService.UserLoaded", user);
+                });
+            } else {
+                user = {};
+                $rootScope.$broadcast("AuthenticationService.UserLoaded", user);
+                console.log("Broadcast")
+            }
+            console.log("Authenticated: ", authenticated, authResponse);
+            $rootScope.$broadcast("AuthenticationService.AuthenticationChanged", authenticated);
         },
 
         /**
@@ -43,12 +61,16 @@ gyfp.service('AuthenticationService', function() {
          * @param immediate  Whether this is an immediate auth request or not.
          * @returns {Function}  The authentication function (which takes no arguments)
          */
-        makeAuthFunction = function(immediate) {
+        makeAuthFunction = function(immediate)
+        {
             return function() {
+                console.log("Initiating authentication request");
+
                 gapi.auth.authorize({
                     client_id: "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com",
-                    scope: ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.readonly.metadata"],
-                    immediate: immediate
+                    scope: ["profile", "https://www.googleapis.com/auth/drive"],
+                    immediate: immediate,
+                    authuser:""
                 }, handleAuthenticationRequest);
             };
         };
@@ -56,6 +78,8 @@ gyfp.service('AuthenticationService', function() {
     return {
         isAuthenticated: isAuthenticated,
         checkAuth: makeAuthFunction(true),
-        authenticate: makeAuthFunction(false)
+        authenticate: makeAuthFunction(false),
+        deauthenticate: gapi.auth.signOut,
+        getUser: getUser
     };
-});
+}]);

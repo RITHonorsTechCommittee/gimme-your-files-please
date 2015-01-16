@@ -10,6 +10,17 @@
 	<jsp:include page="includes/MainMenu.jsp" />
 
 
+	<div id="preload-cover" class="cover">
+		<div class="loadcontainer">
+			<div class="spinner">
+				<div class="bounce1"></div>
+				<div class="bounce2"></div>
+				<div class="bounce3"></div>
+			</div>
+			<h1>Initializing</h1>
+		</div>
+	</div>
+
     <div id="main" class="container">
 		<div ng-view></div>
 	</div>

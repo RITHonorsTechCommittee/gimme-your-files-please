@@ -17,6 +17,13 @@ div.cover div.loadcontainer {
     margin-top: 200px;
 }
 
+div.auth-container {
+    margin-top: 6px;
+}
+div.auth-container button {
+    margin-left: 15px;
+}
+
 .spinner {
     margin: 30px auto;
     width: 70px;

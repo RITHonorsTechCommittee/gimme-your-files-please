@@ -6,16 +6,18 @@
  */
 gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', 'AuthenticationService', function ($scope, $modal, $routeParams, authService) {
 
-    $scope.loaded_users = false;
+    $scope.loading = false;
+    $scope.authenticated = false;
+
     $scope.folder = {
         id: $routeParams.folderId
     };
 
-    $scope.$watch(authService.isAuthenticated, function(isAuthenticated) {
+    // Listen for authentication state changes so we know when to load the folder
+    $scope.$on("AuthenticationService.AuthenticationChanged", function(event, isAuthenticated) {
         if (isAuthenticated) {
+            $scope.authenticated = isAuthenticated;
             $scope.load();
-        } else {
-            authService.checkAuth();
         }
     });
 
@@ -65,8 +67,7 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
             }
         }
 
-        $scope.folderLoading = false;
-        $scope.loaded_users = true;
+        $scope.loading = false;
         $scope.$apply();
     };
 
@@ -224,7 +225,7 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
 
     var refreshFunction = function(force) {
         return function() {
-            $scope.folderLoading = true;
+            $scope.loading = true;
             console.log("Refreshing the folder");
             gapi.client.gyfp.folders.get({
                 id: $scope.folder.id,
@@ -242,7 +243,6 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
     $scope.load = refreshFunction(false);
 
     $scope.selectAll = false;
-    $scope.loaded_users = false;
 
     $scope.users = [];
 }]);
