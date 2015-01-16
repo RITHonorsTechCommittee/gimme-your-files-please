@@ -1,7 +1,7 @@
 /*global gapi, angular*/
 var gyfp = angular.module("gyfp", ['ngRoute', 'ui.bootstrap', 'angular-ladda']);
 
-gyfp.config(function ($routeProvider, $locationProvider) {
+gyfp.config(function ($routeProvider) {
     //configure the routing rules here
     $routeProvider.when('/about', {
         controller: 'AboutController',
@@ -22,6 +22,10 @@ var init = function() {
     console.log("Doing manual bootstrap");
     var gyfp_api = 'https://gimmeyourfilesplease.appspot.com/_ah/api';
     gapi.client.load('gyfp', 'v1', function() {
-        angular.bootstrap(document, ["gyfp"]);
+        // Also load the google plus API so that we can get the user's profile information
+        gapi.client.load('plus','v1', function() {
+            angular.bootstrap(document, ["gyfp"]);
+            document.getElementById("preload-cover").style.display = "none";
+        });
     }, gyfp_api);
 };

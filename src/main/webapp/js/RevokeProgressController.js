@@ -31,9 +31,9 @@ gyfp.controller('RevokeProgressController', ['$scope', '$modalInstance', 'users'
         $scope.updateUserProgress = function (resp) {
             var permission = $scope.user.permission;
 
-            if (resp.files.hasOwnProperty(permission)
-                && resp.files[permission].hasOwnProperty('files')
-                && resp.files[permission].files.hasOwnProperty(role)) {
+            if (resp.files[permission]
+                && resp.files[permission].files
+                && resp.files[permission].files[role]) {
 
                 $scope.progress.user.current = $scope.progress.user.total - resp.files[permission].files[role].length;
                 $scope.user.files[role] = resp.files[permission].files[role];

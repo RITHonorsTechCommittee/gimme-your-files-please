@@ -1,5 +1,5 @@
 /**
- * Controller for displaying and managing ploite transfer requests
+ * Controller for displaying and managing polite transfer requests
  */
 gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams", "AuthenticationService", function($scope, $modal, $routeParams, authService) {
 

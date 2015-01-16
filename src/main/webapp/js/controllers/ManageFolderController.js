@@ -4,18 +4,21 @@
  * Provides functionality to manage the permissions for users of a specific
  * folder.
  */
-gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', 'AuthenticationService', function ($scope, $modal, $routeParams, authService) {
+gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', function ($scope, $modal, $routeParams) {
 
-    $scope.loaded_users = false;
+    $scope.loading = false;
+    $scope.authenticated = false;
+
     $scope.folder = {
         id: $routeParams.folderId
     };
 
-    $scope.$watch(authService.isAuthenticated, function(isAuthenticated) {
+    // Listen for authentication state changes so we know when to load the folder
+    $scope.$on("AuthenticationService.AuthenticationChanged", function(event, isAuthenticated) {
         if (isAuthenticated) {
+            $scope.authenticated = isAuthenticated;
+            $scope.$apply();
             $scope.load();
-        } else {
-            authService.checkAuth();
         }
     });
 
@@ -65,8 +68,7 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
             }
         }
 
-        $scope.folderLoading = false;
-        $scope.loaded_users = true;
+        $scope.loading = false;
         $scope.$apply();
     };
 
@@ -170,7 +172,7 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
 
     /**
      * Gets a list of the users that are currently selected
-     * @returns {Array.<T>}
+     * @returns {Array.<Users>}
      */
     $scope.getSelectedUsers = function() {
         return $scope.users.filter(function(user) {
@@ -224,7 +226,7 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
 
     var refreshFunction = function(force) {
         return function() {
-            $scope.folderLoading = true;
+            $scope.loading = true;
             console.log("Refreshing the folder");
             gapi.client.gyfp.folders.get({
                 id: $scope.folder.id,
@@ -242,7 +244,6 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
     $scope.load = refreshFunction(false);
 
     $scope.selectAll = false;
-    $scope.loaded_users = false;
 
     $scope.users = [];
 }]);
