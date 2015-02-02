@@ -17,14 +17,10 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
     $scope.authenticated = false;
 
     // Watch for change in authentication state
-    $scope.$watch(authService.isAuthenticated, function(isAuthenticated) {
+    $scope.$on("AuthenticationService.AuthenticationChanged", function(event, isAuthenticated) {
         $scope.authenticated = isAuthenticated;
         if (isAuthenticated) {
             $scope.loadRequest();
-        } else {
-            // If we are not authenticated, attempt to authenticate using
-            // existing credentials to prevent having to click the login button
-            authService.checkAuth();
         }
     });
 
@@ -56,5 +52,32 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
         // This is not executed in the normal context of an angular call, so
         // we need to manually digest
         $scope.$apply();
-    }
+    };
+
+    $scope.removeAll = function() {
+        $scope.
+    };
+
+    $scope.remove = function(toRemove) {
+        var files = [];
+
+        if (!toRemove.length) {
+            toRemove = [toRemove];
+        }
+
+        toRemove.forEach(function(file) {
+            files.push(file.fileId);
+        });
+
+        gapi.client.gyfp.user.request.remove({
+            request: $scope.request.id,
+            ids: [file.fileId]
+        }).execute(function() {
+            $scope.request.files = $scope.request.files.filter(function(f) {
+                return f.fileId !== file.fileId;
+            });
+
+            $scope.$apply();
+        });
+    };
 }]);
