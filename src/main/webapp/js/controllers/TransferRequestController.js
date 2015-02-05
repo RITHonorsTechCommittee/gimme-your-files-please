@@ -9,7 +9,8 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
      * @type {{id: string, files: array, requester: object, target: object}}
      */
     $scope.request = {
-        id: $routeParams.requestId
+        id: $routeParams.requestId,
+        files: []
     };
 
 
