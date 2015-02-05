@@ -11,8 +11,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -79,6 +78,23 @@ public class ApiUtil {
     }
 
     public static void sendTransferRequestEmail(String from, String to, String message) {
+
+    }
+
+    public static void splitStringArguments(Collection<String> args) {
+        List<String> toAdd = new ArrayList<>();
+        for (Iterator<String> iter = args.iterator(); iter.hasNext(); ) {
+            String next = iter.next();
+
+            if (next.contains(",")) {
+                toAdd.addAll(Arrays.asList(next.split(",")));
+
+                iter.remove();
+            }
+        }
+
+        args.addAll(toAdd);
+
 
     }
 }

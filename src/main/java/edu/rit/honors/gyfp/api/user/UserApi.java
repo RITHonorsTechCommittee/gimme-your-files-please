@@ -22,6 +22,7 @@ import com.google.appengine.api.users.User;
 import com.google.apphosting.api.ApiProxy;
 import com.googlecode.objectify.ObjectifyService;
 
+import edu.rit.honors.gyfp.api.ApiUtil;
 import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.api.model.TransferRequest;
 import edu.rit.honors.gyfp.api.model.TransferableFile;
@@ -178,14 +179,20 @@ public class UserApi {
 			throws ForbiddenException, NotFoundException, BadRequestException {
 		TransferRequest request = getRequest(requestId, user);
 
+        ApiUtil.splitStringArguments(ids);
+        log.info("Processing id list of size " + ids.size());
+
 		List<TransferableFile> toRemove = new ArrayList<>();
 		for (TransferableFile file : request.getFiles()) {
 			if (ids.contains(file.getFileId())) {
 				toRemove.add(file);
 				ids.remove(file.getFileId());
-			}
-		}
 
+                if (ids.size() == 0) {
+                    break;
+                }
+            }
+        }
 
 		request.getFiles().removeAll(toRemove);
 		ObjectifyService.ofy().save().entity(request);
