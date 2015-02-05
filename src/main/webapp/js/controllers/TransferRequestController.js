@@ -98,8 +98,11 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
             request: $scope.request.id,
             ids: files
         }).execute(function() {
-            $scope.request.files = $scope.request.files.filter(function(f) {
-                return f.fileId !== file.fileId;
+            $scope.request.files = $scope.request.files.filter(function(file) {
+                // Keep files from request.files that do not have ids that are in the files list.
+                return !files.some(function(fileId) {
+                    return fileId === file.fileId;
+                })
             });
 
             $scope.$apply();
