@@ -187,9 +187,10 @@ public class UserApi {
 			if (ids.contains(file.getFileId())) {
 				toRemove.add(file);
 				ids.remove(file.getFileId());
-                log.info("Removing file " + file.getFileId() + ".  Remaining: " + ids.toString());
-            } else {
-                log.info("Keeping file " + file.getFileName() + " (" + file.getFileId() + ")");
+
+                if (ids.size() == 0) {
+                    break;
+                }
             }
         }
 
