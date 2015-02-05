@@ -55,23 +55,27 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
     };
 
     $scope.removeAll = function() {
-        $scope.
+        $scope.remove($scope.request.files);
     };
 
     $scope.remove = function(toRemove) {
-        var files = [];
+        var files;
 
         if (!toRemove.length) {
             toRemove = [toRemove];
         }
 
-        toRemove.forEach(function(file) {
-            files.push(file.fileId);
+
+        files = toRemove.map(function(file) {
+            // Extract the file IDs.
+            // If the item is already a string (which is to say, it doesn't have a fileId property) keep it unchanged.
+            // Otherwise, return the fileId
+            return file.fileId || file;
         });
 
         gapi.client.gyfp.user.request.remove({
             request: $scope.request.id,
-            ids: [file.fileId]
+            ids: files
         }).execute(function() {
             $scope.request.files = $scope.request.files.filter(function(f) {
                 return f.fileId !== file.fileId;
