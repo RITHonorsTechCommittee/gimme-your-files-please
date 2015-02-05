@@ -54,10 +54,31 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
         $scope.$apply();
     };
 
-    $scope.removeAll = function() {
-        $scope.remove($scope.request.files);
+    /**
+     * Checks if any files in the request are selected
+     *
+     * @returns {boolean}
+     */
+    $scope.hasSelectedFiles = function() {
+        return $scope.request.files.some(function(file) {
+            return file.selected;
+        });
     };
 
+    /**
+     * Removes all selected files from the transfer request
+     */
+    $scope.removeSelected = function() {
+        $scope.remove($scope.request.files.filter(function(file) {
+            return file.selected;
+        }));
+    };
+
+    /**
+     * Helper method to remove a file or multiple files from the transfer request
+     *
+     * @param toRemove  A single file object or a list of file objects
+     */
     $scope.remove = function(toRemove) {
         var files;
 
