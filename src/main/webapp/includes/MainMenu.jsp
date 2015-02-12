@@ -20,12 +20,12 @@
 			</ul>
 
 			<div class="pull-right auth-container" ng-controller="AuthenticationController">
-				<span ng-bind="{{displayName}}"></span>
+				<span ng-show="authenticated"><span ng-bind="displayName"></span> (<span ng-bind="email"></span></span>
 				<button ng-show="!authenticated" class="btn btn-primary" type="button" ng-click="authenticate()" ladda="operationRunning" data-style="expand-right">
 					Login
 				</button>
 				<button ng-show="authenticated" class="btn btn-primary" type="button" ng-click="deauthenticate()" ladda="operationRunning" data-style="expand-right">
-					Log Out {{email}}
+					Log Out
 				</button>
 			</div>
 

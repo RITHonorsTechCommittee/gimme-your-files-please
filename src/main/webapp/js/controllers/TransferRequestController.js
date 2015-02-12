@@ -9,7 +9,8 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
      * @type {{id: string, files: array, requester: object, target: object}}
      */
     $scope.request = {
-        id: $routeParams.requestId
+        id: $routeParams.requestId,
+        files: []
     };
 
 
@@ -17,14 +18,10 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
     $scope.authenticated = false;
 
     // Watch for change in authentication state
-    $scope.$watch(authService.isAuthenticated, function(isAuthenticated) {
+    $scope.$on("AuthenticationService.AuthenticationChanged", function(event, isAuthenticated) {
         $scope.authenticated = isAuthenticated;
         if (isAuthenticated) {
             $scope.loadRequest();
-        } else {
-            // If we are not authenticated, attempt to authenticate using
-            // existing credentials to prevent having to click the login button
-            authService.checkAuth();
         }
     });
 
@@ -56,5 +53,60 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
         // This is not executed in the normal context of an angular call, so
         // we need to manually digest
         $scope.$apply();
-    }
+    };
+
+    /**
+     * Checks if any files in the request are selected
+     *
+     * @returns {boolean}
+     */
+    $scope.hasSelectedFiles = function() {
+        return $scope.request.files.some(function(file) {
+            return file.selected;
+        });
+    };
+
+    /**
+     * Removes all selected files from the transfer request
+     */
+    $scope.removeSelected = function() {
+        $scope.remove($scope.request.files.filter(function(file) {
+            return file.selected;
+        }));
+    };
+
+    /**
+     * Helper method to remove a file or multiple files from the transfer request
+     *
+     * @param toRemove  A single file object or a list of file objects
+     */
+    $scope.remove = function(toRemove) {
+        var files;
+
+        if (!toRemove.length) {
+            toRemove = [toRemove];
+        }
+
+
+        files = toRemove.map(function(file) {
+            // Extract the file IDs.
+            // If the item is already a string (which is to say, it doesn't have a fileId property) keep it unchanged.
+            // Otherwise, return the fileId
+            return file.fileId || file;
+        });
+
+        gapi.client.gyfp.user.request.remove({
+            request: $scope.request.id,
+            ids: files
+        }).execute(function() {
+            $scope.request.files = $scope.request.files.filter(function(file) {
+                // Keep files from request.files that do not have ids that are in the files list.
+                return !files.some(function(fileId) {
+                    return fileId === file.fileId;
+                })
+            });
+
+            $scope.$apply();
+        });
+    };
 }]);

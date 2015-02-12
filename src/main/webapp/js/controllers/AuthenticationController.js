@@ -11,6 +11,8 @@ gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", 
     $scope.$on("AuthenticationService.AuthenticationChanged", function(event, isAuthenticated) {
         console.log("Updated Auth Status", isAuthenticated);
         $scope.authenticated = isAuthenticated;
+        $scope.displayName = "";
+        $scope.email = "";
         $scope.operationRunning = false;
         $scope.$apply();
     });
@@ -37,5 +39,6 @@ gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", 
     $scope.deauthenticate = function() {
         $scope.operationRunning = true;
         authService.deauthenticate();
+
     };
 }]);
