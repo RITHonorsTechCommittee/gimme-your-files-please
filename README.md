@@ -12,7 +12,7 @@ Development
 This project uses Maven to manage dependencies.  This allows us to specify the different libraries we need without having to manually download them all and add them to the git repository.
 
 ### Importing the project into IntelliJ
-1.  Make sure you have the "Ultimate Edition" of IntelliJ.  The community edition does not include the Google App Engine plugin.
+1.  Make sure you have the "Ultimate Edition" of IntelliJ.  The community edition does not include the Google App Engine plugin.  You can register as a student at https://www.jetbrains.com/student/
 2.  Check out the project using GitHub.  Go to VCS > Checkout from version control > Github.
 3.  You will be prompted about the project containing a pom file.  Choose to open it.
 4.  By default, a debug server run configuration will be created.  You can add a deployment run configuration by going to edit configurations in the run menu.
