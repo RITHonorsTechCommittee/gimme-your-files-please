@@ -40,6 +40,8 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
                 $scope.errorMessage = "An unknown error occurred";
             }
         } else {
+            $scope.errorMessage = "";
+            $scope.isErrored = false;
             $scope.folder = {
                 id: folder.id,
                 files: folder.files

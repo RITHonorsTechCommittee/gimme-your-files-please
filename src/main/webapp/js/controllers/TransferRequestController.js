@@ -15,13 +15,15 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
 
 
     $scope.loaded = false;
-    $scope.authenticated = false;
+    $scope.authenticated = authService.isAuthenticated();
 
     // Watch for change in authentication state
     $scope.$on("AuthenticationService.AuthenticationChanged", function(event, isAuthenticated) {
         $scope.authenticated = isAuthenticated;
         if (isAuthenticated) {
             $scope.loadRequest();
+        } else {
+            $scope.request.files = [];
         }
     });
 
@@ -44,7 +46,14 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
         if (request && request.error) {
             $scope.isErrored = true;
             $scope.errorMessage = request.message;
+
+            // Clear out any data that may have been there before
+            $scope.request = {
+                id: $scope.request.id
+            };
         } else {
+            $scope.isErrored = false;
+            $scope.errorMessage = "";
             $scope.request.files = request.files;
             $scope.request.requester = request.requestingUser;
             $scope.request.target = request.targetUser;
@@ -109,4 +118,8 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
             $scope.$apply();
         });
     };
+
+    if ($scope.authenticated) {
+        $scope.loadRequest();
+    }
 }]);
