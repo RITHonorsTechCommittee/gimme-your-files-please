@@ -4,21 +4,20 @@
  * Provides functionality to manage the permissions for users of a specific
  * folder.
  */
-gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', function ($scope, $modal, $routeParams) {
-
-    $scope.loading = false;
-    $scope.authenticated = false;
-
-    $scope.folder = {
-        id: $routeParams.folderId
-    };
+gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', 'AuthenticationService', function ($scope, $modal, $routeParams, authService) {
 
     // Listen for authentication state changes so we know when to load the folder
     $scope.$on("AuthenticationService.AuthenticationChanged", function(event, isAuthenticated) {
+        $scope.authenticated = isAuthenticated;
         if (isAuthenticated) {
-            $scope.authenticated = isAuthenticated;
             $scope.$apply();
-            $scope.load();
+            if (!$scope.loading) {
+                $scope.load();
+            }
+        } else {
+            $scope.folder.files = [];
+            $scope.users = [];
+            $scope.$apply();
         }
     });
 
@@ -41,6 +40,8 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', f
                 $scope.errorMessage = "An unknown error occurred";
             }
         } else {
+            $scope.errorMessage = "";
+            $scope.isErrored = false;
             $scope.folder = {
                 id: folder.id,
                 files: folder.files
@@ -243,7 +244,18 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', f
     $scope.refresh = refreshFunction(true);
     $scope.load = refreshFunction(false);
 
+    $scope.loading = false;
+    $scope.authenticated = authService.isAuthenticated();
     $scope.selectAll = false;
-
     $scope.users = [];
+
+    $scope.folder = {
+        id: $routeParams.folderId
+    };
+
+
+
+    if ($scope.authenticated) {
+        $scope.load();
+    }
 }]);
