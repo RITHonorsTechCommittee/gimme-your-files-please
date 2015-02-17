@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-	<servlet>
-		<servlet-name>FolderView</servlet-name>
-		<servlet-class>edu.rit.honors.gyfp.servlets.FolderViewServlet</servlet-class>
-	</servlet>
 
 	<servlet>
 		<servlet-name>Oauth2Callback</servlet-name>
 		<servlet-class>edu.rit.honors.gyfp.servlets.Oauth2Callback</servlet-class>
 	</servlet>
 
-	<servlet-mapping>
-		<servlet-name>FolderView</servlet-name>
-		<url-pattern>/gyfp</url-pattern>
-	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Oauth2Callback</servlet-name>
 		<url-pattern>/oauth2callback</url-pattern>
@@ -27,17 +19,6 @@
 			<scripting-invalid>true</scripting-invalid>
 		</jsp-property-group>
 	</jsp-config>
-
-	<!-- Make sure that there is a logged in user! -->
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>any</web-resource-name>
-			<url-pattern>/gyfp*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>*</role-name>
-		</auth-constraint>
-	</security-constraint>
  <servlet>
   <servlet-name>SystemServiceServlet</servlet-name>
   <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
