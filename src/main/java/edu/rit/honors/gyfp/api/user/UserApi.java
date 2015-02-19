@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
@@ -17,6 +18,7 @@ import com.google.api.server.spi.response.ForbiddenException;
 import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.Permission;
 import com.google.appengine.api.users.User;
 import com.google.apphosting.api.ApiProxy;
@@ -34,7 +36,7 @@ import edu.rit.honors.gyfp.util.Utils;
 		version = "v1", 
 		scopes = { 
 				Constants.Scope.USER_EMAIL,
-				Constants.Scope.DRIVE_METADATA_READONLY
+				Constants.Scope.DRIVE_FULL
 		},
 		clientIds = {
 				Constants.Clients.WEB_CLIENT
@@ -225,4 +227,16 @@ public class UserApi {
 
 		ObjectifyService.ofy().delete().entity(request);
 	}
+
+    @ApiMethod(name="user.verify", httpMethod = HttpMethod.GET)
+    public boolean verify(User user) {
+        try {
+            Drive service = Utils.createDriveFromUser(user);
+            About execute = service.about().get().execute();
+            return true;
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Error verifying user", e);
+            return false;
+        }
+    }
 }

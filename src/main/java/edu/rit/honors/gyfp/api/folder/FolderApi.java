@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 		version = "v1",
 		scopes = {
 				Constants.Scope.USER_EMAIL,
-				Constants.Scope.DRIVE_METADATA_READONLY
+				Constants.Scope.DRIVE_FULL
 		},
 		clientIds = {
 				Constants.Clients.WEB_CLIENT

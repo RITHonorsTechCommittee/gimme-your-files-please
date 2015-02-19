@@ -3,9 +3,9 @@ package edu.rit.honors.gyfp.api;
 public class Constants {
 
 	public static class Scope {
-		public static final String DRIVE_METADATA_READONLY = "https://www.googleapis.com/auth/drive.readonly.metadata";
 		public static final String USER_EMAIL = "https://www.googleapis.com/auth/userinfo.email";
-	}
+        public static final String DRIVE_FULL = "https://www.googleapis.com/auth/drive";
+    }
 
 	public static class Clients {
 		public static final String WEB_CLIENT = "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com";
