@@ -51,7 +51,7 @@ public class Utils {
 			.getDefaultInstance();
 
 	private static GoogleClientSecrets clientSecrets = null;
-	public static final String MAIN_SERVLET_PATH = "/";
+	public static final String MAIN_SERVLET_PATH = "/#/installed";
 	public static final String AUTH_CALLBACK_SERVLET_PATH = "/oauth2callback";
 	public static final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
 	public static final JacksonFactory JSON_FACTORY = JacksonFactory
@@ -80,24 +80,11 @@ public class Utils {
 
 	public static GoogleAuthorizationCodeFlow initializeFlow()
 			throws IOException {
-		// Ask for only the permissions you need. Asking for more permissions
-		// will reduce the number of
-		// users who finish the process for giving you access to their accounts.
-		// It will also increase
-		// the amount of effort you will have to spend explaining to users what
-		// you are doing with their
-		// data.
-		// Here we are listing all of the available scopes. You should remove
-		// scopes that you are not
-		// actually using.
 		Set<String> scopes = new HashSet<String>();
 		scopes.add(DriveScopes.DRIVE);
-		scopes.add(DriveScopes.DRIVE_APPDATA);
-		scopes.add(DriveScopes.DRIVE_APPS_READONLY);
-		scopes.add(DriveScopes.DRIVE_FILE);
-		scopes.add(DriveScopes.DRIVE_METADATA_READONLY);
-		scopes.add(DriveScopes.DRIVE_READONLY);
-		scopes.add(DriveScopes.DRIVE_SCRIPTS);
+		scopes.add(DriveScopes.DRIVE + ".install");
+        scopes.add("email");
+        scopes.add("profile");
 
 		return new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT,
 				JSON_FACTORY, getClientSecrets(), scopes)

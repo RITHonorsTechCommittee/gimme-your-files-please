@@ -21,6 +21,6 @@ public class InitializeServlet extends DriveServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Drive service = getDriveService(req);
 
-        resp.sendRedirect("/");
+        resp.sendRedirect("/#/installed");
     }
 }

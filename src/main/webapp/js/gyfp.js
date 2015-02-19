@@ -6,6 +6,10 @@ gyfp.config(function ($routeProvider) {
     $routeProvider.when('/about', {
         controller: 'AboutController',
         templateUrl: 'js/partials/about.html'
+    }).when('/installed', {
+        templateUrl: 'js/partials/post-install.html'
+    }).when('/error', {
+        templateUrl: 'js/partials/install-error.html'
     }).when('/manage/:folderId', {
         controller: 'ManageFolderController',
         templateUrl: 'js/partials/manage.html'
