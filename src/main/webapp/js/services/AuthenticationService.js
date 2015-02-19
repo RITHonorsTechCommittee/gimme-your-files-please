@@ -9,6 +9,8 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
      * @type {boolean}
      */
     var authenticated = false,
+        hasCheckedAuth = false,
+        signedOut = false,
         user = {},
 
         /**
@@ -18,6 +20,15 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
          */
         isAuthenticated = function() {
             return authenticated;
+        },
+
+        /**
+         * Checks if the user has attempted to sign out from the application to prevent immediate login
+         *
+         * @returns {boolean}  True, if we have signed out
+         */
+        hasSignedOut = function() {
+            return signedOut;
         },
 
         getUser = function() {
@@ -35,6 +46,7 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
             $rootScope.$broadcast("AuthenticationService.AuthenticationChanged", authenticated);
 
             if (authenticated) {
+                signedOut = false;
                 gapi.client.plus.people.get({
                     'userId': 'me'
                 }).execute(function (me) {
@@ -65,6 +77,10 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
         makeAuthFunction = function(immediate)
         {
             return function() {
+                if (immediate && hasCheckedAuth) {
+                    return;
+                }
+                hasCheckedAuth = true;
                 console.log("Initiating authentication request");
 
                 gapi.auth.authorize({
@@ -80,9 +96,16 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
 
     return {
         isAuthenticated: isAuthenticated,
+        hasSignedOut: hasSignedOut,
         checkAuth: makeAuthFunction(true),
         authenticate: makeAuthFunction(false),
-        deauthenticate: gapi.auth.signOut,
+        deauthenticate: function() {
+            signedOut = true;
+            gapi.auth.signOut();
+            gapi.auth.setToken(null);
+            $rootScope.$broadcast("AuthenticationService.AuthenticationChanged", false);
+            authenticated = false;
+        },
         getUser: getUser
     };
 }]);
