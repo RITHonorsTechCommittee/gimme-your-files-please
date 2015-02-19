@@ -30,7 +30,7 @@ public class Oauth2Callback extends
 	      throws ServletException, IOException {
 
 		  // Redirect them to the list page after the callback.
-		  resp.sendRedirect("/list");
+		  resp.sendRedirect("/error");
 	    return;
 	  }
 

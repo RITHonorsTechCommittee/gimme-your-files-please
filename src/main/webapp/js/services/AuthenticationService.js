@@ -69,9 +69,11 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
 
                 gapi.auth.authorize({
                     client_id: "975557209634-fuq8i9nc7466p1nqn8aqv168vv3nttd0.apps.googleusercontent.com",
-                    scope: ["profile", "https://www.googleapis.com/auth/drive"],
+                    scope: ["profile", "email", "https://www.googleapis.com/auth/drive"],
                     immediate: immediate,
-                    authuser:""
+                    authuser: "",
+                    accesstype: "offline",
+                    cookiepolicy: "single_host_origin"
                 }, handleAuthenticationRequest);
             };
         };
