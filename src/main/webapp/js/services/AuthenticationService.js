@@ -11,6 +11,7 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
     var authenticated = false,
         hasCheckedAuth = false,
         signedOut = false,
+        installedSuccessfully = false,
         user = {},
 
         /**
@@ -19,7 +20,19 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
          * @returns {boolean}  True, if we have authenticated
          */
         isAuthenticated = function() {
-            return authenticated;
+            return installedSuccessfully;
+        },
+
+        /**
+         * Checks whether we have successfully been installed into drive and had permissions cached.
+         *
+         * This is critical to the operation of the API calls.  We need to install into drive and get offline access
+         * otherwise none of the serverside calls will work.
+         *
+         * @returns {boolean}  True if the app has been installed, false otherwise
+         */
+        isInstalled = function () {
+            return isInstalled;
         },
 
         /**
@@ -31,6 +44,11 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
             return signedOut;
         },
 
+        /**
+         * Helper function to return the currently logged in user
+         *
+         * @returns {{}}
+         */
         getUser = function() {
             return user;
         },
@@ -47,6 +65,7 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
 
             if (authenticated) {
                 signedOut = false;
+                checkInstallation();
                 gapi.client.plus.people.get({
                     'userId': 'me'
                 }).execute(function (me) {
@@ -92,10 +111,23 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
                     cookiepolicy: "single_host_origin"
                 }, handleAuthenticationRequest);
             };
+        },
+
+        /**
+         * Makes a request to the verify API endpoint.  If the API responds as successful then we have a cached
+         * credential that is able to grant a token for us.  If not, we will not be able to preform any api calls
+         * involving drive!
+         */
+        checkInstallation = function() {
+            gapi.client.gyfp.user.verify.installation().execute(function(resp) {
+                installedSuccessfully = resp.success || false;
+                $rootScope.$broadcast("AuthenticationService.InstallationChanged", installedSuccessfully);
+            });
         };
 
     return {
         isAuthenticated: isAuthenticated,
+        isInstalled: isInstalled,
         hasSignedOut: hasSignedOut,
         checkAuth: makeAuthFunction(true),
         authenticate: makeAuthFunction(false),

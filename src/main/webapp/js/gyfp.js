@@ -8,8 +8,9 @@ gyfp.config(function ($routeProvider) {
         templateUrl: 'js/partials/about.html'
     }).when('/installed', {
         templateUrl: 'js/partials/post-install.html'
-    }).when('/error', {
-        templateUrl: 'js/partials/install-error.html'
+    }).when('/install/:state?', {
+        controller: 'InstallController',
+        templateUrl: 'js/partials/install.html'
     }).when('/manage/:folderId', {
         controller: 'ManageFolderController',
         templateUrl: 'js/partials/manage.html'

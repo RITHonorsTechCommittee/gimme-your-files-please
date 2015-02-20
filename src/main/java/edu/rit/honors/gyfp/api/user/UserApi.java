@@ -228,15 +228,31 @@ public class UserApi {
 		ObjectifyService.ofy().delete().entity(request);
 	}
 
-    @ApiMethod(name="user.verify", httpMethod = HttpMethod.GET)
-    public boolean verify(User user) {
+    public static class VerificationResult {
+        private boolean success;
+
+        private VerificationResult(boolean success) {
+            this.success = success;
+        }
+
+        public boolean getSuccess() {
+            return success;
+        }
+
+    }
+
+    public static final VerificationResult PASS = new VerificationResult(true);
+    public static final VerificationResult FAIL = new VerificationResult(false);
+
+    @ApiMethod(name="user.verify.installation", httpMethod = HttpMethod.GET)
+    public VerificationResult verifyInstallation(User user) {
         try {
             Drive service = Utils.createDriveFromUser(user);
             About execute = service.about().get().execute();
-            return true;
+            return PASS;
         } catch (Exception e) {
             log.log(Level.WARNING, "Error verifying user", e);
-            return false;
+            return FAIL;
         }
     }
 }

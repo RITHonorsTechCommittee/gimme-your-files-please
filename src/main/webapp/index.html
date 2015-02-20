@@ -31,6 +31,7 @@
     <script type="application/javascript" src="js/services/AuthenticationService.js"></script>
     <script type="application/javascript" src="js/controllers/AboutController.js"></script>
     <script type="application/javascript" src="js/controllers/AuthenticationController.js"></script>
+    <script type="application/javascript" src="js/controllers/InstallController.js"></script>
     <script type="application/javascript" src="js/controllers/ManageFolderController.js"></script>
     <script type="application/javascript" src="js/controllers/TransferRequestController.js"></script>
     <script type="application/javascript" src="js/directives/LoadingCover.js"></script>
@@ -57,7 +58,7 @@
                     <li class="active"><a href="#">Home</a></li>
                     <li><a href="#/about">About</a></li>
                     <li><a href="#/contact">Contact</a></li>
-                    <li><a href="/setup" ng-show="authenticated">Install</a></li>
+                    <li><a href="/setup" ng-show="authenticated && !isInstalled">Install</a></li>
                 </ul>
 
                 <div class="pull-right auth-container">

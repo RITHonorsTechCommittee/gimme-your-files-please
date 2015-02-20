@@ -30,16 +30,6 @@
         </auth-constraint>
     </security-constraint>
 
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>oauth</web-resource-name>
-            <url-pattern>/oauth*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>*</role-name>
-        </auth-constraint>
-    </security-constraint>
-
     <welcome-file-list>
         <welcome-file>gyfp</welcome-file>
         <welcome-file>index.html</welcome-file>

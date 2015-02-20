@@ -1,5 +1,6 @@
-gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", function($scope, authService) {
+gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", "$location", function($scope, authService, $location) {
     $scope.authenticated = authService.isAuthenticated();
+    $scope.isInstalled = authService.isInstalled();
 
     $scope.operationRunning = false;
 
@@ -29,6 +30,19 @@ gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", 
             $scope.email = "";
         }
         $scope.$apply();
+    });
+
+    // Subscribe to changes in user information
+    $scope.$on("AuthenticationService.InstallationChanged", function(event, isInstalled) {
+        console.log("Updated User", isInstalled);
+
+        $scope.isInstalled = isInstalled;
+
+        if (!isInstalled) {
+            $location.path("/error");
+        } else {
+            $scope.$apply();
+        }
     });
 
     $scope.authenticate = function() {
