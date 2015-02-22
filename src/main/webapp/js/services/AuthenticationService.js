@@ -3,7 +3,7 @@
  * location.  Allows other controllers to easily check authentication status
  * and initiate authentication requests
  */
-gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
+gyfp.service('AuthenticationService', ['$rootScope', '$location', function($rootScope, $location) {
     /**
      * Whether we have successfully authenticated
      * @type {boolean}
@@ -121,6 +121,12 @@ gyfp.service('AuthenticationService', ['$rootScope', function($rootScope) {
         checkInstallation = function() {
             gapi.client.gyfp.user.verify.installation().execute(function(resp) {
                 installedSuccessfully = resp.success || false;
+
+                if (!installedSuccessfully) {
+                    $rootScope.$apply(function() {
+                        $location.path("/install/");
+                    });
+                }
                 $rootScope.$broadcast("AuthenticationService.InstallationChanged", installedSuccessfully);
             });
         };

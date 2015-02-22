@@ -4,6 +4,6 @@ gyfp.controller("InstallController", ["$scope", '$routeParams', function($scope,
         $scope.installText = "Try Again";
     } else {
         $scope.firstTime = true;
-        $scope.installText = "install";
+        $scope.installText = "Install";
     }
 }]);

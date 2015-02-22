@@ -1,4 +1,4 @@
-gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", "$location", function($scope, authService, $location) {
+gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", function($scope, authService) {
     $scope.authenticated = authService.isAuthenticated();
     $scope.isInstalled = authService.isInstalled();
 
@@ -38,11 +38,7 @@ gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", 
 
         $scope.isInstalled = isInstalled;
 
-        if (!isInstalled) {
-            $location.path("/error");
-        } else {
-            $scope.$apply();
-        }
+        $scope.$apply();
     });
 
     $scope.authenticate = function() {
