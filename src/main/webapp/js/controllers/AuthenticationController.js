@@ -1,5 +1,6 @@
 gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", function($scope, authService) {
     $scope.authenticated = authService.isAuthenticated();
+    $scope.isInstalled = authService.isInstalled();
 
     $scope.operationRunning = false;
 
@@ -28,6 +29,15 @@ gyfp.controller("AuthenticationController", ["$scope", "AuthenticationService", 
         } else {
             $scope.email = "";
         }
+        $scope.$apply();
+    });
+
+    // Subscribe to changes in user information
+    $scope.$on("AuthenticationService.InstallationChanged", function(event, isInstalled) {
+        console.log("Updated User", isInstalled);
+
+        $scope.isInstalled = isInstalled;
+
         $scope.$apply();
     });
 

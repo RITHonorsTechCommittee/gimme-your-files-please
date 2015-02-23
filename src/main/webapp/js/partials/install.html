@@ -1,0 +1,9 @@
+<div ng-show="error">
+    <h1>There was an error authorizing the application.</h1>
+    <p>GYFP will not work until it has been successfully installed.</p>
+</div>
+<div ng-show="firstTime">
+    <h1>Install Gimme Your Files, Please!</h1>
+    <p>Looks like this is your first time using Gimme Your Files, Please!  Before you can use the application you'll need to install it into Google Drive and authorize it.</p>
+</div>
+<a href="/setup" class="btn btn-lg btn-primary">{{installText}}</a>

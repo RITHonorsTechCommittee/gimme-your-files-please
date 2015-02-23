@@ -41,92 +41,78 @@ import edu.rit.honors.gyfp.api.Constants;
 
 public class Utils {
 
-	private static final Logger log = Logger.getLogger(Utils.class.getName());
+    private static final Logger log = Logger.getLogger(Utils.class.getName());
 
-	/**
-	 * Global instance of the {@link DataStoreFactory}. The best practice is to
-	 * make it a single globally shared instance across your application.
-	 */
-	private static final AppEngineDataStoreFactory DATA_STORE_FACTORY = AppEngineDataStoreFactory
-			.getDefaultInstance();
+    /**
+     * Global instance of the {@link DataStoreFactory}. The best practice is to
+     * make it a single globally shared instance across your application.
+     */
+    private static final AppEngineDataStoreFactory DATA_STORE_FACTORY = AppEngineDataStoreFactory
+            .getDefaultInstance();
 
-	private static GoogleClientSecrets clientSecrets = null;
-	public static final String MAIN_SERVLET_PATH = "/";
-	public static final String AUTH_CALLBACK_SERVLET_PATH = "/oauth2callback";
-	public static final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
-	public static final JacksonFactory JSON_FACTORY = JacksonFactory
-			.getDefaultInstance();
+    private static GoogleClientSecrets clientSecrets = null;
+    public static final String MAIN_SERVLET_PATH = "/#/installed";
+    public static final String AUTH_CALLBACK_SERVLET_PATH = "/oauth2callback";
+    public static final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
+    public static final JacksonFactory JSON_FACTORY = JacksonFactory
+            .getDefaultInstance();
 
-	private static GoogleClientSecrets getClientSecrets() throws IOException {
-		log.info("Setting the stuff.");
-		if (clientSecrets == null) {
-			clientSecrets = GoogleClientSecrets.load(
-					JSON_FACTORY,
-					new InputStreamReader(Utils.class
-							.getResourceAsStream("/client_secrets.json")));
-			Preconditions
-					.checkArgument(
-							!clientSecrets.getDetails().getClientId()
-									.startsWith("Enter ")
-									&& !clientSecrets.getDetails()
-											.getClientSecret()
-											.startsWith("Enter "),
-							"Download client_secrets.json file from "
-									+ "https://code.google.com/apis/console/?api=drive#project:456052621 into "
-									+ "src/main/resources/client_secrets.json");
-		}
-		return clientSecrets;
-	}
+    private static GoogleClientSecrets getClientSecrets() throws IOException {
+        log.info("Setting the stuff.");
+        if (clientSecrets == null) {
+            clientSecrets = GoogleClientSecrets.load(
+                    JSON_FACTORY,
+                    new InputStreamReader(Utils.class
+                            .getResourceAsStream("/client_secrets.json")));
+            Preconditions
+                    .checkArgument(
+                            !clientSecrets.getDetails().getClientId()
+                                    .startsWith("Enter ")
+                                    && !clientSecrets.getDetails()
+                                            .getClientSecret()
+                                            .startsWith("Enter "),
+                            "Download client_secrets.json file from "
+                                    + "https://code.google.com/apis/console/?api=drive#project:456052621 into "
+                                    + "src/main/resources/client_secrets.json");
+        }
+        return clientSecrets;
+    }
 
-	public static GoogleAuthorizationCodeFlow initializeFlow()
-			throws IOException {
-		// Ask for only the permissions you need. Asking for more permissions
-		// will reduce the number of
-		// users who finish the process for giving you access to their accounts.
-		// It will also increase
-		// the amount of effort you will have to spend explaining to users what
-		// you are doing with their
-		// data.
-		// Here we are listing all of the available scopes. You should remove
-		// scopes that you are not
-		// actually using.
-		Set<String> scopes = new HashSet<String>();
-		scopes.add(DriveScopes.DRIVE);
-		scopes.add(DriveScopes.DRIVE_APPDATA);
-		scopes.add(DriveScopes.DRIVE_APPS_READONLY);
-		scopes.add(DriveScopes.DRIVE_FILE);
-		scopes.add(DriveScopes.DRIVE_METADATA_READONLY);
-		scopes.add(DriveScopes.DRIVE_READONLY);
-		scopes.add(DriveScopes.DRIVE_SCRIPTS);
+    public static GoogleAuthorizationCodeFlow initializeFlow()
+            throws IOException {
+        Set<String> scopes = new HashSet<String>();
+        scopes.add(DriveScopes.DRIVE);
+        scopes.add(DriveScopes.DRIVE + ".install");
+        scopes.add("email");
+        scopes.add("profile");
 
-		return new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT,
-				JSON_FACTORY, getClientSecrets(), scopes)
-				.setDataStoreFactory(DATA_STORE_FACTORY)
+        return new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT,
+                JSON_FACTORY, getClientSecrets(), scopes)
+                .setDataStoreFactory(DATA_STORE_FACTORY)
                 .setApprovalPrompt("force")
-				.setAccessType("offline").build();
-	}
+                .setAccessType("offline").build();
+    }
 
-	public static String getRedirectUri(HttpServletRequest req) {
-		GenericUrl requestUrl = new GenericUrl(req.getRequestURL().toString());
-		requestUrl.setRawPath(AUTH_CALLBACK_SERVLET_PATH);
-		return requestUrl.build();
-	}
+    public static String getRedirectUri(HttpServletRequest req) {
+        GenericUrl requestUrl = new GenericUrl(req.getRequestURL().toString());
+        requestUrl.setRawPath(AUTH_CALLBACK_SERVLET_PATH);
+        return requestUrl.build();
+    }
 
-	/**
-	 * @param user
-	 * @return
-	 * @throws ForbiddenException 
-	 */
-	public static Drive createDriveFromUser(User user) throws ForbiddenException {
-		try {
-			AuthorizationCodeFlow authFlow = Utils.initializeFlow();
-			Credential credential = authFlow.loadCredential(user.getUserId());
-			Drive service = new Drive.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
-					.setApplicationName(Constants.Strings.APP_NAME)
-					.build();
-			return service;
-		} catch (IOException exc) {
-			throw new ForbiddenException("Could not create drive service for user " + user.getUserId(), exc);
-		}
-	}
+    /**
+     * @param user  The user for which the service will be created
+     * @return  The instantiated drive service
+     * @throws ForbiddenException  If the service could not be created
+     */
+    public static Drive createDriveFromUser(User user) throws ForbiddenException {
+        try {
+            AuthorizationCodeFlow authFlow = Utils.initializeFlow();
+            Credential credential = authFlow.loadCredential(user.getUserId());
+            return new Drive.Builder(Utils.HTTP_TRANSPORT, Utils.JSON_FACTORY, credential)
+                    .setApplicationName(Constants.Strings.APP_NAME)
+                    .build();
+        } catch (IOException exc) {
+            throw new ForbiddenException("Could not create drive service for user " + user.getUserId(), exc);
+        }
+    }
 }

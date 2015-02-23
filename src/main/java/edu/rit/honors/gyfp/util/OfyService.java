@@ -12,7 +12,7 @@ import edu.rit.honors.gyfp.model.DriveUser;
 
 public class OfyService {
     static {
-    	System.out.println("Registering classes");
+        System.out.println("Registering classes");
         ObjectifyService.register(DriveUser.class);
         ObjectifyService.register(Folder.class);
         ObjectifyService.register(FileUser.class);
