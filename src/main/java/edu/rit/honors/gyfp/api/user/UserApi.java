@@ -212,9 +212,9 @@ public class UserApi {
 	 * @param user
 	 *            The user who is completing the transfer request
 	 * @throws ForbiddenException
-	 *             If the user does not own this request
-	 * @throws NotFoundException
-	 *             If the request cannot be found
+     *             If the user does not own this request
+     * @throws NotFoundException
+     *             If the request cannot be found
 	 * @throws BadRequestException
 	 *             If any of the given file IDs are not part of the request. The
 	 *             valid files that were found, however, will still be removed
