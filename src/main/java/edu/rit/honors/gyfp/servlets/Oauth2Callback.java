@@ -14,34 +14,33 @@ import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineA
 import edu.rit.honors.gyfp.util.Utils;
 
 public class Oauth2Callback extends
-		AbstractAppEngineAuthorizationCodeCallbackServlet {
+        AbstractAppEngineAuthorizationCodeCallbackServlet {
 
-	private static final long serialVersionUID = -8146690178186062866L;
+    private static final long serialVersionUID = -8146690178186062866L;
 
-	@Override
-	  protected void onSuccess(HttpServletRequest req, HttpServletResponse resp, Credential credential)
-	      throws ServletException, IOException {
-	    resp.sendRedirect(Utils.MAIN_SERVLET_PATH);
-	  }
+    @Override
+      protected void onSuccess(HttpServletRequest req, HttpServletResponse resp, Credential credential)
+          throws ServletException, IOException {
+        resp.sendRedirect(Utils.MAIN_SERVLET_PATH);
+      }
 
-	  @Override
-	  protected void onError(
-	      HttpServletRequest req, HttpServletResponse resp, AuthorizationCodeResponseUrl errorResponse)
-	      throws ServletException, IOException {
+      @Override
+      protected void onError(
+          HttpServletRequest req, HttpServletResponse resp, AuthorizationCodeResponseUrl errorResponse)
+          throws ServletException, IOException {
 
-		  // Redirect them to the list page after the callback.
-		  resp.sendRedirect("/#/install/error");
-	    return;
-	  }
+          // Redirect them to the list page after the callback.
+          resp.sendRedirect("/#/install/error");
+      }
 
-	  @Override
-	  protected AuthorizationCodeFlow initializeFlow() throws ServletException, IOException {
-	    return Utils.initializeFlow();
-	  }
+      @Override
+      protected AuthorizationCodeFlow initializeFlow() throws ServletException, IOException {
+        return Utils.initializeFlow();
+      }
 
-	  @Override
-	  protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
-	    return Utils.getRedirectUri(req);
-	  }
+      @Override
+      protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
+        return Utils.getRedirectUri(req);
+      }
 
 }

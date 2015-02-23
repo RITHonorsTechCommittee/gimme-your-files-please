@@ -1,6 +1,5 @@
 package edu.rit.honors.gyfp.api.model;
 
-import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -15,111 +14,111 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @Entity
 public class TransferRequest {
 
-	private static final Logger log = Logger.getLogger(TransferRequest.class.getName());
+    private static final Logger log = Logger.getLogger(TransferRequest.class.getName());
 
-	/**
-	 * The ID of this transfer request.  Automatically assigned by Objectify
-	 */
-	@Id
-	Long id;
+    /**
+     * The ID of this transfer request.  Automatically assigned by Objectify
+     */
+    @Id
+    Long id;
 
-	/**
-	 * The User who initiated the request
-	 */
-	@Index
-	private FileUser requester;
+    /**
+     * The User who initiated the request
+     */
+    @Index
+    private FileUser requester;
 
-	/**
-	 * The email address of the user as which the request is directed
-	 */
-	@Index
-	private FileUser target;
+    /**
+     * The email address of the user as which the request is directed
+     */
+    @Index
+    private FileUser target;
 
-	/**
-	 * The date/time that the request was made.
-	 */
-	@Index
-	private DateTime requestCreation;
+    /**
+     * The date/time that the request was made.
+     */
+    @Index
+    private DateTime requestCreation;
 
-	/**
-	 * The files that will be transferred
-	 */
-	Set<TransferableFile> files;
+    /**
+     * The files that will be transferred
+     */
+    Set<TransferableFile> files;
 
-	/**
-	 * Whether this is a polite request or a forced transfer
-	 */
-	boolean isForced;
+    /**
+     * Whether this is a polite request or a forced transfer
+     */
+    boolean isForced;
 
-	private TransferRequest() {
-		// Required for Objectify
-	}
-	
-	private TransferRequest(FileUser requester, FileUser target, Collection<TransferableFile> files) {
-		this.requester = checkNotNull(requester);
-		this.target = checkNotNull(target);
-		this.files = new HashSet<>(checkNotNull(files));
-	}
-	
-	public static TransferRequest fromFolder(Folder folder, User user, String targetId) {
-		checkNotNull(folder);
-		checkNotNull(user);
-		checkNotNull(targetId);
+    private TransferRequest() {
+        // Required for Objectify
+    }
 
-		// Attempt to load the an existing TransferRequest
-		TransferRequest request = OfyService.ofy().load()
-				.type(TransferRequest.class)
-				.filter("target.permission", targetId)
-				.filter("requester.permission", user.getUserId())
-				.first().now();
+    private TransferRequest(FileUser requester, FileUser target, Collection<TransferableFile> files) {
+        this.requester = checkNotNull(requester);
+        this.target = checkNotNull(target);
+        this.files = new HashSet<>(checkNotNull(files));
+    }
 
-		FileUser target = checkNotNull(folder.getUser(targetId));
-		log.info("Creating transfer request for user " + targetId + " files: " + target.getFiles());
-		List<TransferableFile> files = target.getFiles().get(Constants.Role.OWNER);
+    public static TransferRequest fromFolder(Folder folder, User user, String targetId) {
+        checkNotNull(folder);
+        checkNotNull(user);
+        checkNotNull(targetId);
 
-		if (request == null) {
-			log.info("Creating a new transfer request.");
-			FileUser requester = new FileUser(user);
+        // Attempt to load the an existing TransferRequest
+        TransferRequest request = OfyService.ofy().load()
+                .type(TransferRequest.class)
+                .filter("target.permission", targetId)
+                .filter("requester.permission", user.getUserId())
+                .first().now();
 
-			request = new TransferRequest(requester, target, files);
-		} else {
-			log.info("Updating existing transfer request.");
-			request.getFiles().addAll(files);
-		}
+        FileUser target = checkNotNull(folder.getUser(targetId));
+        log.info("Creating transfer request for user " + targetId + " files: " + target.getFiles());
+        List<TransferableFile> files = target.getFiles().get(Constants.Role.OWNER);
 
-		OfyService.ofy().save().entity(request).now();
+        if (request == null) {
+            log.info("Creating a new transfer request.");
+            FileUser requester = new FileUser(user);
 
-		return request;
-	}
+            request = new TransferRequest(requester, target, files);
+        } else {
+            log.info("Updating existing transfer request.");
+            request.getFiles().addAll(files);
+        }
 
-	public Long getId() {
-		return id;
-	}
+        OfyService.ofy().save().entity(request).now();
 
-	public FileUser getRequestingUser() {
-		return requester;
-	}
+        return request;
+    }
 
-	public FileUser getTargetUser() {
-		return target;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public DateTime getRequestCreationTime() {
-		return requestCreation;
-	}
+    public FileUser getRequestingUser() {
+        return requester;
+    }
 
-	public Set<TransferableFile> getFiles() {
-		return files;
-	}
+    public FileUser getTargetUser() {
+        return target;
+    }
 
-	public void setIsForced(boolean isForced) {
-		this.isForced = isForced;
-	}
+    public DateTime getRequestCreationTime() {
+        return requestCreation;
+    }
+
+    public Set<TransferableFile> getFiles() {
+        return files;
+    }
+
+    public void setIsForced(boolean isForced) {
+        this.isForced = isForced;
+    }
 
 
 
