@@ -10,6 +10,10 @@
         <servlet-name>InitializeServlet</servlet-name>
         <servlet-class>edu.rit.honors.gyfp.servlets.InitializeServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DriveOpenRedirectServlet</servlet-name>
+        <servlet-class>edu.rit.honors.gyfp.servlets.DriveOpenRedirectServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>Oauth2Callback</servlet-name>
@@ -19,11 +23,24 @@
         <servlet-name>InitializeServlet</servlet-name>
         <url-pattern>/setup</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DriveOpenRedirectServlet</servlet-name>
+        <url-pattern>/open</url-pattern>
+    </servlet-mapping>
 
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>setup</web-resource-name>
             <url-pattern>/setup*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>*</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>open</web-resource-name>
+            <url-pattern>/open*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>*</role-name>
