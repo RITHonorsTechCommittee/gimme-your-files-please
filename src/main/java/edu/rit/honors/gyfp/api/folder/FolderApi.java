@@ -93,34 +93,13 @@ public class FolderApi {
             throw new NotFoundException(String.format(Constants.Error.LOAD_FOLDER_FOR_USER_FAIL, id, user.getNickname(), user.getEmail(), e.getMessage()), e);
         }
 
-        if (Constants.MimeType.FOLDER.equals(result.getMimeType())) {
-            boolean isOwner = false;
-            for (com.google.api.services.drive.model.User driveUser : result.getOwners()) {
-                if (driveUser.getIsAuthenticatedUser()) {
-                    isOwner = true;
-                    break;
-                }
-            }
-
-            if (!isOwner) {
-                StringBuilder message = new StringBuilder(Constants.Error.INCORRECT_FOLDER_USER);
-                for (com.google.api.services.drive.model.User driveUser : result.getOwners()) {
-                    message.append(driveUser.getDisplayName());
-                    message.append(" (");
-                    message.append(driveUser.getEmailAddress());
-                    message.append(")\n");
-                }
-
-                throw new ForbiddenException(message.toString());
-            }
-        } else {
+        if (!Constants.MimeType.FOLDER.equals(result.getMimeType())) {
             throw new BadRequestException(String.format(Constants.Error.INVALID_MIME, result.getMimeType()));
         }
 
         // At this point we know that:
         //   1)  There is a file with the given id
         //   2)  The "file" is actually a folder
-        //   3)  The currently logged in user is an owner of the folder
         //
         // This means we can safely begin attempting to load the contents of the folder.
 
