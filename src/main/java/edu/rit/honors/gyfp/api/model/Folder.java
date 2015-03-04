@@ -161,11 +161,7 @@ public class Folder {
         }
 
         if (cached != null && !cached.isDirty()) {
-            if (cached.ownerUserId.equals(user.getUserId())) {
-                return cached;
-            }
-
-            throw new ForbiddenException("User " + user.getUserId() + " is not authorized to control this folder");
+            return cached;
         }
 
         Drive service = Utils.createDriveFromUser(user);
