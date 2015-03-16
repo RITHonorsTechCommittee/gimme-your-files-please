@@ -21,7 +21,9 @@ public class SimplePermissionDeletionExecutor implements IncrementalExecutor<Tra
 
     /**
      * @param service
+     *         The authenticated drive service
      * @param user
+     *         The user for whom the permissions will be deleted
      */
     public SimplePermissionDeletionExecutor(Drive service, FileUser user) {
         this.service = service;

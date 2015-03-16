@@ -13,7 +13,7 @@ import java.util.Map;
 public class DriveUser {
 
     @Id
-    Long id;
+    private Long id;
 
 
     private String name;
@@ -27,10 +27,6 @@ public class DriveUser {
      */
     @SuppressWarnings("unused")
     private DriveUser() {
-    }
-
-    public DriveUser(Permission user) {
-        this(user.getName(), user.getEmailAddress());
     }
 
     public DriveUser(String name, String email) {

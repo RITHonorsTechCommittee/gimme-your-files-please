@@ -79,7 +79,7 @@ public class Utils {
 
     public static GoogleAuthorizationCodeFlow initializeFlow()
             throws IOException {
-        Set<String> scopes = new HashSet<String>();
+        Set<String> scopes = new HashSet<>();
         scopes.add(DriveScopes.DRIVE);
         scopes.add(DriveScopes.DRIVE + ".install");
         scopes.add("email");
