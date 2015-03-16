@@ -16,7 +16,8 @@ public class TransferableFile {
      * Needed for Objectify
      */
     @SuppressWarnings("unused")
-    private TransferableFile() { }
+    private TransferableFile() {
+    }
 
     public TransferableFile(File file) {
         this.filename = file.getTitle();

@@ -14,14 +14,6 @@
 
 package edu.rit.honors.gyfp.util;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.appengine.datastore.AppEngineDataStoreFactory;
@@ -39,13 +31,20 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.appengine.api.users.User;
 import edu.rit.honors.gyfp.api.Constants;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Logger;
+
 public class Utils {
 
     private static final Logger log = Logger.getLogger(Utils.class.getName());
 
     /**
-     * Global instance of the {@link DataStoreFactory}. The best practice is to
-     * make it a single globally shared instance across your application.
+     * Global instance of the {@link DataStoreFactory}. The best practice is to make it a single globally shared
+     * instance across your application.
      */
     private static final AppEngineDataStoreFactory DATA_STORE_FACTORY = AppEngineDataStoreFactory
             .getDefaultInstance();
@@ -69,8 +68,8 @@ public class Utils {
                             !clientSecrets.getDetails().getClientId()
                                     .startsWith("Enter ")
                                     && !clientSecrets.getDetails()
-                                            .getClientSecret()
-                                            .startsWith("Enter "),
+                                    .getClientSecret()
+                                    .startsWith("Enter "),
                             "Download client_secrets.json file from "
                                     + "https://code.google.com/apis/console/?api=drive#project:456052621 into "
                                     + "src/main/resources/client_secrets.json");
@@ -100,9 +99,13 @@ public class Utils {
     }
 
     /**
-     * @param user  The user for which the service will be created
-     * @return  The instantiated drive service
-     * @throws ForbiddenException  If the service could not be created
+     * @param user
+     *         The user for which the service will be created
+     *
+     * @return The instantiated drive service
+     *
+     * @throws ForbiddenException
+     *         If the service could not be created
      */
     public static Drive createDriveFromUser(User user) throws ForbiddenException {
         try {

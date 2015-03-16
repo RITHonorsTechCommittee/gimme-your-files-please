@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Entry servlet for the Drive API App Engine Sample. Demonstrates how to make
- * an authenticated API call using OAuth 2 helper classes.
+ * Entry servlet for the Drive API App Engine Sample. Demonstrates how to make an authenticated API call using OAuth 2
+ * helper classes.
  */
 public class DriveSampleServlet extends
         DriveServlet {
@@ -40,18 +40,14 @@ public class DriveSampleServlet extends
                 FileList files = request.execute();
 
                 // Add every file / folder in the hierarchy
-                for (File f : files.getItems())
-                {
+                for (File f : files.getItems()) {
                     log.println("<li>");
                     DriveSampleServlet.log.info(f.toPrettyString());
-                    if (f.getMimeType().equals(FOLDER_MIME))
-                    {
+                    if (f.getMimeType().equals(FOLDER_MIME)) {
                         log.println("<strong>" + f.getTitle() + "</strong>: " + f.getOwnerNames().get(0));
                         //log.println(rootFolderId + " -> " + f.getTitle() + ": " + f.getId());
                         result.addAll(getChildren(service, f.getId(), log));
-                    }
-                    else
-                    {
+                    } else {
                         log.println(f.getTitle() + ": " + f.getOwnerNames().get(0));
                         result.add(f);
                     }
@@ -83,21 +79,17 @@ public class DriveSampleServlet extends
         PrintWriter writer = resp.getWriter();
 
         String stateJson = req.getParameter("state");
-        if (stateJson != null)
-        {
+        if (stateJson != null) {
             State driveState = new State(stateJson);
 
             // Send the results as the response
             writer.println("<h1>Listing Directory Contents</h1>");
 
             List<File> files = new ArrayList<>();
-            for (String id : driveState.ids)
-            {
+            for (String id : driveState.ids) {
                 files.addAll(getChildren(drive, id, writer));
             }
-        }
-        else
-        {
+        } else {
             writer.println("Please use google drive to open a folder (or folders!) you want processed.");
         }
     }

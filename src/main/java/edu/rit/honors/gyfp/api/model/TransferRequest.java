@@ -55,6 +55,7 @@ public class TransferRequest {
      */
     boolean isForced;
 
+    @SuppressWarnings("unused")
     private TransferRequest() {
         // Required for Objectify
     }
@@ -119,7 +120,6 @@ public class TransferRequest {
     public void setIsForced(boolean isForced) {
         this.isForced = isForced;
     }
-
 
 
 }

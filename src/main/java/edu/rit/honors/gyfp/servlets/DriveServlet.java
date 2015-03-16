@@ -1,20 +1,18 @@
 package edu.rit.honors.gyfp.servlets;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeServlet;
 import com.google.api.services.drive.Drive;
-
 import edu.rit.honors.gyfp.drive.FileHelper;
 import edu.rit.honors.gyfp.drive.impl.FileHelperImpl;
 import edu.rit.honors.gyfp.util.Utils;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class DriveServlet extends
         AbstractAppEngineAuthorizationCodeServlet {
@@ -29,8 +27,7 @@ public abstract class DriveServlet extends
     protected Drive getDriveService(HttpServletRequest req) {
 
         Drive drive = null;
-        try
-        {
+        try {
             // Get the stored credentials using the Authorization Flow
             AuthorizationCodeFlow authFlow = initializeFlow();
             Credential credential = authFlow.loadCredential(getUserId(req));
@@ -38,8 +35,7 @@ public abstract class DriveServlet extends
             drive = new Drive.Builder(Utils.HTTP_TRANSPORT,
                     Utils.JSON_FACTORY, credential).setApplicationName(
                     APPLICATION_NAME).build();
-        }
-        catch (IOException | ServletException e) {
+        } catch (IOException | ServletException e) {
             log.log(Level.SEVERE, "Error authenticating", e);
         }
 
@@ -55,7 +51,8 @@ public abstract class DriveServlet extends
      * Generates the appropriate page title for a gyfp page
      *
      * @param req
-     *            The request for which the page title is being generated
+     *         The request for which the page title is being generated
+     *
      * @return The title of the current page
      */
     protected abstract String getTitle(HttpServletRequest req);

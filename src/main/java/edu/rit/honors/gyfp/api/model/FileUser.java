@@ -15,9 +15,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Class that stores information about users and the files they own.
- * 
- * This class mainly serves as a map between the three different permission
- * types (read, write, own)
+ * <p/>
+ * This class mainly serves as a map between the three different permission types (read, write, own)
  */
 @Entity
 public class FileUser {
@@ -36,17 +35,18 @@ public class FileUser {
      * Needed for Objectify
      */
     @SuppressWarnings("unused")
-    private FileUser() { }
+    private FileUser() {
+    }
 
     /**
      * Constructor
      *
      * @param permission
-     *            The permission id for this user
+     *         The permission id for this user
      * @param name
-     *            The name of the user
+     *         The name of the user
      * @param email
-     *            The user's / group's email address
+     *         The user's / group's email address
      */
     public FileUser(String permission, String name, String email) {
         this.permission = checkNotNull(permission);
@@ -78,13 +78,13 @@ public class FileUser {
 
     /**
      * @param role
-     *          The role which the user has for the given file
+     *         The role which the user has for the given file
      * @param file
-     *          The file itself
+     *         The file itself
      */
     public void addFile(String role, TransferableFile file) {
         List<TransferableFile> roleFiles = files.get(role);
-        if (roleFiles ==  null) {
+        if (roleFiles == null) {
             roleFiles = new ArrayList<>();
             files.put(role, roleFiles);
         }
@@ -96,6 +96,7 @@ public class FileUser {
      *
      * @param role
      *         The role for which the files will be returned
+     *
      * @return The files (not null)
      */
     public List<TransferableFile> getFiles(String role) {
