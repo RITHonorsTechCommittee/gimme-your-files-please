@@ -150,7 +150,7 @@ public class UserApi {
             throw new NotFoundException(String.format(Constants.Error.TRANSFER_REQUEST_NOT_FOUND, requestId));
         }
         
-        if (request.getTargetUser().getEmail().equals(user.getEmail())) {
+        if (request.getTargetUser().getEmail().toLowerCase().equals(user.getEmail().toLowerCase())) {
             log.info(request.getTargetUser() + " == " + user.getUserId());
             return request;
         } else {

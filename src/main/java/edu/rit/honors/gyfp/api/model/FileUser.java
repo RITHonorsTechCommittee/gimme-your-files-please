@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -49,8 +50,9 @@ public class FileUser {
      */
     public FileUser(String permission, String name, String email) {
         this.permission = checkNotNull(permission);
-        this.name = checkNotNull(name);
-        this.email = checkNotNull(email);
+        checkArgument(!(name == null && email == null), "Both email and name cannot be null for permission " + permission);
+        this.name = name;
+        this.email = email;
         this.files = new HashMap<>();
     }
 
