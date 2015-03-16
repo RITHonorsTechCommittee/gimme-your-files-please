@@ -32,9 +32,4 @@ public class DriveOpenRedirectServlet extends DriveServlet {
             resp.sendRedirect("/#/error/no-state");
         }
     }
-
-    @Override
-    protected String getTitle(HttpServletRequest req) {
-        return "Redirect";
-    }
 }
