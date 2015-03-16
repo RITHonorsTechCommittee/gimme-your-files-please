@@ -29,6 +29,8 @@ public class Constants {
         public static final String OWNER = "owner";
         public static final String WRITER = "writer";
         public static final String READER = "reader";
+        public static final String ANYONE = "anyone";
+        public static final String ANYONE_WITH_LINK = "anyoneWithLink";
     }
 
     public static class Error {

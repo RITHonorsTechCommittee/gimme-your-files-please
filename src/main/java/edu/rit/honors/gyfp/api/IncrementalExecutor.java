@@ -1,11 +1,10 @@
 package edu.rit.honors.gyfp.api;
 
-import com.google.api.services.drive.Drive;
-
-import java.io.IOException;
-
 /**
- * Created by Greg on 11/10/2014.
+ * Interface that provides a mechanism for incrementally executing a long-running operation.
+ *
+ * @param <T>
+ *         The type of data that is being operated over.  For example, a File
  */
 public interface IncrementalExecutor<T> {
 

@@ -51,23 +51,22 @@ public class FolderApi {
     private static final Logger log = Logger.getLogger(FolderApi.class.getName());
 
     /**
-     * Gets a folder object which contains ownership information for all files
-     * contained under the requested fileid. This request is recursive and will
-     * take time for large requests.
+     * Gets a folder object which contains ownership information for all files contained under the requested fileid.
+     * This request is recursive and will take time for large requests.
      *
      * @param id
-     *            The google fileid of the folder that will be inspected
+     *         The google fileid of the folder that will be inspected
      * @param user
-     *            The user making the request. Required for authorization
-     *            purposes.
-     * @return  The folder, with all children loaded
+     *         The user making the request. Required for authorization purposes.
+     *
+     * @return The folder, with all children loaded
      *
      * @throws NotFoundException
-     *             If a folder with fileid id is not found
+     *         If a folder with fileid id is not found
      * @throws ForbiddenException
-     *             If the user is not the owner of the folder
+     *         If the user is not the owner of the folder
      * @throws BadRequestException
-     *             If the id is not a folder, or if the id is not provided
+     *         If the id is not a folder, or if the id is not provided
      */
     @ApiMethod(name = "folders.get", httpMethod = HttpMethod.GET)
     public Folder getFolder(@Named("id") String id, User user,
@@ -109,21 +108,21 @@ public class FolderApi {
     }
 
     /**
-     * Removes read permissions for all files in the given folder from the list
-     * of users specified.
+     * Removes read permissions for all files in the given folder from the list of users specified.
      *
      * @param folder
-     *            The id of the folder from which access will be revoked
+     *         The id of the folder from which access will be revoked
      * @param user
-     *            The user making the request. Required for authorization
-     *            purposes
+     *         The user making the request. Required for authorization purposes
      * @param userId
-     *            The ID of the user who will have read permissions removed
+     *         The ID of the user who will have read permissions removed
+     *
      * @return the updated folder
+     *
      * @throws NotFoundException
-     *             If a folder with fileid id is not found
+     *         If a folder with fileid id is not found
      * @throws ForbiddenException
-     *             If the user is not the owner of the folder
+     *         If the user is not the owner of the folder
      */
     @ApiMethod(name = "folders.revoke.reader", httpMethod = HttpMethod.POST)
     public Folder revokeReadPermission(@Named("folder") String folder, User user, @Named("userId") String userId)
@@ -133,23 +132,23 @@ public class FolderApi {
     }
 
     /**
-     * Removes write permissions for all files in the given folder from the list
-     * of users specified.
+     * Removes write permissions for all files in the given folder from the list of users specified.
      *
      * @param folder
-     *            The id of the folder from which access will be revoked
+     *         The id of the folder from which access will be revoked
      * @param user
-     *            The user making the request. Required for authorization
-     *            purposes
+     *         The user making the request. Required for authorization purposes
      * @param userId
-     *            The ID of the user who will have read permissions removed
-     * @return the updated folder
-     * @throws NotFoundException
-     *             If a folder with fileid id is not found
-     * @throws ForbiddenException
-     *             If the user is not the owner of the folder
-     * @throws BadRequestException  If there are no users specified or no permissions were revoked
+     *         The ID of the user who will have read permissions removed
      *
+     * @return the updated folder
+     *
+     * @throws NotFoundException
+     *         If a folder with fileid id is not found
+     * @throws ForbiddenException
+     *         If the user is not the owner of the folder
+     * @throws BadRequestException
+     *         If there are no users specified or no permissions were revoked
      */
     @ApiMethod(name = "folders.revoke.writer", httpMethod = HttpMethod.POST)
     public Folder revokeWritePermission(@Named("folder") String folder, User user, @Named("userId") String userId)
@@ -160,15 +159,16 @@ public class FolderApi {
 
     /**
      * @param folder
-     *            The id of the folder from which access will be revoked
+     *         The id of the folder from which access will be revoked
      * @param user
-     *            The user making the request. Required for authorization
-     *            purposes
+     *         The user making the request. Required for authorization purposes
      * @param userId
-     *            The ID of the user who will have read permissions removed
+     *         The ID of the user who will have read permissions removed
      * @param role
-     *            The role (read or write)
+     *         The role (read or write)
+     *
      * @return the updated folder
+     *
      * @throws ForbiddenException
      * @throws BadRequestException
      */
@@ -201,26 +201,24 @@ public class FolderApi {
     }
 
     /**
-     * Creates "polite" transfer requests for all the specified users which will
-     * transfer any files owned in the given folder to the requesting user
+     * Creates "polite" transfer requests for all the specified users which will transfer any files owned in the given
+     * folder to the requesting user
      *
      * @param folderid
-     *            The id of folder for which the transfer requests will be
-     *            created
+     *         The id of folder for which the transfer requests will be created
      * @param user
-     *            The user making the request. Required for authorization
-     *            purposes
+     *         The user making the request. Required for authorization purposes
      * @param users
-     *            A list of users who will have transfer requests made for their
-     *            files
-     * @return A list of TransferRequests, one for each user who owned files in
-     *         the folder.
+     *         A list of users who will have transfer requests made for their files
+     *
+     * @return A list of TransferRequests, one for each user who owned files in the folder.
+     *
      * @throws NotFoundException
-     *             If a folder with fileid id is not found
+     *         If a folder with fileid id is not found
      * @throws ForbiddenException
-     *             If the user is not the owner of the folder
+     *         If the user is not the owner of the folder
      * @throws BadRequestException
-     *             If no users are specified
+     *         If no users are specified
      */
     @ApiMethod(name = "folders.transfer.polite", httpMethod = HttpMethod.POST)
     public List<TransferRequest> makeTransferRequest(@Named("folder") String folderid, User user, @Named("users") List<String> users)
@@ -230,30 +228,30 @@ public class FolderApi {
     }
 
     /**
-     * Creates "hostile" transfer requests for all the specified users which
-     * will transfer any files owned in the given folder to the requesting user.
-     *
-     * Unlike the "polite" transfer requests, this API call will actually
-     * forcefully transfer ownership of all files to the requesting user
+     * Creates "hostile" transfer requests for all the specified users which will transfer any files owned in the given
+     * folder to the requesting user.
+     * <p/>
+     * Unlike the "polite" transfer requests, this API call will actually forcefully transfer ownership of all files to
+     * the requesting user
      *
      * @param folderid
-     *            The id of the folder for which the transfer requests will be created
+     *         The id of the folder for which the transfer requests will be created
      * @param user
-     *            The user making the request. Required for authorization
-     *            purposes
+     *         The user making the request. Required for authorization purposes
      * @param users
-     *            A list of users who will have transfer requests made for their
-     *            files
-     * @return A list of TransferRequests, one for each user who owned files in
-     *         the folder.
+     *         A list of users who will have transfer requests made for their files
+     *
+     * @return A list of TransferRequests, one for each user who owned files in the folder.
+     *
      * @throws NotFoundException
-     *             If a folder with fileid id is not found
+     *         If a folder with fileid id is not found
      * @throws ForbiddenException
-     *             If the user is not the owner of the folder
-     * @throws BadRequestException  If no users are specified
+     *         If the user is not the owner of the folder
+     * @throws BadRequestException
+     *         If no users are specified
      */
     @ApiMethod(name = "folders.transfer.hostile", httpMethod = HttpMethod.POST)
-    public List<TransferRequest> makeHostileTransferRequest(@Named("folder") String folderid, User user,@Named("users") List<String> users)
+    public List<TransferRequest> makeHostileTransferRequest(@Named("folder") String folderid, User user, @Named("users") List<String> users)
             throws NotFoundException, ForbiddenException, BadRequestException {
 
         return getTransferRequests(folderid, user, users, true);
@@ -288,7 +286,7 @@ public class FolderApi {
         // TODO make this message contain useful information
         String messageText = "Hey there! \n"
                 + "    " + request.getRequestingUser().getEmail() + " has requested that you transfer ownership of "
-                + "your files in the folder " + request.getId() + ".";
+                + "your files in the folder  <a href=\"https://gimmeyoufilesplease.appspot.com/#/request/" + request.getId() + "\">" + request.getId() + "</a>.";
 
         try {
             Message message = new MimeMessage(session);
@@ -314,14 +312,14 @@ public class FolderApi {
      * Converts existing polite transfer requests into hostile requests and executes them.
      *
      * @param requests
-     *            A list of all the ids of the transfer requests that will be
-     *            force-completed
+     *         A list of all the ids of the transfer requests that will be force-completed
      * @param user
-     *            The user making the request. Required for authorization
-     *            purposes
+     *         The user making the request. Required for authorization purposes
+     *
      * @return A list of the modified TransferRequests
+     *
      * @throws ForbiddenException
-     *             If the user is not the owner of the folder
+     *         If the user is not the owner of the folder
      */
     @ApiMethod(name = "folders.transfer.convert", httpMethod = HttpMethod.PUT)
     public List<TransferRequest> convertTransferRequest(@Named("requests") List<Long> requests, User user)
@@ -335,15 +333,16 @@ public class FolderApi {
      * Gets a list of the pending transfer requests for a given folder
      *
      * @param folder
-     *            The id of the folder for which transfer requests will be listed
+     *         The id of the folder for which transfer requests will be listed
      * @param user
-     *            The user making the request. Required for authorization
-     *            purposes.
-     * @return  The folder, with all children loaded
+     *         The user making the request. Required for authorization purposes.
+     *
+     * @return The folder, with all children loaded
+     *
      * @throws NotFoundException
-     *             If a folder with the fiven id is not found
+     *         If a folder with the fiven id is not found
      * @throws ForbiddenException
-     *             If the user is not the owner of the folder
+     *         If the user is not the owner of the folder
      */
     @ApiMethod(name = "folders.transfer.list", httpMethod = HttpMethod.GET)
     public List<TransferRequest> getTransferRequests(@Named("folder") Long folder, User user)
@@ -351,6 +350,4 @@ public class FolderApi {
         // TODO
         return new ArrayList<>();
     }
-
-
 }
