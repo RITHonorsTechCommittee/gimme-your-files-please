@@ -199,13 +199,17 @@ public class FolderApi {
 
         BatchRequest batch = service.batch();
         final Set<TransferableFile> success = new HashSet<>();
-        final Set<TransferableFile> fail = new HashSet<>();
         for (final TransferableFile f : targetUser.getFiles(role)) {
+
+            // Limit the number of requests to 100 at a time to somewhat come closer to the rate limit...
+            if (batch.size() >= 100) {
+                break;
+            }
+
             try {
                 service.permissions().delete(f.getFileId(), targetUser.getPermission()).queue(batch, new JsonBatchCallback<Void>() {
                     @Override
                     public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
-                        fail.add(f);
                         log.log(Level.WARNING, "Could not delete permission for file " + f.getFileId(), e);
                     }
 
