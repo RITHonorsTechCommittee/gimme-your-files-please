@@ -1,5 +1,10 @@
 package edu.rit.honors.gyfp.api.folder;
 
+import com.google.api.client.googleapis.batch.BatchRequest;
+import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
+import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpHeaders;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
@@ -17,6 +22,7 @@ import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.api.model.FileUser;
 import edu.rit.honors.gyfp.api.model.Folder;
 import edu.rit.honors.gyfp.api.model.TransferRequest;
+import edu.rit.honors.gyfp.api.model.TransferableFile;
 import edu.rit.honors.gyfp.util.OfyService;
 import edu.rit.honors.gyfp.util.Utils;
 
@@ -30,9 +36,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -192,9 +196,37 @@ public class FolderApi {
             throw new NotFoundException("User " + userId + " does not have any files in the specified folder");
         }
 
-        SimplePermissionDeletionExecutor executor = new SimplePermissionDeletionExecutor(service, targetUser);
 
-        ApiUtil.safeExecuteDriveRequestQueue(targetUser.getFiles(role), executor, 3);
+        BatchRequest batch = service.batch();
+        final Set<TransferableFile> success = new HashSet<>();
+        final Set<TransferableFile> fail = new HashSet<>();
+        for (final TransferableFile f : targetUser.getFiles(role)) {
+            try {
+                service.permissions().delete(f.getFileId(), targetUser.getPermission()).queue(batch, new JsonBatchCallback<Void>() {
+                    @Override
+                    public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
+                        fail.add(f);
+                        log.log(Level.WARNING, "Could not delete permission for file " + f.getFileId(), e);
+                    }
+
+                    @Override
+                    public void onSuccess(Void aVoid, HttpHeaders responseHeaders) throws IOException {
+                        success.add(f);
+                    }
+                });
+            } catch (IOException e) {
+                log.log(Level.WARNING, "Could not delete permission for file " + f.getFileId(), e);
+            }
+        }
+
+        try {
+            batch.execute();
+        } catch (IOException e) {
+            log.log(Level.SEVERE, "Error executing batch", e);
+        }
+
+        targetUser.getFiles(role).removeAll(success);
+
 
         OfyService.ofy().save().entity(target).now();
         return target;
