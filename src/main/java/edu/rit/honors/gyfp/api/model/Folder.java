@@ -318,9 +318,10 @@ public class Folder {
             final Files.List request = afl.request;
             final String id = afl.id + " paged";
             // Also queue up the next page
-            if (request.getPageToken() != null
-                    && request.getPageToken().length() > 0) {
+            if (afl.list.getNextPageToken() != null
+                    && afl.list.getNextPageToken().length() > 0) {
                 request.setPageToken(afl.list.getNextPageToken());
+                log.log(Level.INFO, "Making page request for " + id + " with token '" + afl.list.getNextPageToken());
 
                 try {
                     request.queue(batch, new JsonBatchCallback<FileList>() {
@@ -345,7 +346,7 @@ public class Folder {
         // Actually execute the batch
         if (batch.size() > 0) {
             try {
-                log.info("Executing batch request with " + batch.size() + " requests.");
+                log.log(Level.INFO, "Executing batch request with " + batch.size() + " requests.");
                 batch.execute();
                 loadFileBatchHelper(service);
             } catch (IOException e) {
