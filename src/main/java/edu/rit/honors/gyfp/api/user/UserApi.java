@@ -1,5 +1,9 @@
 package edu.rit.honors.gyfp.api.user;
 
+import com.google.api.client.googleapis.batch.BatchRequest;
+import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
+import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.http.HttpHeaders;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
@@ -84,30 +88,41 @@ public class UserApi {
         }
 
         Drive service = Utils.createDriveFromUser(user);
-        List<TransferableFile> success = new ArrayList<>();
+        final List<TransferableFile> success = new ArrayList<>();
         Permission owner = new Permission();
         owner.setRole("owner");
 
-        for (TransferableFile file : request.getFiles()) {
+        BatchRequest batch = service.batch();
+
+        for (final TransferableFile file : request.getFiles()) {
+
             try {
-                service.permissions().update(file.getFileId(), request.getRequestingUser().getPermission(), owner).execute();
+                service.permissions().update(file.getFileId(), request.getRequestingUser().getPermission(), owner).queue(batch, new JsonBatchCallback<Permission>() {
+                    @Override
+                    public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
+                        log.log(Level.SEVERE, "Could not transfer ownership", e);
+                    }
+
+                    @Override
+                    public void onSuccess(Permission permission, HttpHeaders responseHeaders) throws IOException {
+                        success.add(file);
+                    }
+                });
                 success.add(file);
-                limit--;
-                // Maybe not necessary, but just to be safe slow ourselves down slightly to avoid hitting the rate limit
-                Thread.sleep(50);
             } catch (IOException e) {
                 throw new InternalServerErrorException(
                         Constants.Error.FAILED_DRIVE_REQUEST, e);
-            } catch (InterruptedException e) {
-                throw new InternalServerErrorException(
-                        Constants.Error.SLEEP_INTERRUPTED, e);
             }
 
-            // Ensure that we have enough time to remove the processed files,
-            // store the updated request, and return the result
-            if (ApiProxy.getCurrentEnvironment().getRemainingMillis() <= 2000 || limit == 0) {
+            if (batch.size() >= limit) {
                 break;
             }
+        }
+
+        try {
+            batch.execute();
+        } catch (IOException e) {
+            log.log(Level.SEVERE, "Error executing batch request");
         }
 
         request.getFiles().removeAll(success);
