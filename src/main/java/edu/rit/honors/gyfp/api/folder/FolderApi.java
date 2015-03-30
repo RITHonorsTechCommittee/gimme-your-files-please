@@ -302,10 +302,12 @@ public class FolderApi {
             throw new BadRequestException(String.format(Constants.Error.MISSING_PARAMETER, "users"));
         }
 
+
         Folder folder = Folder.fromGoogleId(folderid, user);
         List<TransferRequest> requests = new ArrayList<>();
 
         for (String userId : users) {
+            log.info("Creating transfer request of folder " + folderid + " from " + userId + " to " + user.getUserId() + "/" + user.getEmail());
             TransferRequest request = TransferRequest.fromFolder(folder, user, userId);
             request.setIsForced(isForced);
             requests.add(request);

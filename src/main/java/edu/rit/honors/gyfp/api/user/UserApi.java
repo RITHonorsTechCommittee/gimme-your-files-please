@@ -100,7 +100,8 @@ public class UserApi {
                 service.permissions().update(file.getFileId(), request.getRequestingUser().getPermission(), owner).queue(batch, new JsonBatchCallback<Permission>() {
                     @Override
                     public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
-                        log.log(Level.SEVERE, "Could not transfer ownership", e);
+                        log.log(Level.SEVERE, "Could not transfer ownership of file " + file.getFileId() + " (" + file.getFileName() + ")", e);
+                        log.log(Level.WARNING, e.getMessage() + ": " + e.getErrors());
                     }
 
                     @Override

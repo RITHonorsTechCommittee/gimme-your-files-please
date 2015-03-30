@@ -395,6 +395,7 @@ public class Folder {
      *         The actual permission of the user
      */
     private void loadPermission(TransferableFile file, Permission permission) {
+        log.info("Adding to file " + file.getFileName() + " (" + file.getFileId() + ") permission " + permission.getId() + " (" + permission.getEmailAddress() + ")");
         getUser(permission).addFile(permission.getRole(), file);
     }
 
