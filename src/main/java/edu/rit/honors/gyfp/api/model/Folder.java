@@ -414,6 +414,10 @@ public class Folder {
         return null;
     }
 
+    public void addUser(FileUser user) {
+        files.put(user.getPermission(), user);
+    }
+
     /**
      * Helper data storage class.
      * <p/>

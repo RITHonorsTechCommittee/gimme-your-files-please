@@ -85,7 +85,15 @@ public class TransferRequest {
 
         if (request == null) {
             log.info("Creating a new transfer request.");
-            FileUser requester = new FileUser(user);
+
+
+            FileUser requester;
+            if (folder.getUser(requesterId) != null) {
+                requester = folder.getUser(requesterId);
+            } else {
+                requester = new FileUser(requesterId, user.getNickname(), user.getEmail());
+                folder.addUser(requester);
+            }
 
             request = new TransferRequest(requester, target, files);
         } else {
