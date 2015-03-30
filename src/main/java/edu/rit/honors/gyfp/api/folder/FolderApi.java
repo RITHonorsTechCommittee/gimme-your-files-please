@@ -303,12 +303,21 @@ public class FolderApi {
         }
 
 
+        Drive service = Utils.createDriveFromUser(user);
+        String toPermission;
+        try {
+            toPermission = service.permissions().getIdForEmail(user.getEmail()).execute().getId();
+        } catch (IOException e) {
+            log.log(Level.SEVERE, "Could not get destination permission for user " + user.getUserId() + " / " + user.getEmail(), e);
+            return new ArrayList<>();
+        }
+
         Folder folder = Folder.fromGoogleId(folderid, user);
         List<TransferRequest> requests = new ArrayList<>();
 
         for (String userId : users) {
             log.info("Creating transfer request of folder " + folderid + " from " + userId + " to " + user.getUserId() + "/" + user.getEmail());
-            TransferRequest request = TransferRequest.fromFolder(folder, user, userId);
+            TransferRequest request = TransferRequest.fromFolder(folder, user, toPermission, userId);
             request.setIsForced(isForced);
             requests.add(request);
 
