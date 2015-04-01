@@ -64,6 +64,22 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
         $scope.$apply();
     };
 
+    $scope.delete = {
+        isRunning: false,
+        isDeleted: false,
+        execute: function() {
+            if (!$scope.delete.isRunning && !$scope.delete.isDeleted) {
+                $scope.delete.isRunning = true;
+                gapi.client.gyfp.user.request.delete({request: $scope.request.id}).execute(function(resp) {
+                    console.log("Request deleted");
+                    $scope.delete.isRunning = false;
+                    $scope.delete.isDeleted = true;
+                    $scope.$apply();
+                });
+            }
+        }
+    };
+
     /**
      * Checks if any files in the request are selected
      *

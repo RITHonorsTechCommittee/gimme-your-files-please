@@ -21,8 +21,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Entity
 public class FileUser {
 
+    /**
+     * The ID of this transfer request.  Same as the permission
+     * Objectify doesn't seem to want to let us query when permission is used as the @Id :(
+     */
     @Id
-    @Index
+    private String id;
+
     private String permission;
 
     private String name;
@@ -50,6 +55,7 @@ public class FileUser {
      */
     public FileUser(String permission, String name, String email) {
         this.permission = checkNotNull(permission);
+        this.id = permission;
         checkArgument(!(name == null && email == null), "Both email and name cannot be null for permission " + permission);
         this.name = name;
         this.email = email;

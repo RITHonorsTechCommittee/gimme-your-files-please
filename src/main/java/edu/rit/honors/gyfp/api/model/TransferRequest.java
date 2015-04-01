@@ -66,16 +66,17 @@ public class TransferRequest {
         this.files = new HashSet<>(checkNotNull(files));
     }
 
-    public static TransferRequest fromFolder(Folder folder, User user, String targetId) {
+    public static TransferRequest fromFolder(Folder folder, User user, String requesterId, String targetId) {
         checkNotNull(folder);
         checkNotNull(user);
+        checkNotNull(requesterId);
         checkNotNull(targetId);
 
         // Attempt to load the an existing TransferRequest
         TransferRequest request = OfyService.ofy().load()
                 .type(TransferRequest.class)
                 .filter("target.permission", targetId)
-                .filter("requester.permission", user.getUserId())
+                .filter("requester.permission", requesterId)
                 .first().now();
 
         FileUser target = checkNotNull(folder.getUser(targetId));
@@ -84,7 +85,15 @@ public class TransferRequest {
 
         if (request == null) {
             log.info("Creating a new transfer request.");
-            FileUser requester = new FileUser(user);
+
+
+            FileUser requester;
+            if (folder.getUser(requesterId) != null) {
+                requester = folder.getUser(requesterId);
+            } else {
+                requester = new FileUser(requesterId, user.getNickname(), user.getEmail());
+                folder.addUser(requester);
+            }
 
             request = new TransferRequest(requester, target, files);
         } else {

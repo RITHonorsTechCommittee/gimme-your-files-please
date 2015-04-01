@@ -1,5 +1,10 @@
 package edu.rit.honors.gyfp.api.folder;
 
+import com.google.api.client.googleapis.batch.BatchRequest;
+import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
+import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpHeaders;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
@@ -17,6 +22,7 @@ import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.api.model.FileUser;
 import edu.rit.honors.gyfp.api.model.Folder;
 import edu.rit.honors.gyfp.api.model.TransferRequest;
+import edu.rit.honors.gyfp.api.model.TransferableFile;
 import edu.rit.honors.gyfp.util.OfyService;
 import edu.rit.honors.gyfp.util.Utils;
 
@@ -30,9 +36,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -192,9 +196,41 @@ public class FolderApi {
             throw new NotFoundException("User " + userId + " does not have any files in the specified folder");
         }
 
-        SimplePermissionDeletionExecutor executor = new SimplePermissionDeletionExecutor(service, targetUser);
 
-        ApiUtil.safeExecuteDriveRequestQueue(targetUser.getFiles(role), executor, 3);
+        BatchRequest batch = service.batch();
+        final Set<TransferableFile> success = new HashSet<>();
+        for (final TransferableFile f : targetUser.getFiles(role)) {
+
+            // Limit the number of requests to 100 at a time to somewhat come closer to the rate limit...
+            if (batch.size() >= 100) {
+                break;
+            }
+
+            try {
+                service.permissions().delete(f.getFileId(), targetUser.getPermission()).queue(batch, new JsonBatchCallback<Void>() {
+                    @Override
+                    public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
+                        log.log(Level.WARNING, "Could not delete permission for file " + f.getFileId(), e);
+                    }
+
+                    @Override
+                    public void onSuccess(Void aVoid, HttpHeaders responseHeaders) throws IOException {
+                        success.add(f);
+                    }
+                });
+            } catch (IOException e) {
+                log.log(Level.WARNING, "Could not delete permission for file " + f.getFileId(), e);
+            }
+        }
+
+        try {
+            batch.execute();
+        } catch (IOException e) {
+            log.log(Level.SEVERE, "Error executing batch", e);
+        }
+
+        targetUser.getFiles(role).removeAll(success);
+
 
         OfyService.ofy().save().entity(target).now();
         return target;
@@ -266,11 +302,22 @@ public class FolderApi {
             throw new BadRequestException(String.format(Constants.Error.MISSING_PARAMETER, "users"));
         }
 
+
+        Drive service = Utils.createDriveFromUser(user);
+        String toPermission;
+        try {
+            toPermission = service.permissions().getIdForEmail(user.getEmail()).execute().getId();
+        } catch (IOException e) {
+            log.log(Level.SEVERE, "Could not get destination permission for user " + user.getUserId() + " / " + user.getEmail(), e);
+            return new ArrayList<>();
+        }
+
         Folder folder = Folder.fromGoogleId(folderid, user);
         List<TransferRequest> requests = new ArrayList<>();
 
         for (String userId : users) {
-            TransferRequest request = TransferRequest.fromFolder(folder, user, userId);
+            log.info("Creating transfer request of folder " + folderid + " from " + userId + " to " + user.getUserId() + "/" + user.getEmail());
+            TransferRequest request = TransferRequest.fromFolder(folder, user, toPermission, userId);
             request.setIsForced(isForced);
             requests.add(request);
 
