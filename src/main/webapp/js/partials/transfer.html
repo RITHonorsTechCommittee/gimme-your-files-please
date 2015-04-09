@@ -1,34 +1,51 @@
 <div id="main" class="container" ng-show="authenticated">
     <div loading-cover ng-show="!loaded"></div>
 
+    <div ng-show="isErrored" class="alert alert-error" ng-bind="errorMessage"></div>
+    
     <div ng-show="delete.isDeleted">
         <h1>This request has been deleted.</h1>
     </div>
 
     <div ng-show="!delete.isDeleted">
-        <div>Sending {{request.files.length}} Files to <strong ng-bind="request.requester.name"></strong></div>
+        <div ng-show="transferComplete">Thx :D</div>
+        <div ng-show="!transferComplete">
+            <div class="btn-group">
+                <a class="btn btn-default  btn-sm" ng-click="deleteRequest()" ladda="deleting">Delete Request</a>
+                <a ng-class="{'disabled': !hasSelectedFiles()}" class="btn btn-default  btn-sm" ng-click="removeFilesFromTransfer()">Remove Selected Files</a>
+                <a ng-class="{'disabled': !request.files.length}" class="btn btn-default  btn-sm" ng-click="transferFiles()" ladda="transferring">Transfer Files</a>
+            </div>
+        </div>
+        <h2>Sending {{request.files.length}} Files to <strong ng-bind="request.requester.name"></strong></h2>
         <table class="table table-striped" ng-cloak>
             <tr>
-                <th><input type="checkbox" ng-model="selectAll" ui-indeterminate="isSelectAllIndeterminate()" ng-click="toggleSelectAll()"/> </th>
+                <th><input type="checkbox" ng-model="selectAll" ui-indeterminate="isSelectAllIndeterminate()" ng-click="toggleSelectAll()" ng-disabled="transferComplete"/> </th>
                 <th>File Name</th>
                 <th>Actions</th>
             </tr>
-            <tr ng-repeat="file in request.files" ng-cloak>
-                <td><input type="checkbox" ng-model="file.selected"/></td>
+            <tr ng-repeat="file in request.files" ng-class="{success: transferComplete}">
+                <td><input type="checkbox" ng-model="file.selected" ng-disabled="transferComplete"/></td>
                 <td ng-bind="file.fileName"></td>
                 <td>
                     <div class="btn-group">
-                        <a class="btn btn-success btn-sm" ng-click="remove(file)"><span class="glyphicon glyphicon-trash"></span></a>
+                        <a class="btn btn-success btn-sm" ng-click="remove(file)" ladda="file.loading"><span class="glyphicon glyphicon-trash"></span></a>
                     </div>
                 </td>
             </tr>
         </table>
-        <div>
-            <div class="btn-group">
-                <a class="btn btn-default  btn-sm" ng-click="delete.execute()" ladda="delete.isRunning" ng-class="{'disabled': delete.isDeleted}">Delete Request</a>
-                <a ng-class="{'disabled': !hasSelectedFiles()}" class="btn btn-default  btn-sm" ng-click="removeSelected()">Remove Selected Files</a>
-                <a ng-class="{'disabled': !hasFiles()}" class="btn btn-default  btn-sm" ng-click="transfer()">Transfer Files</a>
-            </div>
-        </div>
+
+        <h2 ng-show="removedFiles.length">Files Not To Transfer</h2>
+        <table class="table table-striped removed" ng-cloak ng-show="removedFiles.length">
+            <thead>
+            <tr>
+                <th>File Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="file in removedFiles" class="danger">
+                <td ng-bind="file.fileName"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
