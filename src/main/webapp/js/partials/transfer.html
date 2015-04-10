@@ -18,7 +18,7 @@
         </div>
         <h2>Sending {{request.files.length}} Files to <strong ng-bind="request.requester.name"></strong></h2>
         <table class="table table-striped" ng-cloak>
-            <tr>
+            <tr style>
                 <th><input type="checkbox" ng-model="selectAll" ui-indeterminate="isSelectAllIndeterminate()" ng-click="toggleSelectAll()" ng-disabled="transferComplete"/> </th>
                 <th>File Name</th>
                 <th>Actions</th>
@@ -37,14 +37,14 @@
         <h2 ng-show="removedFiles.length">Files Not To Transfer</h2>
         <table class="table table-striped removed" ng-cloak ng-show="removedFiles.length">
             <thead>
-            <tr>
-                <th>File Name</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="file in removedFiles" class="danger">
-                <td ng-bind="file.fileName"></td>
-            </tr>
+                <tr>
+                    <th>File Name</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="file in removedFiles" class="danger">
+                    <td ng-bind="file.fileName"></td>
+                </tr>
             </tbody>
         </table>
     </div>

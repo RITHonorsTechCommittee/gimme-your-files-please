@@ -13,13 +13,15 @@
 .ng-table th.sortable .sort-indicator {
   padding-right: 18px;
   position: relative;
+  right: 3px;
+  top: -10px;
 }
 .ng-table th.sortable .sort-indicator:after,
 .ng-table th.sortable .sort-indicator:before {
   content: "";
   border-width: 0 4px 4px;
   border-style: solid;
-  border-color: #000 transparent;
+  border-color: #FFF transparent;
   visibility: visible;
   right: 5px;
   top: 50%;
@@ -32,7 +34,7 @@
   border-bottom: none;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  border-top: 4px solid #000;
+  border-top: 4px solid #FFF;
 }
 .ng-table th.sortable .sort-indicator:hover:after,
 .ng-table th.sortable .sort-indicator:hover:before {
@@ -64,7 +66,7 @@
   border-bottom: none;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  border-top: 4px solid #000;
+  border-top: 4px solid #FFF;
   visibility: visible;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -133,4 +135,8 @@
   .ng-table-responsive tr {
     display: block;
   }
+}
+.table-header-text {
+  margin-left: 15px;
+  margin-right: 15px;
 }

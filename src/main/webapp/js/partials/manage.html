@@ -5,11 +5,10 @@
     </div>
 </div>
 <div ng-show="!loading && authenticated">
-
     <div ng-show="isErrored" class="alert alert-error" ng-bind="errorMessage"></div>
     <a class="btn btn-primary btn-md" ladda="folderLoading" ng-click="refresh()" data-style="expand-right">{{folderLoading ? "Loading..." : "Refresh"}}</a>
 
-    <table class="table table-striped" ng-cloak ng-table="tableParams">
+    <table class="table table-striped blacktab" ng-cloak ng-table="tableParams">
         <thead>
         <tr>
             <th><input type="checkbox" ng-model="selectAll" ui-indeterminate="isSelectAllIndeterminate()" ng-click="toggleSelectAll()"/> </th>
@@ -18,34 +17,41 @@
                     'sort-desc': tableParams.isSortBy('name', 'desc')
                   }"
                 ng-click="tableParams.sorting({'name' : tableParams.isSortBy('name', 'asc') ? 'desc' : 'asc'})">
-                <div>User</div>
+                <div class="table-header-text">User</div>
+                <div class="sort-indicator"></div>
             </th>
             <th class="sortable" ng-class="{
                     'sort-asc': tableParams.isSortBy('email', 'asc'),
                     'sort-desc': tableParams.isSortBy('email', 'desc')
                   }"
                 ng-click="tableParams.sorting({'email' : tableParams.isSortBy('email', 'asc') ? 'desc' : 'asc'})">
-                <div>Email</div>
+                <div class="table-header-text">Email</div>
+                <div class="sort-indicator"></div>
             </th>
             <th class="sortable" ng-class="{
                     'sort-asc': tableParams.isSortBy('files.owner.length', 'asc'),
                     'sort-desc': tableParams.isSortBy('files.owner.length', 'desc')
                   }"
                 ng-click="tableParams.sorting({'files.owner.length' : tableParams.isSortBy('files.owner.length', 'asc') ? 'desc' : 'asc'})">
-                <div>Owner</div>
+                <div class="table-header-text">Owner</div>
+                <div class="sort-indicator"></div>
             </th>
             <th class="sortable" ng-class="{
                     'sort-asc': tableParams.isSortBy('files.reader.length', 'asc'),
                     'sort-desc': tableParams.isSortBy('files.reader.length', 'desc')
                   }"
                 ng-click="tableParams.sorting({'files.reader.length' : tableParams.isSortBy('files.reader.length', 'asc') ? 'desc' : 'asc'})">
-                <div>Reader</div>
+                <div class="table-header-text">Reader</div>
+                <div class="sort-indicator"></div>
             </th>
             <th class="sortable" ng-class="{
                     'sort-asc': tableParams.isSortBy('files.writer.length', 'asc'),
                     'sort-desc': tableParams.isSortBy('files.writer.length', 'desc')
                   }"
-                ng-click="tableParams.sorting({'files.writer.length' : tableParams.isSortBy('files.writer.length', 'asc') ? 'desc' : 'asc'})">Writer</th>
+                ng-click="tableParams.sorting({'files.writer.length' : tableParams.isSortBy('files.writer.length', 'asc') ? 'desc' : 'asc'})">
+                <div class="table-header-text">Writer</div>
+                <div class="sort-indicator"></div>
+            </th>
             <th>Actions</th>
         </tr>
         </thead>
