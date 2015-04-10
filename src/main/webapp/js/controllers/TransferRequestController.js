@@ -72,15 +72,25 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
         isRunning: false,
         isDeleted: false,
         execute: function() {
-            if (!$scope.delete.isRunning && !$scope.delete.isDeleted) {
-                $scope.delete.isRunning = true;
-                gapi.client.gyfp.user.request.delete({request: $scope.request.id}).execute(function(resp) {
-                    console.log("Request deleted");
-                    $scope.delete.isRunning = false;
-                    $scope.delete.isDeleted = true;
-                    $scope.$apply();
+            gapi.client.gyfp.user.request.delete({request: $scope.request.id})
+                .then(function() {
+                    $scope.$apply(function($scope) {
+                        $scope.isErrored = false;
+                        $scope.delete.isRunning = false;
+                        $scope.delete.isDeleted = true;
+                        $scope.request = false;
+                    });
+                }, function(resp) {
+                    $scope.$apply(function ($scope) {
+                        $scope.isErrored = true;
+                        //TODO: make sure the error message is meaningful
+                        $scope.errorMessage = resp.result.error.message;
+                        $scope.delete.isRunning = false;
+                        $scope.delete.isDeleted = false;
+                        console.log("Request deleted");
+                        $scope.apply();
+                    });
                 });
-            }
         }
     };
 
@@ -124,22 +134,7 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
 
     $scope.deleteRequest = function() {
         //TODO: confirm?
-        $scope.deleting = true;
-        gapi.client.gyfp.user.request.delete({request: $scope.request.id})
-            .then(function() {
-                $scope.$apply(function($scope) {
-                    $scope.isErrored = false;
-                    $scope.deleting = false;
-                    $scope.request = false;
-                });
-            }, function(resp) {
-                $scope.$apply(function ($scope) {
-                    $scope.isErrored = true;
-                    //TODO: make sure the error message is meaningful
-                    $scope.errorMessage = resp.result.error.message;
-                    $scope.deleting = false;
-                });
-            });
+
     };
 
     $scope._remove = function(fileArray) {

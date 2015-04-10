@@ -11,7 +11,7 @@
         <div ng-show="transferComplete">Thx :D</div>
         <div ng-show="!transferComplete">
             <div class="btn-group">
-                <a class="btn btn-default  btn-sm" ng-click="deleteRequest()" ladda="deleting">Delete Request</a>
+                <a class="btn btn-default  btn-sm" ng-click="delete.execute()" ladda="delete.isDeleting">Delete Request</a>
                 <a ng-class="{'disabled': !hasSelectedFiles()}" class="btn btn-default  btn-sm" ng-click="removeFilesFromTransfer()">Remove Selected Files</a>
                 <a ng-class="{'disabled': !request.files.length}" class="btn btn-default  btn-sm" ng-click="transferFiles()" ladda="transferring">Transfer Files</a>
             </div>
