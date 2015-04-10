@@ -4,7 +4,7 @@
  * Provides functionality to manage the permissions for users of a specific
  * folder.
  */
-gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', 'AuthenticationService', function ($scope, $modal, $routeParams, authService) {
+gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', 'AuthenticationService', '$filter', 'ngTableParams', function ($scope, $modal, $routeParams, authService, $filter, ngTableParams) {
 
     // Listen for authentication state changes so we know when to load the folder
     $scope.$on("AuthenticationService.AuthenticationChanged", function(event, isAuthenticated) {
@@ -69,6 +69,7 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
             }
         }
 
+        $scope.tableParams.reload();
         $scope.loading = false;
         $scope.$apply();
     };
@@ -252,6 +253,27 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
     $scope.folder = {
         id: $routeParams.folderId
     };
+
+    // Setup ng-table (and receive sorting and such!!)
+    $scope.tableParams = new ngTableParams({
+        page: 1,            // show first page
+        count: 10,          // count per page
+        sorting: {
+            "files.owner.length": 'desc'     // initial sorting
+        }
+    }, {
+        total: function() { console.log($scope.users.length); return $scope.users.length; }, // length of data
+        getData: function($defer, params) {
+            params.total($scope.users.length);
+
+            // use built-in angular filter
+            var orderedData = params.sorting() ?
+                $filter('orderBy')($scope.users, params.orderBy()) :
+                $scope.users;
+
+            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+    });
 
 
 
