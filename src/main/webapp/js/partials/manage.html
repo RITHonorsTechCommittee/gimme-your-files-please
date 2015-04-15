@@ -7,11 +7,12 @@
 <div ng-show="!loading && authenticated">
     <div ng-show="isErrored" class="alert alert-error" ng-bind="errorMessage"></div>
     <a class="btn btn-primary btn-md" ladda="folderLoading" ng-click="refresh()" data-style="expand-right">{{folderLoading ? "Loading..." : "Refresh"}}</a>
-
     <table class="table table-striped blacktab" ng-cloak ng-table="tableParams">
         <thead>
         <tr>
-            <th><input type="checkbox" ng-model="selectAll" ui-indeterminate="isSelectAllIndeterminate()" ng-click="toggleSelectAll()"/> </th>
+            <th class="align-left">
+                <input type="checkbox" id="select-all-table-checkbox" ng-model="selectedUsers.checked"/>
+            </th>
             <th class="sortable" ng-class="{
                     'sort-asc': tableParams.isSortBy('name', 'asc'),
                     'sort-desc': tableParams.isSortBy('name', 'desc')
@@ -63,7 +64,7 @@
         </thead>
         <tbody>
         <tr ng-repeat="user in $data" ng-cloak>
-            <td><input type="checkbox" ng-model="user.selected"/></td>
+            <td><input type="checkbox" ng-model="selectedUsers.items[user.permission]" click="setClicked(user)"/></td>
             <td ng-bind="user.name"></td>
             <td ng-bind="user.email"></td>
             <td ng-bind="user.files.owner.length"

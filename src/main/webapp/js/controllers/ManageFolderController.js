@@ -21,6 +21,41 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
         }
     });
 
+    $scope.selectedUsers = {checked: false, items: {}};
+
+    // Toggle all rows when the summary checkbox is checked
+    $scope.$watch('selectedUsers.checked', function(value) {
+        angular.forEach($scope.users, function(user) {
+            if (angular.isDefined(user.permission)) {
+                $scope.selectedUsers.items[user.permission] = value;
+                user.selected = value;
+            }
+        });
+    });
+
+    // Handle the indeterminate checkbox for selecting all people
+    $scope.$watch('selectedUsers.items', function(values) {
+        if (!$scope.users) {
+            return;
+        }
+
+        var checked = 0, unchecked = 0,
+            total = $scope.users.length;
+
+        angular.forEach($scope.users, function(item) {
+            item.selected = values[item.permission];
+            checked   += item.selected == true ? 1 : 0;
+            unchecked += item.selected != true ? 1 : 0;
+        });
+
+        if ((unchecked == 0) || (checked == 0)) {
+            $scope.selectedUsers.checked = (checked == total) && checked > 0;
+        }
+        angular.element("#select-all-table-checkbox").prop("indeterminate", (checked != 0 && unchecked != 0));
+
+    }, true);
+
+
     /**
      * Updates the contents of the folder list from an api response
      *
@@ -213,17 +248,6 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
         return $scope.getSelectedUsers().some(function(user) {
             return user.files.writer.length > 0;
         });
-    };
-
-    $scope.isSelectAllIndeterminate = function() {
-        var numSelectedUsers = $scope.getSelectedUsers().length;
-        return numSelectedUsers > 0 && numSelectedUsers != $scope.users.length;
-    };
-
-    $scope.toggleSelectAll = function() {
-        $scope.users.forEach(function(user) {
-            user.selected = $scope.selectAll;
-        })
     };
 
     var refreshFunction = function(force) {
