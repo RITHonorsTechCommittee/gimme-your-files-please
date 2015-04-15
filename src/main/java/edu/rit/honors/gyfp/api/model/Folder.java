@@ -11,6 +11,7 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 import com.google.appengine.api.users.User;
+import com.google.apphosting.api.ApiProxy;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Ignore;
@@ -137,8 +138,14 @@ public class Folder {
         folder.loadChildren(service);
         folder.ownerUserId = user.getUserId();
 
-        OfyService.ofy().save().entity(folder);
+        log.info("Attempting to cache folder with id " + fileid);
 
+        try {
+            log.info("Saved folder with id " + fileid);
+            OfyService.ofy().save().entity(folder).now();
+        } catch (ApiProxy.RequestTooLargeException ex) {
+            log.severe("Folder too large to cache :(");
+        }
         return folder;
     }
 
@@ -395,7 +402,6 @@ public class Folder {
      *         The actual permission of the user
      */
     private void loadPermission(TransferableFile file, Permission permission) {
-        log.info("Adding to file " + file.getFileName() + " (" + file.getFileId() + ") permission " + permission.getId() + " (" + permission.getEmailAddress() + ")");
         getUser(permission).addFile(permission.getRole(), file);
     }
 
