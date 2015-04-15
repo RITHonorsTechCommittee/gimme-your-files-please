@@ -11,24 +11,27 @@
         <div ng-show="transferComplete">Thx :D</div>
         <div ng-show="!transferComplete">
             <div class="btn-group">
-                <a class="btn btn-default  btn-sm" ng-click="delete.execute()" ladda="delete.isDeleting">Delete Request</a>
-                <a ng-class="{'disabled': !hasSelectedFiles()}" class="btn btn-default  btn-sm" ng-click="removeFilesFromTransfer()">Remove Selected Files</a>
-                <a ng-class="{'disabled': !request.files.length}" class="btn btn-default  btn-sm" ng-click="transferFiles()" ladda="transferring">Transfer Files</a>
+                <a class="btn btn-default  btn-sm" ng-click="delete.execute()" ladda="delete.isDeleting"
+                        title="Delete this transfer request without accepting it">Delete Request</a>
+                <a ng-class="{'disabled': !hasSelectedFiles()}" class="btn btn-default  btn-sm" ng-click="removeFilesFromTransfer()"
+                        title="Remove the selected files from the transfer.  These will not be transferred when the request is accepted.">Remove Selected Files</a>
+                <a ng-class="{'disabled': !request.files.length}" class="btn btn-default  btn-sm" ng-click="transferFiles()" ladda="transferring"
+                        title="Accept the transfer request and give the files to the requesting user">Transfer Files</a>
             </div>
         </div>
         <h2>Sending {{request.files.length}} Files to <strong ng-bind="request.requester.name"></strong></h2>
         <table class="table table-striped" ng-cloak>
             <tr style>
                 <th><input type="checkbox" ng-model="selectAll" ui-indeterminate="isSelectAllIndeterminate()" ng-click="toggleSelectAll()" ng-disabled="transferComplete"/> </th>
-                <th>File Name</th>
-                <th>Actions</th>
+                <th title="Name of the file to transfer">File Name</th>
+                <th title="The actions you can perform on this file">Actions</th>
             </tr>
             <tr ng-repeat="file in request.files" ng-class="{success: transferComplete}">
                 <td><input type="checkbox" ng-model="file.selected" ng-disabled="transferComplete"/></td>
                 <td ng-bind="file.fileName"></td>
                 <td>
                     <div class="btn-group">
-                        <a class="btn btn-success btn-sm" ng-click="remove(file)" ladda="file.loading"><span class="glyphicon glyphicon-trash"></span></a>
+                        <a class="btn btn-success btn-sm" ng-click="remove(file)" ladda="file.loading" title="Do not transfer this file"><span class="glyphicon glyphicon-trash"></span></a>
                     </div>
                 </td>
             </tr>
@@ -38,7 +41,7 @@
         <table class="table table-striped removed" ng-cloak ng-show="removedFiles.length">
             <thead>
                 <tr>
-                    <th>File Name</th>
+                    <th title="The names of the files that you will keep">File Name</th>
                 </tr>
                 </thead>
                 <tbody>
