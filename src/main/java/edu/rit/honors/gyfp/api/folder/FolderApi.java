@@ -333,7 +333,7 @@ public class FolderApi {
         // TODO make this message contain useful information
         String messageText = "Hey there! \n"
                 + "    " + request.getRequestingUser().getEmail() + " has requested that you transfer ownership of "
-                + "your files in the folder  <a href=\"https://gimmeyoufilesplease.appspot.com/#/request/" + request.getId() + "\">" + request.getId() + "</a>.";
+                + "your files in the folder  <a href=\"https://gimmeyourfilesplease.appspot.com/#/request/" + request.getId() + "\">" + request.getId() + "</a>.";
 
         try {
             Message message = new MimeMessage(session);

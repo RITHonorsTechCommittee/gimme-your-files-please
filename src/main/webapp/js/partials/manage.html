@@ -5,22 +5,66 @@
     </div>
 </div>
 <div ng-show="!loading && authenticated">
-
     <div ng-show="isErrored" class="alert alert-error" ng-bind="errorMessage"></div>
     <a class="btn btn-primary btn-md" ladda="folderLoading" ng-click="refresh()" data-style="expand-right">{{folderLoading ? "Loading..." : "Refresh"}}</a>
-
-    <table class="table table-striped" ng-cloak>
+    <table class="table table-striped blacktab" ng-cloak ng-table="tableParams">
+        <thead>
         <tr>
-            <th><input type="checkbox" ng-model="selectAll" ui-indeterminate="isSelectAllIndeterminate()" ng-click="toggleSelectAll()"/> </th>
-            <th>User</th>
-            <th>Email</th>
-            <th>Owner</th>
-            <th>Reader</th>
-            <th>Writer</th>
-            <th>Actions</th>
+            <th class="align-left">
+                <input type="checkbox" id="select-all-table-checkbox" ng-model="selectedUsers.checked"/>
+            </th>
+            <th class="sortable" ng-class="{
+                    'sort-asc': tableParams.isSortBy('name', 'asc'),
+                    'sort-desc': tableParams.isSortBy('name', 'desc')
+                  }"
+                ng-click="tableParams.sorting({'name' : tableParams.isSortBy('name', 'asc') ? 'desc' : 'asc'})"
+                    title="The name of the person who has access to this folder"
+                    >
+                <div class="table-header-text">User</div>
+                <div class="sort-indicator"></div>
+            </th>
+            <th class="sortable" ng-class="{
+                    'sort-asc': tableParams.isSortBy('email', 'asc'),
+                    'sort-desc': tableParams.isSortBy('email', 'desc')
+                  }"
+                ng-click="tableParams.sorting({'email' : tableParams.isSortBy('email', 'asc') ? 'desc' : 'asc'})"
+                    title="The email address of the person who has access to this person">
+                <div class="table-header-text">Email</div>
+                <div class="sort-indicator"></div>
+            </th>
+            <th class="sortable" ng-class="{
+                    'sort-asc': tableParams.isSortBy('files.owner.length', 'asc'),
+                    'sort-desc': tableParams.isSortBy('files.owner.length', 'desc')
+                  }"
+                ng-click="tableParams.sorting({'files.owner.length' : tableParams.isSortBy('files.owner.length', 'asc') ? 'desc' : 'asc'})"
+                    title="The number of files in this folder owned by this person">
+                <div class="table-header-text">Owner</div>
+                <div class="sort-indicator"></div>
+            </th>
+            <th class="sortable" ng-class="{
+                    'sort-asc': tableParams.isSortBy('files.reader.length', 'asc'),
+                    'sort-desc': tableParams.isSortBy('files.reader.length', 'desc')
+                  }"
+                ng-click="tableParams.sorting({'files.reader.length' : tableParams.isSortBy('files.reader.length', 'asc') ? 'desc' : 'asc'})"
+                    title="The number of files in this folder that this person can see">
+                <div class="table-header-text">Reader</div>
+                <div class="sort-indicator"></div>
+            </th>
+            <th class="sortable" ng-class="{
+                    'sort-asc': tableParams.isSortBy('files.writer.length', 'asc'),
+                    'sort-desc': tableParams.isSortBy('files.writer.length', 'desc')
+                  }"
+                ng-click="tableParams.sorting({'files.writer.length' : tableParams.isSortBy('files.writer.length', 'asc') ? 'desc' : 'asc'})"
+                title="The number of files in this folder that this person can see and edit">
+                <div class="table-header-text">Writer</div>
+                <div class="sort-indicator"></div>
+            </th>
+            <th title="The operations that can be preformed on the files owned by this user">Actions</th>
         </tr>
-        <tr ng-repeat="user in users" ng-cloak>
-            <td><input type="checkbox" ng-model="user.selected"/></td>
+        </thead>
+        <tbody>
+        <tr ng-repeat="user in $data" ng-cloak>
+            <td><input type="checkbox" ng-model="selectedUsers.items[user.permission]" click="setClicked(user)"/></td>
             <td ng-bind="user.name"></td>
             <td ng-bind="user.email"></td>
             <td ng-bind="user.files.owner.length"
@@ -43,21 +87,34 @@
                 popover-placement="right"></td>
             <td>
                 <div class="btn-group">
-                    <a ng-if="user.files.owner.length > 0" class="btn btn-success btn-sm" ng-click="ask(user)"><span class="glyphicon glyphicon-transfer"></span></a>
-                    <a ng-if="user.files.owner.length > 0" class="btn btn-danger  btn-sm" ng-click="force(user)"><span class="glyphicon glyphicon-exclamation-sign"></span></a>
-                    <a ng-if="user.files.reader.length > 0" class="btn btn-default  btn-sm" ng-click="revoke('reader', user)"><span class="glyphicon glyphicon-eye-open"></span></a>
-                    <a ng-if="user.files.writer.length > 0" class="btn btn-default  btn-sm" ng-click="revoke('writer', user)"><span class="glyphicon glyphicon-pencil"></span></a>
+                    <a ng-if="user.files.owner.length > 0" class="btn btn-success btn-sm" ng-click="ask(user)"
+                            title="Request this user grants you ownership of these files">
+                        <span class="glyphicon glyphicon-transfer"></span>
+                    </a>
+                    <!--<a ng-if="user.files.owner.length > 0" class="btn btn-danger  btn-sm" ng-click="force(user)"><span class="glyphicon glyphicon-exclamation-sign"></span></a>-->
+                    <a ng-if="user.files.reader.length > 0" class="btn btn-default  btn-sm" ng-click="revoke('reader', user)"
+                            title="Revoke this users read access to the contents of the folder">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                    <a ng-if="user.files.writer.length > 0" class="btn btn-default  btn-sm" ng-click="revoke('writer', user)"
+                            title="Revoke this users write access to the contents of the folder">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
                 </div>
             </td>
         </tr>
+        </tbody>
     </table>
     <div>
         With selected...
         <div class="btn-group">
-            <a ng-class="{'disabled': !isReaderSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll('reader')">Remove Read Permissions</a>
-            <a ng-class="{'disabled': !isWriterSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll('writer')">Remove Write Permissions</a>
-            <a ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-default btn-sm" ng-click="askAll()">Ask Nicely</a>
-            <a ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-danger  btn-sm" ng-click="forceAll()">Hostile Takeover</a>
+            <a ng-class="{'disabled': !isReaderSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll('reader')"
+               title="Revoke read access from the files in this folder from all selected users">Remove Read Permissions</a>
+            <a ng-class="{'disabled': !isWriterSelected()}" class="btn btn-default  btn-sm" ng-click="revokeAll('writer')"
+               title="Revoke write access from the files in this folder from all selected users">Remove Write Permissions</a>
+            <a ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-default btn-sm" ng-click="askAll()"
+               title="Ask the selected users to transfer ownership of their owned files to you">Request Ownership Transfer</a>
+            <!--<a ng-class="{'disabled': !isOwnerSelected()}" class="btn btn-danger  btn-sm" ng-click="forceAll()">Hostile Takeover</a>-->
         </div>
     </div>
 </div>

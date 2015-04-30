@@ -1,5 +1,5 @@
 /*global gapi, angular*/
-var gyfp = angular.module("gyfp", ['ngRoute', 'ui.bootstrap', 'angular-ladda']);
+var gyfp = angular.module("gyfp", ['ngRoute', 'ui.bootstrap', 'angular-ladda', 'ngTable']);
 
 gyfp.config(function ($routeProvider) {
     //configure the routing rules here

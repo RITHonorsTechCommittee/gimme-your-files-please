@@ -87,12 +87,16 @@ public class UserApi {
             throw new BadRequestException(String.format(Constants.Error.INVALID_TRANSFER_LIMIT, limit, 0, 600));
         }
 
-        Drive service = Utils.createDriveFromUser(user);
+        final Drive service = Utils.createDriveFromUser(user);
         final List<TransferableFile> success = new ArrayList<>();
-        Permission owner = new Permission();
+        final Permission owner = new Permission();
         owner.setRole("owner");
+        owner.setType("user");
+        owner.setValue(request.getRequestingUser().getEmail());
 
-        BatchRequest batch = service.batch();
+
+        BatchRequest updateBatch = service.batch();
+        final BatchRequest insertBatch = service.batch();
 
         for (final TransferableFile file : request.getFiles()) {
 
@@ -100,11 +104,23 @@ public class UserApi {
                 service.permissions()
                         .update(file.getFileId(), request.getRequestingUser().getPermission(), owner)
                         .setTransferOwnership(true)
-                        .queue(batch, new JsonBatchCallback<Permission>() {
+                        .queue(updateBatch, new JsonBatchCallback<Permission>() {
                     @Override
                     public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
-                        log.log(Level.SEVERE, "Could not transfer ownership of file " + file.getFileId() + " (" + file.getFileName() + ")", e);
-                        log.log(Level.WARNING, e.getMessage() + ": " + e.getErrors());
+                        log.log(Level.INFO, "Could not update ownership of file " + file.getFileId() + " (" + file.getFileName() + ").  Attempting to insert permission", e);
+                        service.permissions().insert(file.getFileId(), owner).queue(insertBatch, new JsonBatchCallback<Permission>() {
+                            @Override
+                            public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
+                                log.log(Level.SEVERE, "Could not transfer ownership of file " + file.getFileId() + " (" + file.getFileName() + ")", e);
+                                log.log(Level.WARNING, e.getMessage() + ": " + e.getErrors());
+                            }
+
+                            @Override
+                            public void onSuccess(Permission permission, HttpHeaders responseHeaders) throws IOException {
+                                success.add(file);
+                            }
+                        });
+
                     }
 
                     @Override
@@ -118,15 +134,24 @@ public class UserApi {
                         Constants.Error.FAILED_DRIVE_REQUEST, e);
             }
 
-            if (batch.size() >= limit) {
+            if (updateBatch.size() >= limit) {
                 break;
             }
         }
 
         try {
-            batch.execute();
+            updateBatch.execute();
         } catch (IOException e) {
-            log.log(Level.SEVERE, "Error executing batch request");
+            log.log(Level.SEVERE, "Error executing batch request", e);
+        }
+
+        if (insertBatch.size() > 0) {
+            log.log(Level.INFO, "There were failures.  Attempting to insert " + insertBatch.size() + " new permissions");
+            try {
+                insertBatch.execute();
+            } catch (IOException e) {
+                log.log(Level.SEVERE, "Error executing batch request", e);
+            }
         }
 
         request.getFiles().removeAll(success);

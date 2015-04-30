@@ -1,5 +1,5 @@
 div#main {
-    margin-top: 50px;
+    margin-top: 75px;
 }
 
 div.cover {
@@ -76,4 +76,13 @@ div.auth-container button {
 .results {
     font-size: 18px;
     color: #FFFFFF;
+}
+
+.logo {
+    float: left;
+    margin-right: 10px;
+}
+
+th.align-left {
+    text-align: left;
 }

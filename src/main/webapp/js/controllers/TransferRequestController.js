@@ -1,7 +1,7 @@
 /**
  * Controller for displaying and managing polite transfer requests
  */
-gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams", "AuthenticationService", function($scope, $modal, $routeParams, authService) {
+gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams", "$filter", "AuthenticationService", function($scope, $modal, $routeParams, $filter, authService) {
 
     /**
      * The request object to display
@@ -16,6 +16,10 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
 
     $scope.loaded = false;
     $scope.authenticated = authService.isAuthenticated();
+    $scope.removedFiles = [];
+    $scope.transferring = false;
+    $scope.transferComplete = false;
+    $scope.deleting = false;
 
     // Watch for change in authentication state
     $scope.$on("AuthenticationService.AuthenticationChanged", function(event, isAuthenticated) {
@@ -68,15 +72,25 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
         isRunning: false,
         isDeleted: false,
         execute: function() {
-            if (!$scope.delete.isRunning && !$scope.delete.isDeleted) {
-                $scope.delete.isRunning = true;
-                gapi.client.gyfp.user.request.delete({request: $scope.request.id}).execute(function(resp) {
-                    console.log("Request deleted");
-                    $scope.delete.isRunning = false;
-                    $scope.delete.isDeleted = true;
-                    $scope.$apply();
+            gapi.client.gyfp.user.request.delete({request: $scope.request.id})
+                .then(function() {
+                    $scope.$apply(function($scope) {
+                        $scope.isErrored = false;
+                        $scope.delete.isRunning = false;
+                        $scope.delete.isDeleted = true;
+                        $scope.request = false;
+                    });
+                }, function(resp) {
+                    $scope.$apply(function ($scope) {
+                        $scope.isErrored = true;
+                        //TODO: make sure the error message is meaningful
+                        $scope.errorMessage = resp.result.error.message;
+                        $scope.delete.isRunning = false;
+                        $scope.delete.isDeleted = false;
+                        console.log("Request deleted");
+                        $scope.apply();
+                    });
                 });
-            }
         }
     };
 
@@ -91,51 +105,79 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
         });
     };
 
-    /**
-     * Removes all selected files from the transfer request
-     */
-    $scope.removeSelected = function() {
-        $scope.remove($scope.request.files.filter(function(file) {
-            return file.selected;
-        }));
+    $scope.remove = function(file) {
+        $scope._remove([file]);
     };
 
-    /**
-     * Helper method to remove a file or multiple files from the transfer request
-     *
-     * @param toRemove  A single file object or a list of file objects
-     */
-    $scope.remove = function(toRemove) {
-        var files;
+    $scope.removeFilesFromTransfer = function() {
+        $scope._remove($scope._getSelectedFiles());
+    };
 
-        if (!toRemove.length) {
-            toRemove = [toRemove];
-        }
-
-
-        files = toRemove.map(function(file) {
-            // Extract the file IDs.
-            // If the item is already a string (which is to say, it doesn't have a fileId property) keep it unchanged.
-            // Otherwise, return the fileId
-            return file.fileId || file;
-        });
-
-        gapi.client.gyfp.user.request.remove({
-            request: $scope.request.id,
-            ids: files
-        }).execute(function() {
-            $scope.request.files = $scope.request.files.filter(function(file) {
-                // Keep files from request.files that do not have ids that are in the files list.
-                return !files.some(function(fileId) {
-                    return fileId === file.fileId;
-                })
+    $scope.transferFiles = function() {
+        $scope.transferring = true;
+        gapi.client.gyfp.user.request.accept({request: $scope.request.id})
+            .then(function() {
+                $scope.$apply(function($scope) {
+                    $scope.isErrored = false;
+                    $scope.transferComplete = true;
+                    $scope.transferring = false;
+                });
+            }, function(resp) {
+                $scope.$apply(function ($scope) {
+                    $scope.isErrored = true;
+                    //TODO: make sure the error message is meaningful
+                    $scope.errorMessage = resp.result.error.message;
+                    $scope.transferring = false;
+                });
             });
+    };
 
-            $scope.$apply();
+    $scope.deleteRequest = function() {
+        //TODO: confirm?
+
+    };
+
+    $scope._remove = function(fileArray) {
+        console.log('Removing files');
+        console.log(fileArray);
+        fileArray.forEach(function(d) {
+            d.loading = true;
         });
+        var fileIds = fileArray.reduce(function(prev,next) {
+            prev.push(next.fileId);
+            return prev;
+        },[]);
+        console.log(fileIds);
+        gapi.client.gyfp.user.request.remove({request: $scope.request.id, ids: fileIds})
+            .then(function (resp) {
+                console.log(resp);
+                $scope.$apply(function ($scope) {
+                    $scope.isErrored = false;
+                    fileArray.forEach(function(d) {
+                        d.loading = false;
+                        $scope.request.files.splice($scope.request.files.indexOf(d), 1);
+                        $scope.removedFiles.push(d);
+                    });
+                });
+            }, function(resp) {
+                console.error(resp);
+                $scope.$apply(function ($scope) {
+                    fileArray.forEach(function(d) {
+                        d.loading = false;
+                    });
+                    $scope.isErrored = true;
+                    //TODO: make sure the error message is meaningful
+                    $scope.errorMessage = resp.result.error.message;
+                });
+            });
+    };
+
+    $scope._getSelectedFiles = function() {
+        return $filter('filter')($scope.request.files,function(d){ return d.selected; });
     };
 
     if ($scope.authenticated) {
         $scope.loadRequest();
     }
+
 }]);
