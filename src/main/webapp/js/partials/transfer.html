@@ -2,13 +2,13 @@
     <div loading-cover ng-show="!loaded"></div>
 
     <div ng-show="isErrored" class="alert alert-error" ng-bind="errorMessage"></div>
+    <div ng-show="transferComplete" class="alert alert-success">Thx :D</div>
     
     <div ng-show="delete.isDeleted">
         <h1>This request has been deleted.</h1>
     </div>
 
     <div ng-show="!delete.isDeleted">
-        <div ng-show="transferComplete">Thx :D</div>
         <div ng-show="!transferComplete">
             <div class="btn-group">
                 <a class="btn btn-default  btn-sm" ng-click="delete.execute()" ladda="delete.isDeleting"
@@ -16,23 +16,33 @@
                 <a ng-class="{'disabled': !hasSelectedFiles()}" class="btn btn-default  btn-sm" ng-click="removeFilesFromTransfer()"
                         title="Remove the selected files from the transfer.  These will not be transferred when the request is accepted.">Remove Selected Files</a>
                 <a ng-class="{'disabled': !request.files.length}" class="btn btn-default  btn-sm" ng-click="transferFiles()" ladda="transferring"
-                        title="Accept the transfer request and give the files to the requesting user">Transfer Files</a>
+                        title="Accept the transfer request and give the files to the requesting user">Transfer {{request.files.length}} Files</a>
             </div>
         </div>
         <h2>Sending {{request.files.length}} Files to <strong ng-bind="request.requester.name"></strong></h2>
-        <table class="table table-striped" ng-cloak>
-            <tr style>
-                <th><input type="checkbox" ng-model="selectAll" ui-indeterminate="isSelectAllIndeterminate()" ng-click="toggleSelectAll()" ng-disabled="transferComplete"/> </th>
-                <th title="Name of the file to transfer">File Name</th>
-                <th title="The actions you can perform on this file">Actions</th>
-            </tr>
+        <p>{{request.requester.name}} has requested that you transfer ownership of the following files to them.
+        Transferring these files will not revoke your edit access, but after the transfer, your edit access
+        might be revoked by the new owner.</p>
+        <div></div>
+        <table class="table table-striped blacktab" ng-cloak ng-table="tableParams">
+            <thead>
+                <tr>
+                    <th class="align-left">
+                        <input type="checkbox" id="select-all-table-checkbox"
+                               ng-model="selectedFiles.checked" ng-disabled="transferComplete"/>
+                    </th>
+                    <th title="Name of the file to transfer">File Name</th>
+                    <th title="The actions you can perform on this file">Actions</th>
+                </tr>
+            </thead>
             <tr ng-repeat="file in request.files" ng-class="{success: transferComplete}">
-                <td><input type="checkbox" ng-model="file.selected" ng-disabled="transferComplete"/></td>
+                <td><input type="checkbox" ng-model="selectedFiles.items[file.id]" click="setClicked(file)" ng-disabled="transferComplete"/></td>
                 <td ng-bind="file.fileName"></td>
                 <td>
-                    <div class="btn-group">
+                    <div class="btn-group" ng-show="!transferComplete">
                         <a class="btn btn-success btn-sm" ng-click="remove(file)" ladda="file.loading" title="Do not transfer this file"><span class="glyphicon glyphicon-trash"></span></a>
                     </div>
+                    <span class="badge" ng-show="transferComplete">Transferred</span>
                 </td>
             </tr>
         </table>
@@ -42,11 +52,13 @@
             <thead>
                 <tr>
                     <th title="The names of the files that you will keep">File Name</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="file in removedFiles" class="danger">
                     <td ng-bind="file.fileName"></td>
+                    <td><span class="badge">Not Transferred</span></td>
                 </tr>
             </tbody>
         </table>

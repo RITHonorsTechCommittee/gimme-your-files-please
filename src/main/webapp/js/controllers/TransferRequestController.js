@@ -58,7 +58,7 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
         } else {
             $scope.isErrored = false;
             $scope.errorMessage = "";
-            $scope.request.files = request.files;
+            $scope.request.files = $filter('orderBy')(request.files,'fileName');
             $scope.request.requester = request.requestingUser;
             $scope.request.target = request.targetUser;
         }
@@ -173,8 +173,50 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
     };
 
     $scope._getSelectedFiles = function() {
-        return $filter('filter')($scope.request.files,function(d){ return d.selected; });
+        return $filter('filter')($scope.request.files,'selected');
     };
+
+    $scope.selectedFiles = {checked: false, items: {}};
+
+    // Toggle all rows when the summary checkbox is checked
+    $scope.$watch('selectedFiles.checked', function(value) {
+        angular.forEach($scope.request.files, function(file) {
+            if (angular.isDefined(file.id)) {
+                $scope.selectedFiles.items[file.id] = value;
+                file.selected = value;
+            }
+        });
+    });
+
+    // Handle the indeterminate checkbox for selecting all people
+    $scope.$watch('selectedFiles.items', function(values) {
+        if (!$scope.request.files) {
+            return;
+        }
+
+        var checked = 0, unchecked = 0,
+            total = $scope.request.files.length;
+
+        angular.forEach($scope.request.files, function(item) {
+            item.selected = values[item.id];
+            checked   += item.selected == true ? 1 : 0;
+            unchecked += item.selected != true ? 1 : 0;
+        });
+
+        if ((unchecked == 0) || (checked == 0)) {
+            $scope.selectedFiles.checked = (checked == total) && checked > 0;
+        }
+        angular.element("#select-all-table-checkbox").prop("indeterminate", (checked != 0 && unchecked != 0));
+
+    }, true);
+
+    // Setup ng-table (and receive sorting and such!!)
+    $scope.tableParams = new ngTableParams({} , {
+        total: function($defer, params) { $defer.resolve($scope.request.files); },
+        getData: function($defer, params) {
+            $defer.resolve($scope.request.files);
+        }
+    });
 
     if ($scope.authenticated) {
         $scope.loadRequest();
