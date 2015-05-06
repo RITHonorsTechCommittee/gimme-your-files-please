@@ -1,7 +1,9 @@
 /**
  * Controller for displaying and managing polite transfer requests
  */
-gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams", "$filter", "AuthenticationService", function($scope, $modal, $routeParams, $filter, authService) {
+gyfp.controller("TransferRequestController",
+        ["$scope", "$modal", "$routeParams", "$filter", "AuthenticationService", "ngTableParams",
+        function($scope, $modal, $routeParams, $filter, authService, ngTableParams) {
 
     /**
      * The request object to display
@@ -173,7 +175,7 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
     };
 
     $scope._getSelectedFiles = function() {
-        return $filter('filter')($scope.request.files,'selected');
+        return $filter('filter')($scope.request.files,{selected:true});
     };
 
     $scope.selectedFiles = {checked: false, items: {}};
@@ -181,8 +183,8 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
     // Toggle all rows when the summary checkbox is checked
     $scope.$watch('selectedFiles.checked', function(value) {
         angular.forEach($scope.request.files, function(file) {
-            if (angular.isDefined(file.id)) {
-                $scope.selectedFiles.items[file.id] = value;
+            if (angular.isDefined(file.fileId)) {
+                $scope.selectedFiles.items[file.fileId] = value;
                 file.selected = value;
             }
         });
@@ -198,7 +200,7 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
             total = $scope.request.files.length;
 
         angular.forEach($scope.request.files, function(item) {
-            item.selected = values[item.id];
+            item.selected = values[item.fileId];
             checked   += item.selected == true ? 1 : 0;
             unchecked += item.selected != true ? 1 : 0;
         });

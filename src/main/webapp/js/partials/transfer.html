@@ -31,12 +31,12 @@
                         <input type="checkbox" id="select-all-table-checkbox"
                                ng-model="selectedFiles.checked" ng-disabled="transferComplete"/>
                     </th>
-                    <th title="Name of the file to transfer">File Name</th>
-                    <th title="The actions you can perform on this file">Actions</th>
+                    <th class="align-left" title="Name of the file to transfer">File Name</th>
+                    <th class="align-left" title="The actions you can perform on this file">Actions</th>
                 </tr>
             </thead>
             <tr ng-repeat="file in request.files" ng-class="{success: transferComplete}">
-                <td><input type="checkbox" ng-model="selectedFiles.items[file.id]" click="setClicked(file)" ng-disabled="transferComplete"/></td>
+                <td><input type="checkbox" ng-model="selectedFiles.items[file.fileId]" click="setClicked(file)" ng-disabled="transferComplete"/></td>
                 <td ng-bind="file.fileName"></td>
                 <td>
                     <div class="btn-group" ng-show="!transferComplete">

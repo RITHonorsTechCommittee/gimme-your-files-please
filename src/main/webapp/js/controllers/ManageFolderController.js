@@ -257,7 +257,7 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
             gapi.client.gyfp.folders.get({
                 id: $scope.folder.id,
                 ignoreCache: force
-            }).execute(function(resp) {
+            }).execute(function (resp) {
                 $scope.applyFolder(resp);
             });
         };
