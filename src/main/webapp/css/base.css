@@ -13,6 +13,10 @@ div.cover {
     text-align: center;
 }
 
+#preload-cover {
+    z-index: 2000;
+}
+
 div.cover div.loadcontainer {
     margin-top: 200px;
 }
