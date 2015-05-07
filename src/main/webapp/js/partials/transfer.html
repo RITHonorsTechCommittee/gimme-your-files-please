@@ -1,7 +1,7 @@
 <div id="main" class="container" ng-show="authenticated">
     <div loading-cover ng-show="!loaded"></div>
 
-    <div ng-show="isErrored" class="alert alert-error" ng-bind="errorMessage"></div>
+    <div ng-show="isErrored" class="alert alert-danger" ng-bind-html="errorMessage"></div>
     
     <div ng-show="delete.isDeleted">
         <h1>This request has been deleted.</h1>
