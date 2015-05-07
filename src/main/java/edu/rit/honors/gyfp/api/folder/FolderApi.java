@@ -330,10 +330,12 @@ public class FolderApi {
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
 
-        // TODO make this message contain useful information
-        String messageText = "Hey there! \n"
-                + "    " + request.getRequestingUser().getEmail() + " has requested that you transfer ownership of "
-                + "your files in the folder  <a href=\"https://gimmeyourfilesplease.appspot.com/#/request/" + request.getId() + "\">" + request.getId() + "</a>.";
+        String messageFormat = "<h1>Hey there, %s!</h1> \n <p><strong>%s</strong> (%s) has requested that you transfer ownership of your files on Google Drive.  "
+                + "<a href=\"https://gimmeyourfilesplease.appspot.com/#/request/%s\">Click Here</a> to reply to the request.</p>" +
+                "<p>Thanks!</p>" +
+                "<p><span style=\"margin-left: 50px;\"><strong>The GYFP Team</strong></span></p>";
+
+        String messageContent = String.format(messageFormat, request.getTargetUser().getName(), request.getRequestingUser().getName(), request.getRequestingUser().getEmail(), request.getId());
 
         try {
             Message message = new MimeMessage(session);
@@ -341,7 +343,7 @@ public class FolderApi {
             message.addRecipient(Message.RecipientType.TO,
                     new InternetAddress(request.getTargetUser().getEmail(), request.getTargetUser().getName()));
             message.setSubject("You received a transfer request");
-            message.setText(messageText);
+            message.setContent(messageContent, "text/html; charset=utf-8");
 
             log.info("Sending transfer email from " + Constants.Email.ADDRESS + " (" + Constants.Email.NAME + ") to " + request.getTargetUser().getEmail() + " for request " + request.getId());
             Transport.send(message);

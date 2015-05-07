@@ -5,7 +5,7 @@
     </div>
 </div>
 <div ng-show="!loading && authenticated">
-    <div ng-show="isErrored" class="alert alert-error" ng-bind="errorMessage"></div>
+    <div ng-show="isErrored" class="alert alert-danger" ng-bind-html="errorMessage"></div>
     <a class="btn btn-primary btn-md" ladda="folderLoading" ng-click="refresh()" data-style="expand-right">{{folderLoading ? "Loading..." : "Refresh"}}</a>
     <table class="table table-striped blacktab" ng-cloak ng-table="tableParams">
         <thead>
@@ -87,7 +87,7 @@
                 popover-placement="right"></td>
             <td>
                 <div class="btn-group">
-                    <a ng-if="user.files.owner.length > 0" class="btn btn-success btn-sm" ng-click="ask(user)"
+                    <a ng-if="user.files.owner.length > 0" class="btn btn-primary btn-sm" ng-click="ask(user)" ladda="user.inProgress" ng-class="{disabled:user.hasActiveRequest,'btn-success':user.hasActiveRequest}"
                             title="Request this user grants you ownership of these files">
                         <span class="glyphicon glyphicon-transfer"></span>
                     </a>
