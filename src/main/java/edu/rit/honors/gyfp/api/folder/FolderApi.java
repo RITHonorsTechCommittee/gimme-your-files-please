@@ -331,7 +331,7 @@ public class FolderApi {
         Session session = Session.getDefaultInstance(props, null);
 
         String messageFormat = "<h1>Hey there, %s!</h1> \n <p><strong>%s</strong> (%s) has requested that you transfer ownership of your files on Google Drive.  "
-                + "<a href=\"https://gimmeyourfilesplease.appspot.com/#/request/%s\">Click Here</a> to view the files they have requested and manage their ownership.</p>" +
+                + "<a href=\"https://gimmeyourfilesplease.appspot.com/#/request/%s\">Click Here</a> to reply to the request.</p>" +
                 "<p>Thanks!</p>" +
                 "<p><span style=\"margin-left: 50px;\"><strong>The GYFP Team</strong></span></p>";
 
