@@ -1,3 +1,61 @@
 <h1>
     {{ appName }} - A simple file management tool.
 </h1>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3>Motivation</h3>
+    </div>
+    <div class="panel-body">
+<p>
+    Google Drive is a fantastic tool, especially because Google accounts are so prevalent.
+    However, sharing in Google Drive is done on a file-by-file basis, with no bulk permission editing tools.
+    We found that as document collaborators came and went, there wasn't an efficient way to clean the old users out, especially if they owned the files.
+    If you own a file in Google Drive (which happens if you create a file or folder), only you can transfer ownership to another user and no one can remove your editing permissions as long as you own the file.
+    It would be unrealistic to ask users to go through their files one-by-one and transfer them to the people we want as new owners, so we built this tool.
+</p>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3>What <em>{{ appName }}</em> Does</h3>
+    </div>
+    <div class="panel-body">
+<p>
+    At it's most basic level, {{ appName }} allows you to see all of the users who have access to any file contained in a folder.
+    After opening a folder with {{ appName }} from Google Drive, {{ appName }} digs through the folder and any subfolders, compiling a list of all the files it encounters and all the users who can access them.
+    When it is done, it shows you a table of all the users it found, along with how many files they can access.
+    Access is broken down into owner, writer, and reader and hovering over the quantities shows a preview of the files they own.
+</p>
+<p>
+    In addition to seeing the users who have access to files, {{ appName }} allows you to make bulk permission changes to the folder you opened.
+    Clicking the transfer button, <a class="btn btn-success btn-sm"><span class="glyphicon glyphicon-transfer"></span></a>, sends an email to the person you selected asking them to transfer all their owned files to you.
+    When they click the link in the email, they will be prompted to confirm the ownership transfer.
+    Clicking the write button, <a class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span></a>, removes write access for the person on all their files.
+    Clicking the read button, <a class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open"></span></a>, removes read access for the person on all their files.
+</p>
+<p>
+    Currently, the transfer ownership button only works to transfer files between people in the same domain (the part after '@' in your email), but we are working to make it work for everyone.
+</p>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3>FAQ</h3>
+    </div>
+    <div class="panel-body">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <h4>Why do I have to log in so many times?</h4>
+                <p>You are probably using <a href="https://support.google.com/accounts/answer/1721977?hl=en">multiple accounts</a>.
+                Due to the limitations of the tools provided to develop apps that work with Google Drive, we have to ask you which account to use often.
+                If you find this limitation problematic, we suggest using a "private" or "incognito" window and logging in to only the account you wish to use with this app.
+                </p>
+            </li>
+            <li class="list-group-item">
+                <h4>My question isn't here?</h4>
+                <p>That's not really a question, more of a statement with a question mark, but please, feel free to ask questions by emailing {{ supportEmail }}.
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
