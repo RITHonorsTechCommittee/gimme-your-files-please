@@ -115,11 +115,26 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
      * @param user  The target user object
      */
     $scope.ask = function(user) {
+        if(user.hasActiveRequest) {
+            console.log('Not asking '+user.name+' again');
+            return;
+        }
         console.log("'Asking' user for files");
         console.log(user);
-
+        user.inProgress = true;
+        user.hasActiveRequest = true;
         gapi.client.gyfp.folders.transfer.polite({folder: $scope.folder.id, users: [user.permission]})
-            .execute(function(resp){console.log(resp);});
+            .execute(function(resp){
+                user.inProgress = false;
+                if(resp.error ||        resp.result.error) {
+                    $scope.isErrored = true;
+                    $scope.errorMessage += "<br>" + "Failed to ask "+user.name;
+                    user.hasActiveRequest = false;
+                }
+                console.log(resp);
+                $scope.$apply();
+            }
+        );
     };
 
     /**
@@ -171,6 +186,9 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
     $scope.askAll = function() {
         console.log("Ask all.");
         console.log($scope.getSelectedUsers());
+        $scope.getSelectedUsers().forEach(function(user){
+            $scope.ask(user);
+        })
     };
 
     /**

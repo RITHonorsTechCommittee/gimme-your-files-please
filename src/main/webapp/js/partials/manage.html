@@ -87,7 +87,7 @@
                 popover-placement="right"></td>
             <td>
                 <div class="btn-group">
-                    <a ng-if="user.files.owner.length > 0" class="btn btn-success btn-sm" ng-click="ask(user)"
+                    <a ng-if="user.files.owner.length > 0" class="btn btn-success btn-sm" ng-click="ask(user)" ladda="user.inProgress" ng-class="{disabled:user.hasActiveRequest}"
                             title="Request this user grants you ownership of these files">
                         <span class="glyphicon glyphicon-transfer"></span>
                     </a>
