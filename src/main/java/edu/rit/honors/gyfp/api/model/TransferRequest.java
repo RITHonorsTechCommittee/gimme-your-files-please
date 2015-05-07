@@ -27,6 +27,9 @@ public class TransferRequest {
     @Id
     Long id;
 
+    @Index
+    String folderId;
+
     /**
      * The User who initiated the request
      */
@@ -60,7 +63,8 @@ public class TransferRequest {
         // Required for Objectify
     }
 
-    private TransferRequest(FileUser requester, FileUser target, Collection<TransferableFile> files) {
+    private TransferRequest(String folderId, FileUser requester, FileUser target, Collection<TransferableFile> files) {
+        this.folderId = checkNotNull(folderId);
         this.requester = checkNotNull(requester);
         this.target = checkNotNull(target);
         this.files = new HashSet<>(checkNotNull(files));
@@ -71,15 +75,16 @@ public class TransferRequest {
         checkNotNull(user);
         checkNotNull(requesterId);
         checkNotNull(targetId);
+        FileUser target = checkNotNull(folder.getUser(targetId));
 
         // Attempt to load the an existing TransferRequest
         TransferRequest request = OfyService.ofy().load()
                 .type(TransferRequest.class)
                 .filter("target.permission", targetId)
                 .filter("requester.permission", requesterId)
+                .filter("folder", folder.getId())
                 .first().now();
 
-        FileUser target = checkNotNull(folder.getUser(targetId));
         log.info("Creating transfer request for user " + targetId + " files: " + target.getFiles());
         List<TransferableFile> files = target.getFiles().get(Constants.Role.OWNER);
 
@@ -95,7 +100,7 @@ public class TransferRequest {
                 folder.addUser(requester);
             }
 
-            request = new TransferRequest(requester, target, files);
+            request = new TransferRequest(folder.getId(), requester, target, files);
         } else {
             log.info("Updating existing transfer request.");
             request.getFiles().addAll(files);

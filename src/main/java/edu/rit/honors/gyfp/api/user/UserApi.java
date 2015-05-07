@@ -155,7 +155,13 @@ public class UserApi {
         }
 
         request.getFiles().removeAll(success);
-        ObjectifyService.ofy().save().entity(request);
+
+        // If there are no files left, delete the request, otherwise save it for future completion.
+        if (request.getFiles().isEmpty()) {
+            OfyService.ofy().delete().entity(request);
+        } else {
+            ObjectifyService.ofy().save().entity(request);
+        }
         return request;
     }
 
