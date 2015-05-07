@@ -28,10 +28,13 @@
 </p>
 <p>
     In addition to seeing the users who have access to files, {{ appName }} allows you to make bulk permission changes to the folder you opened.
-    Clicking the transfer button, <a class="btn btn-success btn-sm"><span class="glyphicon glyphicon-transfer"></span></a>, sends an email to the person you selected asking them to transfer all their owned files to you.
+    Clicking the transfer button, <a class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-transfer"></span></a>,
+    sends an email to the person you selected asking them to transfer all the files they own in the folder you opened to you.
     When they click the link in the email, they will be prompted to confirm the ownership transfer.
-    Clicking the write button, <a class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span></a>, removes write access for the person on all their files.
-    Clicking the read button, <a class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open"></span></a>, removes read access for the person on all their files.
+    Clicking the write button, <a class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></a>,
+    removes write access for the person on all their files within the folder you opened.
+    Clicking the read button, <a class="btn btn-default btn-xs"><span class="glyphicon glyphicon-eye-open"></span></a>,
+    removes read access for the person on all their files within the folder you opened.
 </p>
 <p>
     Currently, the transfer ownership button only works to transfer files between people in the same domain (the part after '@' in your email), but we are working to make it work for everyone.
@@ -53,7 +56,7 @@
             </li>
             <li class="list-group-item">
                 <h4>My question isn't here?</h4>
-                <p>That's not really a question, more of a statement with a question mark, but please, feel free to ask questions by emailing {{ supportEmail }}.
+                <p>That's not really a question, it's a statement with a question mark, but please, feel free to ask your question by emailing {{ supportEmail }}.
                 </p>
             </li>
         </ul>
