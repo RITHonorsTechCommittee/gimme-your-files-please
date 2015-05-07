@@ -17,6 +17,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.appengine.api.users.User;
 import com.google.common.base.Strings;
+import com.googlecode.objectify.ObjectifyService;
 import edu.rit.honors.gyfp.api.ApiUtil;
 import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.api.model.FileUser;
@@ -233,6 +234,7 @@ public class FolderApi {
 
 
         OfyService.ofy().save().entity(target).now();
+        OfyService.ofy().clear();
         return target;
     }
 
