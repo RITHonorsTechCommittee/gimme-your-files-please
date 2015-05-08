@@ -100,9 +100,10 @@ gyfp.controller("TransferRequestController", ["$scope", "$modal", "$routeParams"
      * @returns {boolean}
      */
     $scope.hasSelectedFiles = function() {
-        return $scope.request.files.some(function(file) {
-            return file.selected;
-        });
+        return $scope.request && $scope.request.files &&
+            $scope.request.files.some(function(file) {
+                return file.selected;
+            });
     };
 
     $scope.remove = function(file) {

@@ -15,8 +15,10 @@ import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.Permission;
 import com.google.appengine.api.users.User;
 import com.google.common.base.Strings;
+import com.googlecode.objectify.ObjectifyService;
 import edu.rit.honors.gyfp.api.ApiUtil;
 import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.api.model.FileUser;
@@ -207,17 +209,35 @@ public class FolderApi {
             }
 
             try {
-                service.permissions().delete(f.getFileId(), targetUser.getPermission()).queue(batch, new JsonBatchCallback<Void>() {
-                    @Override
-                    public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
-                        log.log(Level.WARNING, "Could not delete permission for file " + f.getFileId(), e);
-                    }
+                if (role.equals(Constants.Role.READER)) {
+                    service.permissions().delete(f.getFileId(), targetUser.getPermission()).queue(batch, new JsonBatchCallback<Void>() {
+                        @Override
+                        public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
+                            log.log(Level.WARNING, "Could not delete permission for file " + f.getFileId(), e);
+                        }
 
-                    @Override
-                    public void onSuccess(Void aVoid, HttpHeaders responseHeaders) throws IOException {
-                        success.add(f);
-                    }
-                });
+                        @Override
+                        public void onSuccess(Void aVoid, HttpHeaders responseHeaders) throws IOException {
+                            success.add(f);
+                        }
+                    });
+                } else if (role.equals(Constants.Role.WRITER)) {
+                    Permission reader = new Permission();
+                    reader.setRole(Constants.Role.READER);
+                    reader.setType("user");
+                    reader.setValue(targetUser.getEmail());
+                    service.permissions().update(f.getFileId(), targetUser.getPermission(), reader).queue(batch, new JsonBatchCallback<Permission>() {
+                        @Override
+                        public void onSuccess(Permission permission, HttpHeaders responseHeaders) throws IOException {
+                            success.add(f);
+                        }
+
+                        @Override
+                        public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
+                            log.log(Level.WARNING, "Could not downgrade permission for file " + f.getFileId(), e);
+                        }
+                    });
+                }
             } catch (IOException e) {
                 log.log(Level.WARNING, "Could not delete permission for file " + f.getFileId(), e);
             }
@@ -233,6 +253,7 @@ public class FolderApi {
 
 
         OfyService.ofy().save().entity(target).now();
+        OfyService.ofy().clear();
         return target;
     }
 

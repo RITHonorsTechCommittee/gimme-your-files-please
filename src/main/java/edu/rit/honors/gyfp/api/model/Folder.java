@@ -143,6 +143,7 @@ public class Folder {
         try {
             log.info("Saved folder with id " + fileid);
             OfyService.ofy().save().entity(folder).now();
+            OfyService.ofy().clear();
         } catch (ApiProxy.RequestTooLargeException ex) {
             log.severe("Folder too large to cache :(");
         }
@@ -223,7 +224,8 @@ public class Folder {
     public boolean isDirty() {
         boolean isDirty = System.currentTimeMillis() - updateTime > 1000 * 3600;
         if (isDirty) {
-            OfyService.ofy().delete().entity(this);
+            OfyService.ofy().delete().entity(this).now();
+            OfyService.ofy().clear();
         }
 
         return isDirty;

@@ -117,6 +117,13 @@ public class UserApi {
 
                             @Override
                             public void onSuccess(Permission permission, HttpHeaders responseHeaders) throws IOException {
+                                if (success.size() <= 5) {
+                                    if (success.size() == 5) {
+                                        log.info("...");
+                                    } else {
+                                        log.info("Transferred file " + file.getFileId() + " (" + file.getFileName() + ")");
+                                    }
+                                }
                                 success.add(file);
                             }
                         });
@@ -155,7 +162,14 @@ public class UserApi {
         }
 
         request.getFiles().removeAll(success);
-        ObjectifyService.ofy().save().entity(request);
+
+        // If there are no files left, delete the request, otherwise save it for future completion.
+        if (request.getFiles().isEmpty()) {
+            OfyService.ofy().delete().entity(request).now();
+        } else {
+            OfyService.ofy().save().entity(request).now();
+        }
+        OfyService.ofy().clear();
         return request;
     }
 
@@ -182,6 +196,7 @@ public class UserApi {
             throw new ForbiddenException(Constants.Error.AUTH_REQUIRED);
         }
         TransferRequest request = OfyService.ofy().load().type(TransferRequest.class).id(requestId).now();
+        OfyService.ofy().clear();
 
         if (request == null) {
             throw new NotFoundException(String.format(Constants.Error.TRANSFER_REQUEST_NOT_FOUND, requestId));
@@ -220,6 +235,7 @@ public class UserApi {
         TransferRequest request = getRequest(requestId, user);
 
         ApiUtil.splitStringArguments(ids);
+        log.info("Request started with " + request.getFiles().size() + " files.");
         log.info("Processing id list of size " + ids.size());
 
         List<TransferableFile> toRemove = new ArrayList<>();
@@ -235,7 +251,9 @@ public class UserApi {
         }
 
         request.getFiles().removeAll(toRemove);
-        ObjectifyService.ofy().save().entity(request);
+        log.info("Request now contains " + request.getFiles().size() + " files.");
+        OfyService.ofy().save().entity(request).now();
+        OfyService.ofy().clear();
         if (!ids.isEmpty()) {
             throw new BadRequestException(String.format(Constants.Error.REMOVE_UNKNOWN_FILE_IDS, ids));
         }
@@ -263,7 +281,8 @@ public class UserApi {
             throws ForbiddenException, NotFoundException, BadRequestException {
         TransferRequest request = getRequest(requestId, user);
 
-        ObjectifyService.ofy().delete().entity(request);
+        OfyService.ofy().delete().entity(request).now();
+        OfyService.ofy().clear();
     }
 
     public static class VerificationResult {
