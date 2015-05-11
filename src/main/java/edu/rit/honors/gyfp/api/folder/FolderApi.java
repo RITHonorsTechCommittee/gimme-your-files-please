@@ -353,6 +353,8 @@ public class FolderApi {
 
         String messageFormat = "<h1>Hey there, %s!</h1> \n <p><strong>%s</strong> (%s) has requested that you transfer ownership of your files on Google Drive.  "
                 + "<a href=\"https://gimmeyourfilesplease.appspot.com/#/request/%s\">Click Here</a> to reply to the request.</p>" +
+                "<p>Gimme Your Files Please (GYFP) is a new tool created by Honors Technology Committee to transition all of the Honors Program drive files to the incoming president's ownership.  We asked them to create this tool because we don't know (and aren't willing to wait and find out) what happens to files owned by a student after their RIT student email account is discontinued by IT.  Previously, we have done a more forceful transition where the entire Honors drive is downloaded and re-uploaded then re-shared with new Council and committee members, but this means that all sharing/editing/reading access and comments in documents no longer exist.</p>" +
+                "<p>If you follow the link above, log in, and then click \"Transfer Files,\" this tool will transfer ownership of any document you own in the Google drive to the requester, while you retain read/write access.</p>" +
                 "<p>Thanks!</p>" +
                 "<p><span style=\"margin-left: 50px;\"><strong>The GYFP Team</strong></span></p>";
 

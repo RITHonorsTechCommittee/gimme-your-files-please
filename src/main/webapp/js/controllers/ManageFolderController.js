@@ -128,7 +128,7 @@ gyfp.controller("ManageFolderController", ['$scope', '$modal', '$routeParams', '
                 user.inProgress = false;
                 if(resp.error ||        resp.result.error) {
                     $scope.isErrored = true;
-                    $scope.errorMessage += $scope.errorMessage?"<br>":'' + "Failed to ask "+user.name;
+                    $scope.errorMessage += ($scope.errorMessage?"<br>":'') + "Failed to ask "+user.name;
                     user.hasActiveRequest = false;
                 }
                 console.log(resp);
