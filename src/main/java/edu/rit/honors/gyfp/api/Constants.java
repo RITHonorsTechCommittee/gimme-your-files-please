@@ -1,5 +1,8 @@
 package edu.rit.honors.gyfp.api;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Constants {
 
     public static class Scope {
@@ -18,6 +21,7 @@ public class Constants {
 
     public static class MimeType {
         public static final String FOLDER = "application/vnd.google-apps.folder";
+        public static final List<String> GOOGLE_MIME_TYPES = Arrays.asList("application/vnd.google-apps.audio", "application/vnd.google-apps.document", "application/vnd.google-apps.drawing", "application/vnd.google-apps.file", "application/vnd.google-apps.folder", "application/vnd.google-apps.form", "application/vnd.google-apps.fusiontable", "application/vnd.google-apps.photo", "application/vnd.google-apps.presentation", "application/vnd.google-apps.script", "application/vnd.google-apps.sites", "application/vnd.google-apps.spreadsheet", "application/vnd.google-apps.unknown", "application/vnd.google-apps.video");
     }
 
     public static class Email {
