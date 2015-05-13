@@ -3,6 +3,7 @@ package edu.rit.honors.gyfp.api.model;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Ignore;
 import com.googlecode.objectify.annotation.Index;
 
 import java.util.ArrayList;
@@ -19,21 +20,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * This class mainly serves as a map between the three different permission types (read, write, own)
  */
 @Entity
-public class FileUser {
+public class FileUser extends TransferUser {
 
-    /**
-     * The ID of this transfer request.  Same as the permission
-     * Objectify doesn't seem to want to let us query when permission is used as the @Id :(
-     */
-    @Id
-    private String id;
-
-    private String permission;
-
-    private String name;
-
-    private String email;
-
+    @Ignore
     private Map<String, List<TransferableFile>> files;
 
     /**
@@ -64,18 +53,6 @@ public class FileUser {
 
     public FileUser(User user) {
         this(user.getUserId(), user.getNickname(), user.getEmail());
-    }
-
-    public String getPermission() {
-        return permission;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public Map<String, List<TransferableFile>> getFiles() {

@@ -34,18 +34,17 @@ public class TransferRequest {
      * The User who initiated the request
      */
     @Index
-    private FileUser requester;
+    private TransferUser requester;
 
     /**
      * The email address of the user as which the request is directed
      */
     @Index
-    private FileUser target;
+    private TransferUser target;
 
     /**
      * The date/time that the request was made.
      */
-    @Index
     private DateTime requestCreation;
 
     /**
@@ -65,8 +64,12 @@ public class TransferRequest {
 
     private TransferRequest(String folderId, FileUser requester, FileUser target, Collection<TransferableFile> files) {
         this.folderId = checkNotNull(folderId);
-        this.requester = checkNotNull(requester);
-        this.target = checkNotNull(target);
+        checkNotNull(requester);
+        this.requester = new TransferUser(requester.getPermission(), requester.getName(), requester.getEmail());
+
+        checkNotNull(target);
+        this.target = new TransferUser(target.getPermission(), target.getName(), target.getEmail());
+
         this.files = new HashSet<>(checkNotNull(files));
     }
 
@@ -131,11 +134,11 @@ public class TransferRequest {
         return id;
     }
 
-    public FileUser getRequestingUser() {
+    public TransferUser getRequestingUser() {
         return requester;
     }
 
-    public FileUser getTargetUser() {
+    public TransferUser getTargetUser() {
         return target;
     }
 

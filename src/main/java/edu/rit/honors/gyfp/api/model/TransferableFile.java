@@ -24,6 +24,11 @@ public class TransferableFile {
         this.fileid = file.getId();
     }
 
+    public TransferableFile(TransferableFile file) {
+        this.filename = file.getFileName();
+        this.fileid = file.getFileId();
+    }
+
     public String getFileName() {
         return filename;
     }
