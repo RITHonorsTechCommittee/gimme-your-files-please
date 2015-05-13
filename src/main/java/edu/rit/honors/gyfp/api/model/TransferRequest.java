@@ -99,7 +99,8 @@ public class TransferRequest {
                 .filter("folder", folder.getId())
                 .first().now();
 
-        log.info("Creating transfer request for user " + targetId + " files: " + target.getFiles());
+        log.info("Creating transfer request for user " + targetId + " files: " + target.getFiles().get(Constants.Role.OWNER));
+        log.info(folder.toString());
         List<TransferableFile> files = target.getFiles().get(Constants.Role.OWNER);
 
         if (request == null) {

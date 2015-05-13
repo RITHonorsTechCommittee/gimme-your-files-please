@@ -1,13 +1,14 @@
 package edu.rit.honors.gyfp.api.model;
 
-import com.google.common.base.Preconditions;
+import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by greg on 5/11/2015.
  */
+@Entity
 public class TransferUser {
     /**
      * The ID of this transfer request.  Same as the permission

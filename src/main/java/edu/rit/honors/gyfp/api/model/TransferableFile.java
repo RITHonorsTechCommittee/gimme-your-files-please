@@ -1,5 +1,6 @@
 package edu.rit.honors.gyfp.api.model;
 
+import com.google.api.client.repackaged.com.google.common.base.Objects;
 import com.google.api.services.drive.model.File;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -41,4 +42,18 @@ public class TransferableFile {
         return fileid + " (" + filename + ")";
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof TransferableFile) {
+            TransferableFile f = (TransferableFile) obj;
+            return Objects.equal(fileid, f.fileid) && Objects.equal(filename, f.filename);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(fileid, filename);
+    }
 }

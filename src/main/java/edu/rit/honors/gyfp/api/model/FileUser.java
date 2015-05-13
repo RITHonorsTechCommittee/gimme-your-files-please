@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Entity
 public class FileUser extends TransferUser {
 
-    @Ignore
     private Map<String, List<TransferableFile>> files;
 
     /**

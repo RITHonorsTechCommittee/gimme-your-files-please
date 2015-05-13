@@ -12,10 +12,7 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 import com.google.appengine.api.users.User;
 import com.google.apphosting.api.ApiProxy;
-import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Ignore;
-import com.googlecode.objectify.annotation.Unindex;
+import com.googlecode.objectify.annotation.*;
 import edu.rit.honors.gyfp.api.Constants;
 import edu.rit.honors.gyfp.util.OfyService;
 import edu.rit.honors.gyfp.util.Utils;
@@ -44,6 +41,7 @@ public class Folder {
     /**
      * The contents of the folder, indexed by owner id
      */
+    @Unindex
     private Map<String, FileUser> files;
 
     /**
@@ -142,6 +140,9 @@ public class Folder {
 
         try {
             log.info("Saved folder with id " + fileid);
+
+
+            log.log(Level.INFO, folder.toString());
             OfyService.ofy().save().entity(folder).now();
             OfyService.ofy().clear();
         } catch (ApiProxy.RequestTooLargeException ex) {
@@ -424,6 +425,25 @@ public class Folder {
 
     public void addUser(FileUser user) {
         files.put(user.getPermission(), user);
+    }
+
+    public String toString() {
+        StringBuilder folderRepr = new StringBuilder("Folder Contents:\n");
+        if (getFiles() == null) {
+            folderRepr.append("NO FILES STORED.");
+        } else {
+            for (String permission : getFiles().keySet()) {
+                FileUser user = getFiles().get(permission);
+
+                int reader = user.getFiles(Constants.Role.READER).size();
+                int writer = user.getFiles(Constants.Role.WRITER).size();
+                int owner = user.getFiles(Constants.Role.OWNER).size();
+
+                folderRepr.append(String.format("%25.25s (%40.40s):  Read: %5d   Write: %5d  Own: %5d\n", user.getName(), user.getEmail(), reader, writer, owner));
+            }
+        }
+
+        return folderRepr.toString();
     }
 
     /**
