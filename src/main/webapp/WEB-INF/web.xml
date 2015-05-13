@@ -14,6 +14,18 @@
         <servlet-name>DriveOpenRedirectServlet</servlet-name>
         <servlet-class>edu.rit.honors.gyfp.servlets.DriveOpenRedirectServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>appstats</servlet-name>
+        <servlet-class>com.google.appengine.tools.appstats.AppstatsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>trview</servlet-name>
+        <servlet-class>edu.rit.honors.gyfp.servlets.TransferRequestViewServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>folderview</servlet-name>
+        <servlet-class>edu.rit.honors.gyfp.servlets.FolderViewServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>Oauth2Callback</servlet-name>
@@ -26,6 +38,18 @@
     <servlet-mapping>
         <servlet-name>DriveOpenRedirectServlet</servlet-name>
         <url-pattern>/open</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>appstats</servlet-name>
+        <url-pattern>/appstats/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>trview</servlet-name>
+        <url-pattern>/cache/transferrequest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>folderview</servlet-name>
+        <url-pattern>/cache/folder</url-pattern>
     </servlet-mapping>
 
     <security-constraint>
@@ -85,15 +109,6 @@
     </filter-mapping>
 
 
-    <servlet>
-        <servlet-name>appstats</servlet-name>
-        <servlet-class>com.google.appengine.tools.appstats.AppstatsServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>appstats</servlet-name>
-        <url-pattern>/appstats/*</url-pattern>
-    </servlet-mapping>
 
     <security-constraint>
         <web-resource-collection>
