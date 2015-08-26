@@ -13,7 +13,7 @@ public class Constants {
 
     public static class Field {
         public static final String KIND_OWNER = "mimeType,owners(displayName,emailAddress,isAuthenticatedUser)";
-        public static final String FOLDER_ENUM = "items(id,mimeType,permissions(additionalRoles,id,role,name,type,value),title),nextLink,nextPageToken";
+        public static final String FOLDER_ENUM = "items(id,mimeType,permissions(additionalRoles,id,role,name,type,value,emailAddress),title),nextLink,nextPageToken";
     }
 
     public static class MimeType {
