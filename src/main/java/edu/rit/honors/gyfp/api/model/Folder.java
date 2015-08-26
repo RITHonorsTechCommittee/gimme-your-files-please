@@ -371,10 +371,12 @@ public class Folder {
      *
      * @param permission
      *         The permission that will be looked up
+     * @param file
+     *         The file containing this permission (for debug/logging)
      *
      * @return The populated map of permissions for this user
      */
-    private FileUser getUser(Permission permission) {
+    private FileUser getUser(Permission permission, TransferableFile file) {
         FileUser user = files.get(permission.getId());
 
         if (user == null) {
@@ -385,11 +387,21 @@ public class Folder {
                 user = new FileUser(permission.getId(), permission.getId(), permission.getId());
             } else if (Constants.Role.ANYONE_WITH_LINK.equals(permission.getId())) {
                 user = new FileUser(permission.getId(), permission.getId(), permission.getId());
+            } else if (permission.getEmailAddress() == null && permission.getName() == null) {
+                try {
+                    log.info("This is a bad permission: " + permission.toPrettyString());
+                    log.info("The bad file is " + file.getFileId() + " (" + file.getFileName() + ")");
+                } catch (Exception e) {
+                    log.log(Level.WARNING, "Could not prettify string", e);
+                }
             } else {
                 user = new FileUser(permission.getId(), permission.getName(),
-                        permission.getValue());
+                        permission.getEmailAddress());
             }
-            files.put(permission.getId(), user);
+
+            if (user != null) {
+                files.put(permission.getId(), user);
+            }
         }
 
         return user;
@@ -404,7 +416,11 @@ public class Folder {
      *         The actual permission of the user
      */
     private void loadPermission(TransferableFile file, Permission permission) {
-        getUser(permission).addFile(permission.getRole(), file);
+        FileUser user = getUser(permission, file);
+
+        if (user != null) {
+            user.addFile(permission.getRole(), file);
+        }
     }
 
     /**
